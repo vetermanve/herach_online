@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box !important;
+  outline: none !important;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: Whitney, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+}
+
+body {
+  font-size: 1.25em;
+}
+
+p, a, li {
+  display: inline-block;
+}
+
+ul {
+  list-style: none;
+}
+
+.container {
+  width: 100%;
+  min-height: 100%;
+}
+
+.pure-g [class*=pure-u] {
+    font-family: Whitney, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+}

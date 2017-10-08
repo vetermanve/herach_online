@@ -1,0 +1,13 @@
+{
+    "name": "mutants/reanima-back",
+    "description": "Main Repo of Reanima.store backend",
+    "type": "repo",
+    "authors": [
+        {
+            "name": "Denisov Mikhail",
+            "email": "manwebdev@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
