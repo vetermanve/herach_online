@@ -9,5 +9,10 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {}
+    "autoload": {
+      "psr-4": {"": "library/"}
+    },
+    "require": {
+      "monolog/monolog" : "master"
+    }
 }

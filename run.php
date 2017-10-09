@@ -1,6 +1,8 @@
 <?php
+chdir(__DIR__);
+
 require_once(__DIR__.'/_util/get_all_headers.php');
-require_once(__DIR__.'/../bootstrap.php');
+require_once(__DIR__.'/bootstrap.php');
 
 use Run\Util\HttpEnvContext;
 use Run\RunContext;

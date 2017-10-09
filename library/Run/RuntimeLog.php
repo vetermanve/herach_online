@@ -46,7 +46,7 @@ class RuntimeLog extends Logger implements LoggerExtendInterface
      *
      * @return null
      */
-    public function addRecord($level, $message, array $context = array())
+    public function addRecord($level, $message, array $context = array()) : boolean
     {
         $context += $this->context;
         
