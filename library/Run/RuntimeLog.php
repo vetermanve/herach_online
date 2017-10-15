@@ -43,9 +43,9 @@ class RuntimeLog extends Logger
      * @param string $message
      * @param array  $context
      *
-     * @return null
+     * @return bool
      */
-    public function addRecord(int $level, string $message, array $context = array()) : boolean
+    public function addRecord(int $level, string $message, array $context = array()) : bool
     {
         $context += $this->context;
         
@@ -68,6 +68,8 @@ class RuntimeLog extends Logger
         !$stdout && $stdout = fopen('php://stdout', 'w');
         
         fwrite($stdout, $msg."\n");
+        
+        return true;
     }
     
     public function catchErrors () 

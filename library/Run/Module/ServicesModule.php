@@ -3,15 +3,9 @@
 
 namespace Run\Module;
 
-
-use iConto\Exception\InternalError;
-use iConto\Interfaces\RpcServicesContainerInterface;
-use iConto\Service\Service;
-use Run\RunContext;
 use Run\RunModuleProto;
-use Run\Module\RpcServices;
 
-class ServicesModule extends RunModuleProto implements RpcServicesContainerInterface
+class ServicesModule extends RunModuleProto
 {
     /**
      * @var RpcServices
@@ -42,7 +36,7 @@ class ServicesModule extends RunModuleProto implements RpcServicesContainerInter
         $serviceConfig = $this->servicesConfig->getServiceConfig($serviceName);
         
         if (!$serviceConfig) {
-            throw new InternalError("There is no " . $serviceName . " service.");
+            throw new \LogicException("There is no " . $serviceName . " service.");
         }
         
         return $this->services[$serviceName] = Service::factory($serviceConfig);

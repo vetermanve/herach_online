@@ -4,13 +4,7 @@
 namespace Run\Processor;
 
 
-use iConto\Application;
-use iConto\Env;
-use iConto\Exception;
-use iConto\Exception\AdditionalExceptionInterface;
-use iConto\Exception\InternalError;
-use iConto\Exception\Validator;
-use iConto\Rpc\RpcMaster;
+use Rpc\RpcMaster;
 use Run\ChannelMessage\HttpReply;
 use Run\Execution\Rest\MsgModificator\DateWiperAndNullErase;
 use Run\Execution\RestAppExecution;
@@ -27,11 +21,6 @@ class AlolRestRequestProcessor extends RunRequestProcessorProto
 {
     private $profilingEnabled = false;
     
-    /**
-     * @var SchemaChecker
-     */
-    private $schemaChecker;
-    
     public function prepare()
     {
         if (!$this->sessionBuilder) {
@@ -47,8 +36,6 @@ class AlolRestRequestProcessor extends RunRequestProcessorProto
         if ($this->profilingEnabled) {
             RpcMaster::i()->setEnabled(true);
         }
-        
-        $this->schemaChecker = new SchemaChecker();
     }
     
     public function process(RunRequest $request)
@@ -104,8 +91,6 @@ class AlolRestRequestProcessor extends RunRequestProcessorProto
                 return $this->processResponse($response, $request, $execution);
             }
 
-            // Проверим старю схема валидации.
-            $this->schemaChecker->check($request);
             
             // Поехали
             $execution->run();

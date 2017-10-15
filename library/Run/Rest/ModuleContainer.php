@@ -3,11 +3,7 @@
 
 namespace Run\Rest;
 
- 
-use iConto\Application;
-use iConto\Interfaces\ContainerInterface;
-
-class ModuleContainer implements ContainerInterface
+class ModuleContainer
 {
     private $modules = [];
     

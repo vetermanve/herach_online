@@ -28,7 +28,7 @@ class RestHttpRequestFromHttp extends RunSchemaProto
         $provider->setHttpEnv($this->httpEnv);
     
         $this->core->addComponent(new UnexpectedShutdownHandler());
-        $this->core->addComponent(new MainDependencyManager());
+//        $this->core->addComponent(new MainDependencyManager());
         
         $this->core->setProvider($provider);
         $this->core->setProcessor(new MultiAppHttpProcessor());

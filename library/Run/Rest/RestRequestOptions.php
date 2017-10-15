@@ -10,7 +10,7 @@ use Run\Rest\Exception\Redirect;
 use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;
 
-class RestRequestOptions implements DispatcherInterface 
+class RestRequestOptions 
 {
     /**
      * @var RunRequest;
@@ -18,16 +18,6 @@ class RestRequestOptions implements DispatcherInterface
     private $request;
     
     private $allParams;
-    
-    /**
-     * Пока что я просто оставлю его здесь, 
-     * как это ни печально.
-     * 
-     * Конечно же ему здесь не место.
-     * 
-     * @var IEncoder
-     */
-    private $encoder;
     
     /**
      * Это фарш отсюда нужно сносить
@@ -215,43 +205,6 @@ class RestRequestOptions implements DispatcherInterface
     }
     
     /* Всякая фигня с декодированием */
-    
-    /**
-     * @param $data
-     *
-     * $this->getEncoder()->encode($data)
-     *
-     * @return mixed
-     */
-    public function encode($data)
-    {
-        return $this->encoder->encode($data);
-    }
-    
-    public function decode($string)
-    {
-        return $this->encoder->decode($string);
-    }
-    
-    /**
-     * @param IEncoder $encoder
-     *
-     * @return $this
-     */
-    public function setEncoder($encoder)
-    {
-        $this->encoder = $encoder;
-        
-        return $this;
-    }
-    
-    /**
-     * @return IEncoder
-     */
-    public function getEncoder()
-    {
-        return $this->encoder;
-    }
     
     /**
      * @param null $decodedBody
