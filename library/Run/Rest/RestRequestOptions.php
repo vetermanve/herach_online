@@ -4,8 +4,8 @@
 namespace Run\Rest;
 
 
-use iConto\Dispatcher\Encoder\IEncoder;
-use iConto\Interfaces\DispatcherInterface;
+use Mu\Dispatcher\Encoder\IEncoder;
+use Mu\Interfaces\DispatcherInterface;
 use Run\Rest\Exception\Redirect;
 use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;

@@ -4,8 +4,8 @@
 namespace Statist\Processing;
 
 use AMQPEnvelope;
-use iConto\Amqp\Queue;
-use iConto\Env;
+use Mu\Amqp\Queue;
+use Mu\Env;
 
 use Statist\Stats;
 

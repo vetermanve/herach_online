@@ -4,7 +4,7 @@
 namespace Storage\Data;
 
 
-use iConto\Rpc\DataRequest;
+use Mu\Rpc\DataRequest;
 
 class SynthesizeOldServicesDataAdapter extends SynthesizeUniverseDataAdapter
 {

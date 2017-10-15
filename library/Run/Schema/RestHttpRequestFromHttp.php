@@ -3,7 +3,7 @@
 
 namespace Run\Schema;
 
-use iConto\Env;
+use Mu\Env;
 use Run\Channel\JsonHttpResponseChannel;
 use Run\Component\MainDependencyManager;
 use Run\Component\UnexpectedShutdownHandler;
@@ -28,7 +28,7 @@ class RestHttpRequestFromHttp extends RunSchemaProto
         $provider->setHttpEnv($this->httpEnv);
     
         $this->core->addComponent(new UnexpectedShutdownHandler());
-//        $this->core->addComponent(new MainDependencyManager());
+        $this->core->addComponent(new MainDependencyManager());
         
         $this->core->setProvider($provider);
         $this->core->setProcessor(new MultiAppHttpProcessor());

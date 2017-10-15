@@ -4,7 +4,7 @@
 namespace Run\Execution;
 
 
-use iConto\Interfaces\DispatcherInterface;
+use Mu\Interfaces\DispatcherInterface;
 use Run\Rest\RestRequestOptions;
 use Run\RunModuleProto;
 use Run\RunRequest;
@@ -25,7 +25,7 @@ class RestAppExecution extends RunModuleProto
     /**
      * Объект запускаемого контроллера
      * 
-     * @var \iConto\Controller
+     * @var \Mu\Controller
      */
     private $controller;
     
@@ -97,8 +97,8 @@ class RestAppExecution extends RunModuleProto
         $response = $this->controller->$action();
         
         /** Проверим зафетчен ли ответ */
-        if ($response instanceof \iConto\Rpc\Request) {
-            /** @var $response \iConto\Rpc\Request */
+        if ($response instanceof \Mu\Rpc\Request) {
+            /** @var $response \Mu\Rpc\Request */
             $this->data   = $response->getData();
             $this->status = $response->getStatus();
         } else {
@@ -188,7 +188,7 @@ class RestAppExecution extends RunModuleProto
     }
     
     /**
-     * @param \iConto\Controller $controller
+     * @param \Mu\Controller $controller
      */
     public function setController($controller)
     {

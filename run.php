@@ -29,8 +29,14 @@ $context->fill([
     RunContext::IS_SECURE_CONNECTION => stripos($_SERVER['SERVER_PROTOCOL'],'https') === true
 ]);
 
-$context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () {
-    return parse_ini_file('conf/core.ini', true);
+$configFile = 'conf/core.ini';
+
+$context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () use ($configFile) {
+    if (file_exists($configFile)) {
+        return parse_ini_file($configFile, true);    
+    }
+     
+    return [];
 });
 
 $runtime = new \Run\RuntimeLog($context->get(RunContext::IDENTITY));

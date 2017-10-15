@@ -3,7 +3,9 @@
 
 namespace Run\Rest;
 
-class ModuleContainer
+use Mu\Interfaces\ContainerInterface;
+
+class ModuleContainer implements ContainerInterface
 {
     private $modules = [];
     

@@ -4,7 +4,7 @@
 namespace Auth\DataProvider;
 
 
-use iConto\Env;
+use Mu\Env;
 
 class RedisSessionDataProvider extends SessionDataProviderProto
 {
@@ -32,7 +32,7 @@ class RedisSessionDataProvider extends SessionDataProviderProto
     }
     
     /**
-     * @return \iConto\Cache\Redis
+     * @return \Mu\Cache\Redis
      */
     private function getRedis() {
         !$this->redis && $this->redis = Env::getRedis();

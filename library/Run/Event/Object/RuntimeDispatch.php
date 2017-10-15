@@ -4,7 +4,7 @@
 namespace Run\Event\Object;
 
 
-use iConto\Interfaces\DescribableInterface;
+use Mu\Interfaces\DescribableInterface;
 use Run\Event\EventConfig;
 
 class RuntimeDispatch extends EventObjectProto

@@ -2,7 +2,7 @@
 
 namespace Statist\Digger;
 
-use iConto\Service\Container;
+use Mu\Service\Container;
 use Statist\Config;
 
 class Operator extends AbstractDigger {

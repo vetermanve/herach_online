@@ -2,7 +2,7 @@
 
 namespace Statist\Digger;
 
-use iConto\ServicesTrait;
+use Mu\ServicesTrait;
 
 abstract class AbstractDigger {
     

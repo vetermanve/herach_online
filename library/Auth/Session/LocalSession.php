@@ -3,7 +3,7 @@
 
 namespace Run\Module\Session;namespace Auth\Session;
 
-use iConto\Interfaces\SessionInterface;
+use Mu\Interfaces\SessionInterface;
 use yii\console\Exception;
 
 /**

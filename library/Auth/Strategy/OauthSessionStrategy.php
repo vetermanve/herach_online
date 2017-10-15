@@ -6,9 +6,9 @@ namespace Auth\Strategy;
 
 use Auth\AuthConfig;
 use Auth\DataProvider\AccessApplicationDataProvider;
-use iConto\Env;
-use iConto\OAuth\OAuth2Storage\iContoServices;
-use iConto\Service\Auth\AuthService;
+use Mu\Env;
+use Mu\OAuth\OAuth2Storage\iContoServices;
+use Mu\Service\Auth\AuthService;
 use OAuth2\OAuth2;
 
 use Auth\AuthContext;
@@ -34,7 +34,7 @@ class OauthSessionStrategy extends AuthStrategyProto
     public function prepare()
     {
         $this->authService = Env::getServiceContainer()->getService('Auth');
-        $this->provider    = new OAuth2(new iContoServices(), [OAuth2::CONFIG_SUPPORTED_SCOPES => \iConto\OAuth\OAuth2::getAllowedScopes()]);
+        $this->provider    = new OAuth2(new iContoServices(), [OAuth2::CONFIG_SUPPORTED_SCOPES => \Mu\OAuth\OAuth2::getAllowedScopes()]);
     }
     
     

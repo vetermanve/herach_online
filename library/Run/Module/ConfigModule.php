@@ -4,7 +4,7 @@
 namespace Run\Module;
 
 
-use iConto\Interfaces\ConfigInterface;
+use Mu\Interfaces\ConfigInterface;
 use Run\RunContext;
 use Run\RunModuleProto;
 

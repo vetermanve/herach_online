@@ -81,7 +81,7 @@ class RpcServices extends RunModuleProto
         
         $this->cloudsConfig = [
             self::CLOUD_AMQP_MAIN            => [
-                self::F_TRANSPORT => \iConto\Transport::TRANSPORT_TYPE_AMQP_ASYNC,
+                self::F_TRANSPORT => \Mu\Transport::TRANSPORT_TYPE_AMQP_ASYNC,
                 self::F_HOST      => 'localhost',
                 self::F_PORT      => 5672,
             ],
@@ -89,7 +89,7 @@ class RpcServices extends RunModuleProto
                 self::F_PROTO_CLOUD => self::CLOUD_AMQP_MAIN,
             ],
             self::CLOUD_MSG_PACK_TRANSACTION => [
-                self::F_TRANSPORT => \iConto\Transport::TRANSPORT_TYPE_MSGPACK,
+                self::F_TRANSPORT => \Mu\Transport::TRANSPORT_TYPE_MSGPACK,
                 self::F_HOST      => 'localhost',
                 self::F_PORT      => 1988,
             ]

@@ -3,12 +3,12 @@
 
 namespace Run\Component;
 
-use iConto\Amqp\Connection;
-use iConto\Application;
-use iConto\Cache;
-use iConto\Env;
+use Mu\Amqp\Connection;
+use Mu\Application;
+use Mu\Cache;
+use Mu\Env;
 use Router\Router;
-use iConto\Logger;
+use Mu\Logger;
 use Run\Event\EventDispatcher;
 use Run\Module\ConfigModule;
 use Run\Module\ServicesModule;
@@ -24,19 +24,19 @@ class MainDependencyManager extends RunComponentProto
         $container = new ModuleContainer();
         Env::setContainer($container);
         
-        $container->setModule(Application::LOGGER, $this->runtime);
+        $container->setModule('logger', $this->runtime);
     
         $config = new ConfigModule();
         $config->follow($this);
         $config->loadDataFromContext(RunContext::GLOBAL_CONFIG);
         
-        $container->setModule(Application::APP_CONFIG, $config);
+        $container->setModule('config', $config);
         
-        $container->setModule(Application::EVENT_DISPATCHER, function () {
+        $container->setModule('events', function () {
             return new EventDispatcher(); 
         });
     
-        $container->setModule(Application::REDIS, function () use ($config) {
+        $container->setModule('redis', function () use ($config) {
             $params = [
                 'host'               => $config->get('host', 'redis', 'localhost'),
                 'port'               => $config->get('port', 'redis', '6379'),
@@ -45,62 +45,30 @@ class MainDependencyManager extends RunComponentProto
                 'read_timeout'       => $config->get('read_timeout', 'redis', 3)
             ];
         
-            return Cache::factory(Cache::ADAPTER_TYPE_REDIS, $params);
+            return new Cache\Redis($params);
         });
     
-        $container->setModule(Application::SERVICE_CONTAINER, function () use ($self) {
-            $serviceContainer = new ServicesModule();
-            $serviceContainer->follow($self);
-            $serviceContainer->init();
-        
-            return $serviceContainer;
-        });
-    
-        $container->setModule(Application::CACHE, function () use ($config) {
-            return Cache::factory(Cache::ADAPTER_TYPE_MEMCACHED, [
-                'host' => $config->get('host', 'memcached', 'localhost'),
-                'port' => $config->get('port', 'memcached', '11211')
-            ]);
-        });
-        
-        $container->setModule(Application::CACHE_APC, function () {
-            return Cache::factory(Cache::ADAPTER_TYPE_APC); 
-        });
-    
-        $container->setModule(Application::QUEUE, function () use ($config) {
-            return new Connection ($config->getSection('amqp'));
-        });
-    
-        $container->setModule(Application::ROUTER, function () use ($config) {
+        $container->setModule('router', function () use ($config) {
             $router = new Router();
             return $router->init($config);
         });
     
-        $container->setModule(Application::LOGGER, $this->runtime);
+        $container->setModule('logger', $this->runtime);
         
-        {
-            $loggerConfig = [
-                'name'       => $this->context->get(RunContext::IDENTITY, 'unknown@dev'),
-                'handlers'   => [
-                    new \Monolog\Handler\GelfHandler(new \Gelf\MessagePublisher('graylog', 12201, \Gelf\MessagePublisher::CHUNK_SIZE_LAN)),
-                ],
-                'processors' => [
-                    new \Monolog\Processor\PsrLogMessageProcessor()
-                ],
-            ];
-    
-            $remoteLogger = new Logger(new ConfigModule($loggerConfig));
-            $this->runtime->setRemoteLogger($remoteLogger);
-        }
+//        {
+//            $loggerConfig = [
+//                'name'       => $this->context->get(RunContext::IDENTITY, 'unknown@dev'),
+//                'handlers'   => [
+//                    new \Monolog\Handler\GelfHandler(new \Gelf\MessagePublisher('graylog', 12201, \Gelf\MessagePublisher::CHUNK_SIZE_LAN)),
+//                ],
+//                'processors' => [
+//                    new \Monolog\Processor\PsrLogMessageProcessor()
+//                ],
+//            ];
+//    
+//            $remoteLogger = new Logger(new ConfigModule($loggerConfig));
+//            $this->runtime->setRemoteLogger($remoteLogger);
+//        }
         
-        $container->setModule(Application::OAUTH, function () {
-            $config = include ('conf/oauth.php');
-            return new \Hybrid_Auth($config);
-        });
-        
-        $container->setModule(Application::OAUTH_CONFIG, function () {
-            $data = include ('conf/oauth.php');
-            return new ConfigModule($data);
-        });
     }
 }

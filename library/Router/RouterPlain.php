@@ -4,8 +4,8 @@
 namespace Router;
 
 
-use iConto\Amqp\Message;
-use iConto\Env;
+use Mu\Amqp\Message;
+use Mu\Env;
 use Router\Exceptions\EmptyRouterMessage;
 use Uuid\Uuid;
 
@@ -44,7 +44,7 @@ class RouterPlain
     /**
      * Инициализация модуля
      *
-     * @param \iConto\Interfaces\ConfigInterface $config
+     * @param \Mu\Interfaces\ConfigInterface $config
      *
      * @return $this
      */

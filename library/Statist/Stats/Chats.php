@@ -2,7 +2,7 @@
 
 namespace Statist\Stats;
 
-use iConto\Model\CompanyReview;
+use Mu\Model\CompanyReview;
 use Statist\Config;
 use Statist\Digger\Operator;
 use Statist\FlowData;

@@ -4,7 +4,7 @@
 namespace Auth\SessionBuilder;
 
 
-use iConto\Interfaces\SessionInterface;
+use Mu\Interfaces\SessionInterface;
 
 abstract class SessionBuilderProto
 {

@@ -6,13 +6,13 @@ namespace Run\Util;
 
 use Auth\Session\LocalSession;
 use Auth\Session\RedisSession;
-use iConto\Env;
-use iConto\Exception\Auth\NoPrivileges;
-use iConto\Exception\Auth\OAuth2InvalidGrant;
-use iConto\Exception\Auth\OAuth2NoPrivileges;
-use iConto\Interfaces\SessionInterface;
-use iConto\OAuth\OAuth2Storage\iContoServices;
-use iConto\Service\Auth\AuthService;
+use Mu\Env;
+use Mu\Exception\Auth\NoPrivileges;
+use Mu\Exception\Auth\OAuth2InvalidGrant;
+use Mu\Exception\Auth\OAuth2NoPrivileges;
+use Mu\Interfaces\SessionInterface;
+use Mu\OAuth\OAuth2Storage\iContoServices;
+use Mu\Service\Auth\AuthService;
 use OAuth2\OAuth2;
 use OAuth2\OAuth2ServerException;
 use Run\RunModuleProto;
@@ -63,7 +63,7 @@ class SessionBuilder extends RunModuleProto
      * @throws NoPrivileges
      * @throws OAuth2InvalidGrant
      * @throws OAuth2NoPrivileges
-     * @throws \iConto\Exception\InternalError
+     * @throws \Mu\Exception\InternalError
      * @internal param RunRequest $request
      *
      */
@@ -71,7 +71,7 @@ class SessionBuilder extends RunModuleProto
         /* @var $authService AuthService */
         $authService = Env::getServiceContainer()->getService('Auth');
         
-        $provider = new OAuth2(new iContoServices(), [OAuth2::CONFIG_SUPPORTED_SCOPES => \iConto\OAuth\OAuth2::getAllowedScopes()]);
+        $provider = new OAuth2(new iContoServices(), [OAuth2::CONFIG_SUPPORTED_SCOPES => \Mu\OAuth\OAuth2::getAllowedScopes()]);
         
         try {
             $provider->verifyAccessToken($token, $resource);

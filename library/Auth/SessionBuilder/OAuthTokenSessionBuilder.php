@@ -4,13 +4,13 @@
 namespace Auth\SessionBuilder;
 
 
-use iConto\Env;
-use iConto\Exception\Auth\NoPrivileges;
-use iConto\Exception\Auth\OAuth2InvalidGrant;
-use iConto\Exception\Auth\OAuth2NoPrivileges;
-use iConto\Interfaces\SessionInterface;
-use iConto\OAuth\OAuth2Storage\iContoServices;
-use iConto\Service\Auth\AuthService;
+use Mu\Env;
+use Mu\Exception\Auth\NoPrivileges;
+use Mu\Exception\Auth\OAuth2InvalidGrant;
+use Mu\Exception\Auth\OAuth2NoPrivileges;
+use Mu\Interfaces\SessionInterface;
+use Mu\OAuth\OAuth2Storage\iContoServices;
+use Mu\Service\Auth\AuthService;
 use OAuth2\OAuth2;
 use OAuth2\OAuth2ServerException;
 
@@ -29,7 +29,7 @@ class OAuthTokenSessionBuilder extends SessionBuilderProto
     public function prepare()
     {
         $this->authService = Env::getServiceContainer()->getService('Auth');
-        $this->provider    = new OAuth2(new iContoServices(), [OAuth2::CONFIG_SUPPORTED_SCOPES => \iConto\OAuth\OAuth2::getAllowedScopes()]);
+        $this->provider    = new OAuth2(new iContoServices(), [OAuth2::CONFIG_SUPPORTED_SCOPES => \Mu\OAuth\OAuth2::getAllowedScopes()]);
     }
     
     /**

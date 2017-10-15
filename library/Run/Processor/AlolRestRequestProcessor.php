@@ -4,6 +4,7 @@
 namespace Run\Processor;
 
 
+use Mu\Env;
 use Rpc\RpcMaster;
 use Run\ChannelMessage\HttpReply;
 use Run\Execution\Rest\MsgModificator\DateWiperAndNullErase;
@@ -62,7 +63,7 @@ class AlolRestRequestProcessor extends RunRequestProcessorProto
             $session->start();
 
             // Положим сессию в контейнер зависимостей, вдруг пригодится
-            Env::getContainer()->setModule(Application::SESSION, $session);
+            Env::getContainer()->setModule('session', $session);
 
             /* Проверим есть ли у нас такой контроллер  */
             $execution->extractRequestClassAndAction();
@@ -108,7 +109,7 @@ class AlolRestRequestProcessor extends RunRequestProcessorProto
             $response->setHeader(HttpResponseSpec::META_HTTP_HEADER_LOCATION, $e->getUrl());
             
             return $this->sendResponse($response, $request);
-        } catch (InternalError $e) { // some logic hard exception
+        } catch (\RuntimeException $e) { // some logic hard exception
             $response->setCode(HttpResponseSpec::HTTP_CODE_ERROR);
     
             $response->body = [
@@ -131,21 +132,21 @@ class AlolRestRequestProcessor extends RunRequestProcessorProto
                 'trace'  => $e->getTraceAsString(),
             ]);
             
-        } catch (Exception $e) { // some logic exception
-            $response->setCode($e->getStatusCode());
-            
-            $response->body = [
-                HttpResponseSpec::STATUS     => $e->getErrorNo(),
-                HttpResponseSpec::MESSAGE    => $e->getMsg(),
-            ];
-            
-            if ($e instanceof Validator && strlen($e->getErrorFieldName()) > 0) {
-                $response->body['field'] = $e->getErrorFieldName();
-            }
-            
-            if ($e instanceof AdditionalExceptionInterface) {
-                $response->body += (array)$e->getAdditionalFields();
-            }
+//        } catch (\ErrorException $e) { // some logic exception
+//            $response->setCode($e->getStatusCode());
+//            
+//            $response->body = [
+//                HttpResponseSpec::STATUS     => $e->getErrorNo(),
+//                HttpResponseSpec::MESSAGE    => $e->getMsg(),
+//            ];
+//            
+//            if ($e instanceof Validator && strlen($e->getErrorFieldName()) > 0) {
+//                $response->body['field'] = $e->getErrorFieldName();
+//            }
+//            
+//            if ($e instanceof AdditionalExceptionInterface) {
+//                $response->body += (array)$e->getAdditionalFields();
+//            }
 
         } catch (\Exception $e) { // some unexpected exception
             $response->setCode(HttpResponseSpec::HTTP_CODE_ERROR);
@@ -219,12 +220,6 @@ class AlolRestRequestProcessor extends RunRequestProcessorProto
             $contentType = $execution->getDispatcher()->getContentType();
             if ($contentType) {
                 $response->setHeader('Content-Type', $contentType . '; charset=UTF-8');
-            }
-
-            // если хочется что-то запаковать по особенному
-            $encoder = $dispatcher->getEncoder();
-            if ($encoder) {
-                $response->body = $encoder->encode($response->body);
             }
         }
 

@@ -6,7 +6,7 @@ namespace Auth\Session;
 
 use Auth\AuthConfig;
 use Auth\DataProvider\SessionDataProviderProto;
-use iConto\Interfaces\SessionInterface;
+use Mu\Interfaces\SessionInterface;
 
 class AnySession implements SessionInterface
 {

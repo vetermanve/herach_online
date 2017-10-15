@@ -4,8 +4,8 @@
 namespace Router;
 
 
-use iConto\Amqp\Message;
-use iConto\Env;
+use Mu\Amqp\Message;
+use Mu\Env;
 use Router\Actors\RouterReplyReader;
 use Router\Actors\RouterRequestConsumer;
 use Router\Exceptions\EmptyRouterMessage;
@@ -53,7 +53,7 @@ class Router
     /**
      * Инициализация модуля
      *
-     * @param \iConto\Interfaces\ConfigInterface $config
+     * @param \Mu\Interfaces\ConfigInterface $config
      *
      * @return $this
      */

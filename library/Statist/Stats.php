@@ -2,10 +2,10 @@
 
 namespace Statist;
 
-use iConto\Amqp\Message;
-use iConto\Env;
-use iConto\Transport;
-use iConto\Transport\AmqpSimple;
+use Mu\Amqp\Message;
+use Mu\Env;
+use Mu\Transport;
+use Mu\Transport\AmqpSimple;
 
 /**
  * Class Stats
@@ -45,7 +45,7 @@ class Stats  {
     protected static $transport;
     
     /**
-     * @var \iConto\Amqp\Connection
+     * @var \Mu\Amqp\Connection
      */
     protected static $connection;
     
