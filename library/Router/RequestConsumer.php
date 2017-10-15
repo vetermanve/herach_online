@@ -4,11 +4,10 @@
 namespace Router;
 
 
-use iConto\Interfaces\DescribableInterface;
 use Run\Event\EventDispatcher;
 use Run\Event\Object\RuntimeDispatch;
 
-class RequestConsumer implements DescribableInterface
+class RequestConsumer
 {
     const REFRESH_INTERVAL = 3;
     

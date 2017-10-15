@@ -13,6 +13,7 @@
       "psr-4": {"": "library/"}
     },
     "require": {
-      "monolog/monolog" : "master"
+      "monolog/monolog" : "master",
+        "ramsey/uuid": "^3.0@dev"
     }
 }

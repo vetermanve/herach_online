@@ -4,11 +4,10 @@
 namespace Run;
 
 
-use iConto\Interfaces\LoggerExtendInterface;
 use Monolog\Logger;
 use Run\Util\Tracer;
 
-class RuntimeLog extends Logger implements LoggerExtendInterface
+class RuntimeLog extends Logger
 {
     const LOGGER_NAME_CONTEXT_KEY = 'loggerName';
     
@@ -17,7 +16,7 @@ class RuntimeLog extends Logger implements LoggerExtendInterface
     protected $context = [];
     
     /**
-     * @var \iConto\Logger
+     * @var Logger
      */
     private $remoteLogger;
     
@@ -46,7 +45,7 @@ class RuntimeLog extends Logger implements LoggerExtendInterface
      *
      * @return null
      */
-    public function addRecord($level, $message, array $context = array()) : boolean
+    public function addRecord(int $level, string $message, array $context = array()) : boolean
     {
         $context += $this->context;
         
@@ -78,7 +77,7 @@ class RuntimeLog extends Logger implements LoggerExtendInterface
     }
     
     /**
-     * @param \iConto\Logger $remoteLogger
+     * @param Logger $remoteLogger
      */
     public function setRemoteLogger($remoteLogger)
     {
