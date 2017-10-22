@@ -95,6 +95,14 @@ class Env
     }
     
     /**
+     * @return \Renderer\MuRenderer
+     */
+    public static function getRenderer()
+    {
+        return self::getContainer()->bootstrap('renderer');
+    }
+    
+    /**
      * @param ContainerInterface $container
      */
     public static function setContainer(ContainerInterface $container)

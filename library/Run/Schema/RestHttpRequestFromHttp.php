@@ -3,6 +3,7 @@
 
 namespace Run\Schema;
 
+use App\Web\Run\WebProcessor;
 use Mu\Env;
 use Run\Channel\JsonHttpResponseChannel;
 use Run\Component\MainDependencyManager;
@@ -31,7 +32,7 @@ class RestHttpRequestFromHttp extends RunSchemaProto
         $this->core->addComponent(new MainDependencyManager());
         
         $this->core->setProvider($provider);
-        $this->core->setProcessor(new MultiAppHttpProcessor());
+        $this->core->setProcessor(new WebProcessor());
         $this->core->setDataChannel(new JsonHttpResponseChannel());
     }
     
