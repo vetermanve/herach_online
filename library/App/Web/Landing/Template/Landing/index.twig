@@ -1,5 +1,10 @@
 {% extends 'layout.twig' %}
 
 {% block body %}
-    <h1> Feel: {{ feel }} </h1>
+    <h1>Projects</h1>
+    <ul>
+        {% for project in projects %}
+        <li> Project: {{ project.title}} </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

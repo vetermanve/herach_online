@@ -4,7 +4,7 @@
 namespace Run\Channel;
 
 
-use Run\ChannelMessage\ChannelMsgProto;
+use Run\ChannelMessage\ChannelMsg;
 use Run\RunModuleProto;
 
 abstract class DataChannelProto extends RunModuleProto
@@ -23,5 +23,5 @@ abstract class DataChannelProto extends RunModuleProto
      *
      * @return null
      */
-    abstract public function send(ChannelMsgProto $msg);
+    abstract public function send(ChannelMsg $msg);
 }

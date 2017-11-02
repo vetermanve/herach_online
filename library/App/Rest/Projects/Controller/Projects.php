@@ -16,7 +16,7 @@ class Projects extends RestControllerProto
         foreach (range(1, $count) as $id) {
             $result[] = [
                 'id' => $id,
-                'name' => 'Sample Project #1',
+                'title' => 'Sample Project #1',
             ];
         }
         

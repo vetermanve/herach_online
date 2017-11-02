@@ -2,9 +2,11 @@
 
 namespace Load;
 
+use Uuid\Uuid;
+
 class Load
 {
-    private $target;
+    private $resource;
     
     private $count;
     
@@ -12,14 +14,17 @@ class Load
     
     private $results = [];
     
+    private $uuid;
+    
     /**
      * Load constructor.
      *
-     * @param $target
+     * @param $resource
      */
-    public function __construct($target = null)
+    public function __construct($resource = null)
     {
-        $this->target = $target;
+        $this->resource = $resource;
+        $this->uuid = (string)Uuid::v4(); 
     }
     
     /**
@@ -36,5 +41,21 @@ class Load
     public function setResults(array $results)
     {
         $this->results = $results;
+    }
+    
+    /**
+     * @return null
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getUuid(): string
+    {
+        return $this->uuid;
     }
 }

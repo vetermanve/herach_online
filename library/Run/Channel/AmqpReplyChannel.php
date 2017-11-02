@@ -6,7 +6,7 @@ namespace Run\Channel;
 
 use Mu\Env;
 use Router\Router;
-use Run\ChannelMessage\ChannelMsgProto;
+use Run\ChannelMessage\ChannelMsg;
 use Run\RunContext;
 use Run\Spec\HttpResponseSpec;
 
@@ -34,7 +34,7 @@ class AmqpReplyChannel extends DataChannelProto
         $this->replyHost = $this->context->get(RunContext::AMQP_RESULT_CLOUD_HOST, 'localhost');
     }
     
-    public function send(ChannelMsgProto $msg)
+    public function send(ChannelMsg $msg)
     {
         $stateObj = $msg->getChannelState();
         $expires = $stateObj->getExpiresAt();

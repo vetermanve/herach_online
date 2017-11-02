@@ -6,6 +6,9 @@ use Load\Load;
 
 abstract class LoadExecutorProto
 {
+    /**
+     * @var Load[]
+     */
     protected $loads = [];
     
     /**

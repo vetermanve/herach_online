@@ -53,7 +53,7 @@ class RunCore extends RunModuleProto
      * 
      * @var RunComponentProto[]
      */
-    private $components;
+    private $components = [];
     
     /**
      * RunCore constructor.

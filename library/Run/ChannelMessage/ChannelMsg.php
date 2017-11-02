@@ -6,7 +6,7 @@ namespace Run\ChannelMessage;
 
 use Run\Util\ChannelState;
 
-class ChannelMsgProto
+class ChannelMsg
 {
     /**
      * Айди сообщения.

@@ -6,12 +6,12 @@ namespace Run\Channel;
 
 use Run\ChannelMessage\ChannelMsg;
 
-class MemoryStoreChannel extends DataChannelProto
+class MemoryStoreChannelStack extends DataChannelProto
 {
     /**
      * @var ChannelMsg
      */
-    private $message;
+    private $messages = [];
     
     /**
      * Подготовка к отправке данных
@@ -32,15 +32,15 @@ class MemoryStoreChannel extends DataChannelProto
      */
     public function send(ChannelMsg $msg)
     {
-        $this->message = $msg;
+        $this->messages[$msg->getUid()] = $msg;
     }
     
     /**
      * @return ChannelMsg
      */
-    public function getMessage()
+    public function getMessageByUid($uid)
     {
-        return $this->message;
+        return $this->messages[$uid] ?? null;
     }
     
 }

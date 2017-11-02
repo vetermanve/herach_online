@@ -4,7 +4,7 @@
 namespace Run\Processor;
 
 
-use Run\ChannelMessage\ChannelMsgProto;
+use Run\ChannelMessage\ChannelMsg;
 use Run\Execution\Rest\MsgModificator\MsgModificatorProto;
 use Run\RunModuleProto;
 use Run\RunRequest;
@@ -25,7 +25,7 @@ abstract class RunRequestProcessorProto extends RunModuleProto
     abstract public function prepare();
     abstract public function process(RunRequest $request);
     
-    public function sendResponse (ChannelMsgProto $response, RunRequest $request) 
+    public function sendResponse (ChannelMsg $response, RunRequest $request) 
     {
         if ($this->msgModificators) {
             foreach ($this->msgModificators as &$modificator) {

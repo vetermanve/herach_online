@@ -1,22 +1,52 @@
 <?php
 
-
 namespace Load\Executor;
 
-
+use App\Rest\Run\RestInternalProcessor;
+use Mu\Env;
+use Run\Channel\MemoryStoreChannelStack;
+use Run\RunContext;
 use Run\RunCore;
+use Run\RunRequest;
+use Run\RuntimeLog;
+use Run\Spec\HttpResponseSpec;
 
 class InternalRestLoader extends LoadExecutorProto
 {
+    /**
+     * @var RunCore
+     */
+    private $run;
+    
+    /**
+     * @var MemoryStoreChannelStack
+     */
+    private $dataChannel;
     
     public function processLoad()
     {
-        // TODO: Implement processLoad() method.
+        foreach ($this->loads as $load) {
+            $request = new RunRequest($load->getUuid(), $load->getResource());
+            
+            $this->run->process($request);
+            $result = $this->dataChannel->getMessageByUid($load->getUuid());
+            
+            if ($result && $result->getCode() == HttpResponseSpec::HTTP_CODE_OK) {
+                $load->setResults($result->body);    
+            }
+        }
     }
     
     public function init()
     {
-//        $run = new RunCore();
-//        $run->setContext();
+        $this->run = new RunCore();
+        $this->dataChannel = new MemoryStoreChannelStack();
+        
+        $this->run->setContext(new RunContext());
+        $this->run->setProcessor(new RestInternalProcessor());
+        $this->run->setDataChannel($this->dataChannel);
+        $this->run->setRuntime(new RuntimeLog(__CLASS__));
+        
+        $this->run->prepare();
     }
 }

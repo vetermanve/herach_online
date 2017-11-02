@@ -1,54 +1,36 @@
 <?php
 
-namespace App\Web\Run;
 
-use Mu\Env;
-use Renderer\TwigEngine;
+namespace App\Rest\Run;
+
+
 use Run\ChannelMessage\ChannelMsg;
-use Run\ChannelMessage\HttpReply;
 use Run\Processor\RunRequestProcessorProto;
+use Run\Rest\RestRequestOptions;
 use Run\RunRequest;
 use Run\Spec\HttpResponseSpec;
-use Run\Util\SessionBuilder;
 
-class WebProcessor extends RunRequestProcessorProto
+class RestInternalProcessor extends RunRequestProcessorProto
 {
-    private $spaceDir;
     
     public function prepare()
     {
-        if (!$this->sessionBuilder) {
-            $this->sessionBuilder = new SessionBuilder();
-        }
-    
-        $this->sessionBuilder->follow($this);
-        
-        $this->spaceDir = dirname(__DIR__);
+        // TODO: Implement prepare() method.
     }
     
     public function process(RunRequest $request)
     {
-        $request->getResource();
-    
-        $response = new HttpReply();
-        $response->setUid($request->getUid());
-        $response->setDestination($request->getReply());
-        $response->setChannelState($request->getChannelState());
-        $response->setHeaders(HttpResponseSpec::$absoluteHeaders);
-        $response->setHeader('Content-Type', 'text/html; charset=UTF-8');
-    
         $resParts = array_filter(explode('/', $request->getResource()));
         $module = isset($resParts[0]) ? ucfirst($resParts[0]): 'Landing';
         $controller = isset($resParts[1]) ? ucfirst($resParts[1]) : $module;
         $method = $resParts[2] ?? 'index';
-        
-        $controllerClass = '\\App\\Web\\'.$module.'\\Controller\\'.$controller;
-        
-        $templatesPaths[] = $this->spaceDir.'/'.$module.'/Template';
-        $templatesPaths[] = $this->spaceDir.'/Run/Template';
-        
-        $template = $controller.'/'.$method;
-        
+    
+        $controllerClass = '\\App\\Rest\\'.$module.'\\Controller\\'.$controller;
+    
+        $response = new ChannelMsg();
+        $response->setChannelState($request->getChannelState());
+        $response->setUid($request->getUid());
+    
         if (!class_exists($controllerClass)) {
             return $this->abnormalResponse(
                 HttpResponseSpec::HTTP_CODE_NOT_FOUND,
@@ -58,19 +40,12 @@ class WebProcessor extends RunRequestProcessorProto
             );
         }
     
-        Env::getContainer()->setModule('renderer', function () use ($templatesPaths) {
-            $renderer = new TwigEngine();
-            $renderer->setTemplatePaths($templatesPaths);
-            $renderer->init();
-            
-            return $renderer;
-        });
-        
-        /* Try to execute */
+        $method = 'get';
+    
         try {
             $controller = new $controllerClass;
-            
-            if (!$controller instanceof WebControllerProto) {
+        
+            if (!$controller instanceof RestControllerProto) {
                 return $this->abnormalResponse(
                     HttpResponseSpec::HTTP_CODE_NOT_FOUND,
                     'Incorrect resource',
@@ -78,9 +53,7 @@ class WebProcessor extends RunRequestProcessorProto
                     $request
                 );
             }
-    
-            $controller->setTemplate($template);
-            
+        
             if (!method_exists($controller, $method)) {
                 return $this->abnormalResponse(
                     HttpResponseSpec::HTTP_CODE_NOT_FOUND,
@@ -90,16 +63,13 @@ class WebProcessor extends RunRequestProcessorProto
                 );
             }
             
-            // Построим сессию
-            $session = $this->sessionBuilder->getSession($request);
-            $session->start();
-    
-            // Положим сессию в контейнер зависимостей, вдруг пригодится
-            Env::getContainer()->setModule('session', $session);
-            
+            $options = new RestRequestOptions();
+            $options->setRequest($request);
+            $controller->setRequest($options);
+        
             $response->setCode(HttpResponseSpec::HTTP_CODE_OK);
             $response->setBody($controller->{$method}());
-            
+        
         } catch (\Throwable $throwable) {
             return $this->abnormalResponse(
                 HttpResponseSpec::HTTP_CODE_ERROR,
@@ -107,8 +77,7 @@ class WebProcessor extends RunRequestProcessorProto
                 $response,
                 $request
             );
-        } 
-        ///macdata/projects/mutants/reanima-back/library/App/Web/Run/Template
+        }
         
         $this->sendResponse($response, $request);
     }
@@ -116,6 +85,6 @@ class WebProcessor extends RunRequestProcessorProto
     protected function abnormalResponse(int $code, string $text, ChannelMsg $response, RunRequest $request) {
         $response->setCode($code);
         $response->body = $text;
-        $this->sendResponse($response, $request);   
+        $this->sendResponse($response, $request);
     }
 }
