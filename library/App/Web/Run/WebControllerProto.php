@@ -4,8 +4,8 @@
 namespace App\Web\Run;
 
 
+use Load\Load;
 use Mu\Env;
-use Renderer\MutantRenderer;
 
 abstract class WebControllerProto
 {
@@ -24,5 +24,10 @@ abstract class WebControllerProto
     public function setTemplate($template)
     {
         $this->template = $template;
+    }
+    
+    public function load (Load $loadRequest) 
+    {
+        return Env::getLoader()->addLoad($loadRequest)->processLoad();
     }
 }

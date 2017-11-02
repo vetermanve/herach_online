@@ -20,7 +20,7 @@ $env->fill([
 ]);
 
 $schema = new RestHttpRequestFromHttp();
-$schema->setHttpEnv($env);
+$schema->setHttpEnv($env); 
 
 $context = new RunContext();
 $context->fill([

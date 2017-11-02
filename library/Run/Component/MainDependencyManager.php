@@ -3,6 +3,7 @@
 
 namespace Run\Component;
 
+use Load\Executor\InternalRestLoader;
 use Mu\Amqp\Connection;
 use Mu\Application;
 use Mu\Cache;
@@ -34,6 +35,12 @@ class MainDependencyManager extends RunComponentProto
         
         $container->setModule('events', function () {
             return new EventDispatcher(); 
+        });
+    
+        $container->setModule('loader', function () {
+            $loader = new InternalRestLoader();
+            $loader->init();
+            return $loader;
         });
     
         $container->setModule('redis', function () use ($config) {

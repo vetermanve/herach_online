@@ -103,6 +103,14 @@ class Env
     }
     
     /**
+     * @return \Load\Executor\LoadExecutorProto
+     */
+    public static function getLoader()
+    {
+        return self::getContainer()->bootstrap('loader');
+    }
+    
+    /**
      * @param ContainerInterface $container
      */
     public static function setContainer(ContainerInterface $container)
