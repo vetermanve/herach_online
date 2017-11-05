@@ -31,12 +31,20 @@ $context->fill([
 
 $configFile = 'conf/core.ini';
 
-$context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () use ($configFile) {
+$context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () use ($configFile, $context) {
     if (file_exists($configFile)) {
         return parse_ini_file($configFile, true);    
     }
+    
+    $config = [];
+    
+    $host = $context->get(RunContext::HOST, 'localhost');
+    
+    if (strpos($host, 'localhost') !== false) {
+        $config['db']['port'] = '55432';    
+    }
      
-    return [];
+    return $config;
 });
 
 $runtime = new \Run\RuntimeLog($context->get(RunContext::IDENTITY));

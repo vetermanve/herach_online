@@ -11,7 +11,7 @@ class RuntimeLog extends Logger
 {
     const LOGGER_NAME_CONTEXT_KEY = 'loggerName';
     
-    const LOG_LEVEL_RUNTIME = 600;
+    const LOG_LEVEL_RUNTIME = 100;
     
     protected $context = [];
     

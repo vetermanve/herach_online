@@ -9,6 +9,7 @@ use Modular\ModularContextProto;
 class DatabaseContext extends ModularContextProto
 {
     const HOST = 'host';
+    const PORT = 'port';
     const USER = 'user';
     const PASS = 'pass';
     

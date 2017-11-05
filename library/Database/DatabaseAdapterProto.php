@@ -16,4 +16,22 @@ abstract class DatabaseAdapterProto
     abstract public function getByIds($ids);
     
     abstract public function search($filter, $count = 500);
+    
+    abstract public function getAll($limit = 100, $offset = 0);
+    
+    /**
+     * @return DatabaseContext
+     */
+    public function getContext(): DatabaseContext
+    {
+        return $this->context;
+    }
+    
+    /**
+     * @param DatabaseContext $context
+     */
+    public function setContext(DatabaseContext $context)
+    {
+        $this->context = $context;
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Rest\Projects\Controller;
 
 
 use App\Rest\Run\RestControllerProto;
+use Database\DatabaseFactory;
 
 class Projects extends RestControllerProto
 {
@@ -12,14 +13,16 @@ class Projects extends RestControllerProto
     {
         $count = $this->p('count', 1);
         
-        $result = [];
-        foreach (range(1, $count) as $id) {
-            $result[] = [
-                'id' => $id,
-                'title' => 'Sample Project #1',
-            ];
-        }
+        $dbFactory = new DatabaseFactory();
+        $table = $dbFactory->getDatabaseByResource('project_info');
+        $data = $table->getAll();
         
-        return $result;
+        foreach ($data as &$item) {
+            if (isset($item['name'])) {
+                $item['title'] = $item['name'];    
+            }
+        } unset($item);
+        
+        return $data;
     }
 }

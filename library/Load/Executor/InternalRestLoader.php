@@ -45,7 +45,7 @@ class InternalRestLoader extends LoadExecutorProto
         $this->run->setContext(new RunContext());
         $this->run->setProcessor(new RestInternalProcessor());
         $this->run->setDataChannel($this->dataChannel);
-        $this->run->setRuntime(new RuntimeLog(__CLASS__));
+        $this->run->setRuntime(new RuntimeLog('InternalRestLoader'));
         
         $this->run->prepare();
     }
