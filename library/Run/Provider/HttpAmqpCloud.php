@@ -18,11 +18,6 @@ use Run\Util\RestMethodHelper;
 
 class HttpAmqpCloud extends RunProviderProto
 {
-    /**
-     * @var Queue
-     */
-    private $queue;
-    
     private $restarting = true;
     
     /**
@@ -34,9 +29,10 @@ class HttpAmqpCloud extends RunProviderProto
     {
         $queueName = $this->context->get(RunContext::QUEUE_INCOMING, 'http.amqp.cloud.requests.default');
         $amqpCustomHost  = $this->context->get(RunContext::AMQP_REQUEST_CLOUD_HOST);
+        $amqpCustomPort  = $this->context->get(RunContext::AMQP_REQUEST_CLOUD_PORT);
     
         if ($amqpCustomHost) {
-            Env::getRouter()->registerQueue($queueName, $amqpCustomHost);    
+            Env::getRouter()->registerQueue($queueName, $amqpCustomHost, $amqpCustomPort);    
         }
         
         $this->consumer = Env::getRouter()->getConsumer($queueName);
@@ -92,7 +88,7 @@ class HttpAmqpCloud extends RunProviderProto
                            
         // data processing
         {
-            $request->body = trim($amqpRequest[AmqpHttpRequest::DATA]);
+            $request->body = $amqpRequest[AmqpHttpRequest::DATA] ? trim($amqpRequest[AmqpHttpRequest::DATA]) : '';
             $decodedData   = $request->body && strpos($request->body, '{') === 0 ? json_decode($amqpRequest[AmqpHttpRequest::DATA], true) : [];
             $request->data = $decodedData ? $decodedData : [];    
         }
@@ -121,6 +117,5 @@ class HttpAmqpCloud extends RunProviderProto
     public function cancelConsuming()
     {
         $this->restarting = false;
-        $this->runtime->debug('Consuming stopped gracefully on queue ' . $this->queue->getName());
     }
 }

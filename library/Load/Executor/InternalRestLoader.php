@@ -35,6 +35,8 @@ class InternalRestLoader extends LoadExecutorProto
                 $load->setResults($result->body);    
             }
         }
+        
+        $this->loads = [];
     }
     
     public function init()

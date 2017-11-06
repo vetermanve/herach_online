@@ -5,16 +5,17 @@ namespace Database;
 
 
 use Nette\Database\Row;
+use PDO;
 
 class PostgresJson extends DatabaseAdapterProto
 {
-    private $_connection;
+    private static $_connection;
     
     private $_resource = '';
     
     public function connection () 
     {
-        if (!$this->_connection) {
+        if (!self::$_connection) {
             $host = $this->context->get(DatabaseContext::HOST, '127.0.0.1');
             $port = $this->context->get(DatabaseContext::PORT, '5432');
             $db = $this->context->get(DatabaseContext::DB);
@@ -22,18 +23,23 @@ class PostgresJson extends DatabaseAdapterProto
             $password = $this->context->get(DatabaseContext::PASS);
             
             $dsn = 'pgsql:dbname='.$db.';host='.$host.';port='.$port;
-            $this->_connection = new \Nette\Database\Connection(
+            self::$_connection = new \Nette\Database\Connection(
                 $dsn,
                 $user,
-                $password
+                $password,
+                array(
+                    PDO::ATTR_TIMEOUT => "1",
+//                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+                )
             );
+    
+            self::$_connection->connect();
             
-            $this->_connection->connect();
-            
-            $this->_resource = $this->context->get(DatabaseContext::RESOURCE);
         }
         
-        return $this->_connection;
+        $this->_resource = $this->context->get(DatabaseContext::RESOURCE);
+        
+        return self::$_connection;
     }
     
     

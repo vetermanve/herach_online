@@ -26,12 +26,14 @@ class AmqpReplyChannel extends DataChannelProto
     
     private $identity;
     private $replyHost;
+    private $replyPort;
     
     public function prepare()
     {
         $this->router = Env::getRouter();
         $this->identity = $this->context->get(RunContext::IDENTITY);
-        $this->replyHost = $this->context->get(RunContext::AMQP_RESULT_CLOUD_HOST, 'localhost');
+        $this->replyHost = $this->context->get(RunContext::AMQP_REQUEST_CLOUD_HOST);
+        $this->replyPort = $this->context->get(RunContext::AMQP_REQUEST_CLOUD_PORT);
     }
     
     public function send(ChannelMsg $msg)
@@ -53,7 +55,7 @@ class AmqpReplyChannel extends DataChannelProto
             self::FROM => $this->identity ?: 'some_host',
         ];
         
-        $this->router->registerQueue($msg->getDestination(), $this->replyHost);
+        $this->router->registerQueue($msg->getDestination(), $this->replyHost, $this->replyPort);
         $this->router->publish($payload, $msg->getDestination());
         
         $this->getCore()->getRuntime()->runtime('RUN_AMQP_REPLY_SENT', ['request_id' => $msg->getUid(), 'to' => $msg->getDestination()]);

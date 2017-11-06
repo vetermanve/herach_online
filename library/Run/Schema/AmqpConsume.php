@@ -4,6 +4,7 @@
 namespace Run\Schema;
 
 
+use App\Web\Run\WebProcessor;
 use Mu\Env;
 use Run\Channel\AmqpReplyChannel;
 use Run\Component\MainDependencyManager;
@@ -23,7 +24,7 @@ class AmqpConsume extends RunSchemaProto
         $this->core->addComponent(new MainDependencyManager());
         
         $this->core->setProvider(new HttpAmqpCloud());
-        $this->core->setProcessor(new MultiAppHttpProcessor());
+        $this->core->setProcessor(new WebProcessor());
         $this->core->setDataChannel(new AmqpReplyChannel());
     }
 }

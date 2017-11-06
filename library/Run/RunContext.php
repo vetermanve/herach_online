@@ -20,7 +20,9 @@ class RunContext extends ModularContextProto
     const GLOBAL_CONFIG = 'global_config';
     
     /* AMQP CONSUMING */
-    const AMQP_REQUEST_CLOUD_HOST = 'amqp_host_incoming';
+    const AMQP_REQUEST_CLOUD_HOST = 'amqp_request_host';
+    const AMQP_REQUEST_CLOUD_PORT = 'amqp_request_port';
+    
     const AMQP_RESULT_CLOUD_HOST  = 'amqp_host_outgoing';
     const AMQP_INSIDE_CLOUD_HOST  = 'amqp_host_inside';
     
