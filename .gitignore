@@ -3,4 +3,3 @@
 /vendor
 /cluster/*
 !/cluster/configGeneration.php
-!/cluster/workers.php

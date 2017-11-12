@@ -3,17 +3,11 @@
 
 namespace Run\Schema;
 
-use App\Web\Run\WebProcessor;
-use Mu\Env;
+use App\Base\Run\BaseRunProcessor;
 use Run\Channel\JsonHttpResponseChannel;
 use Run\Component\MainDependencyManager;
 use Run\Component\UnexpectedShutdownHandler;
-use Run\Processor\AlolRestRequestProcessor;
-use Run\Processor\MultiAppHttpProcessor;
 use Run\Provider\PhpFpmRequest;
-use Run\Rest\ModuleContainer;
-use Run\RunContext;
-use Run\RuntimeLog;
 use Run\Util\HttpEnvContext;
 
 class RestHttpRequestFromHttp extends RunSchemaProto
@@ -32,7 +26,7 @@ class RestHttpRequestFromHttp extends RunSchemaProto
         $this->core->addComponent(new MainDependencyManager());
         
         $this->core->setProvider($provider);
-        $this->core->setProcessor(new WebProcessor());
+        $this->core->setProcessor(new BaseRunProcessor());
         $this->core->setDataChannel(new JsonHttpResponseChannel());
     }
     
