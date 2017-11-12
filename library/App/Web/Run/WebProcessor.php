@@ -8,6 +8,7 @@ use Run\ChannelMessage\ChannelMsg;
 use Run\ChannelMessage\HttpReply;
 use Run\Processor\RunRequestProcessorProto;
 use Run\RunRequest;
+use Run\Spec\HttpRequestMetaSpec;
 use Run\Spec\HttpResponseSpec;
 use Run\Util\SessionBuilder;
 
@@ -40,7 +41,7 @@ class WebProcessor extends RunRequestProcessorProto
         $resParts = array_filter(explode('/', $request->getResource()));
         $module = isset($resParts[0]) ? ucfirst($resParts[0]): 'Landing';
         $controller = isset($resParts[1]) ? ucfirst($resParts[1]) : $module;
-        $method = $resParts[2] ?? 'index';
+        $method = $request->getMeta(HttpRequestMetaSpec::REQUEST_METHOD) ?? 'index';
         
         $controllerClass = '\\App\\Web\\'.$module.'\\Controller\\'.$controller;
         

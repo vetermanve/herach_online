@@ -4,7 +4,6 @@
 namespace Run\Provider;
 
 
-use Mu\Amqp\Queue;
 use Mu\Env;
 use Router\Actors\RouterRequestConsumer;
 use Run\RunContext;
@@ -93,12 +92,18 @@ class HttpAmqpCloud extends RunProviderProto
             $request->data = $decodedData ? $decodedData : [];    
         }
         
-        $method = RestMethodHelper::getRealMethod($amqpRequest[AmqpHttpRequest::METHOD], $request);
+        if ($pathData->getType() !== HttpResourceHelper::TYPE_WEB) {
+            $method = RestMethodHelper::getRealMethod($amqpRequest[AmqpHttpRequest::METHOD], $request);    
+        } else {
+            $method = $pathData->getMethod();
+        }
+        
     
         $request->meta = [
             HttpRequestMetaSpec::REQUEST_METHOD  => $method,
             HttpRequestMetaSpec::REQUEST_VERSION => $pathData->getVersion(),
             HttpRequestMetaSpec::REQUEST_HEADERS => $amqpRequest[AmqpHttpRequest::HEADERS],
+            HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
         ];
     
         $request->meta[HttpRequestMetaSpec::REQUEST_SOURCE] = $request->getMetaItem(HttpRequestMetaSpec::REQUEST_HEADERS, HttpRequestHeaders::ORIGIN, '');

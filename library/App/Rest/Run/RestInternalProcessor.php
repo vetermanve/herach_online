@@ -5,9 +5,11 @@ namespace App\Rest\Run;
 
 
 use Run\ChannelMessage\ChannelMsg;
+use Run\ChannelMessage\HttpReply;
 use Run\Processor\RunRequestProcessorProto;
 use Run\Rest\RestRequestOptions;
 use Run\RunRequest;
+use Run\Spec\HttpRequestMetaSpec;
 use Run\Spec\HttpResponseSpec;
 
 class RestInternalProcessor extends RunRequestProcessorProto
@@ -23,13 +25,15 @@ class RestInternalProcessor extends RunRequestProcessorProto
         $resParts = array_filter(explode('/', $request->getResource()));
         $module = isset($resParts[0]) ? ucfirst($resParts[0]): 'Landing';
         $controller = isset($resParts[1]) ? ucfirst($resParts[1]) : $module;
-        $method = $resParts[2] ?? 'index';
     
         $controllerClass = '\\App\\Rest\\'.$module.'\\Controller\\'.$controller;
     
-        $response = new ChannelMsg();
-        $response->setChannelState($request->getChannelState());
+        $response = new HttpReply();
         $response->setUid($request->getUid());
+        $response->setDestination($request->getReply());
+        $response->setChannelState($request->getChannelState());
+        $response->setHeaders(HttpResponseSpec::$absoluteHeaders);
+        $response->setHeader('Content-Type', 'application/json; charset=UTF-8');
     
         if (!class_exists($controllerClass)) {
             return $this->abnormalResponse(
@@ -40,7 +44,7 @@ class RestInternalProcessor extends RunRequestProcessorProto
             );
         }
     
-        $method = 'get';
+        $method = $request->getMeta(HttpRequestMetaSpec::REQUEST_METHOD, 'get');
     
         try {
             $controller = new $controllerClass;

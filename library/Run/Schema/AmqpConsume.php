@@ -4,17 +4,11 @@
 namespace Run\Schema;
 
 
-use App\Web\Run\WebProcessor;
-use Mu\Env;
+use App\Base\Run\BaseRunProcessor;
 use Run\Channel\AmqpReplyChannel;
 use Run\Component\MainDependencyManager;
 use Run\Component\UnexpectedShutdownHandler;
-use Run\Processor\AlolRestRequestProcessor;
-use Run\Processor\MultiAppHttpProcessor;
 use Run\Provider\HttpAmqpCloud;
-use Run\Rest\ModuleContainer;
-use Run\RuntimeLog;
-use Run\Util\UnexpectedEndHandler;
 
 class AmqpConsume extends RunSchemaProto
 {
@@ -24,7 +18,7 @@ class AmqpConsume extends RunSchemaProto
         $this->core->addComponent(new MainDependencyManager());
         
         $this->core->setProvider(new HttpAmqpCloud());
-        $this->core->setProcessor(new WebProcessor());
+        $this->core->setProcessor(new BaseRunProcessor());
         $this->core->setDataChannel(new AmqpReplyChannel());
     }
 }

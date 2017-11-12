@@ -41,7 +41,7 @@ $context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () use ($configFi
     $host = $context->get(RunContext::HOST, 'localhost');
     
     if (strpos($host, 'localhost') !== false) {
-        $config['db']['port'] = '55432';    
+        $config['db']['port'] = '5432';    
     }
      
     return $config;

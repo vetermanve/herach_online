@@ -1,0 +1,10 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+    <h1>Project Edit</h1>
+    <ul>
+        {% for project in projects %}
+            <li> Project: {{ project.title}} </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
