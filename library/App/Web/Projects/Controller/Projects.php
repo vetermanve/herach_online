@@ -10,4 +10,9 @@ class Projects extends WebControllerProto
     {
         return $this->render([]);
     }
+    
+    public function save () 
+    {
+        return $this->render([], 'Projects/edit');
+    }
 }

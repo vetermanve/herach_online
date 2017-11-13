@@ -2,9 +2,15 @@
 
 {% block body %}
     <h1>Projects</h1>
-    <ul>
-        {% for project in projects %}
-        <li> Project: {{ project.title}} </li>
-        {% endfor %}
-    </ul>
+    {% for project in projects %}
+    <div class="pure-u-1">
+        <h2>{{ project.title}}</h2>
+        <p>
+            {{ project.desc }}
+            {% if not project.desc %}
+                Нет описания
+            {% endif %}
+        </p>
+    </div>
+    {% endfor %}
 {% endblock %}

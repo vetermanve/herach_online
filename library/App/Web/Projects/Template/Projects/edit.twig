@@ -1,10 +1,13 @@
 {% extends 'layout.twig' %}
 
 {% block body %}
-    <h1>Project Edit</h1>
-    <ul>
-        {% for project in projects %}
-            <li> Project: {{ project.title}} </li>
-        {% endfor %}
-    </ul>
+    <h1>Project {{ project.title }}</h1>
+    <form class="pure-form" action="save" method="POST">
+        <fieldset class="pure-group">
+            <input type="text" class="pure-input-1-2" placeholder="A title">
+            <textarea class="pure-input-1-2" placeholder="Description"></textarea>
+        </fieldset>
+
+        <button type="submit" class="pure-button pure-input-1-2 pure-button-primary">Save</button>
+    </form>
 {% endblock %}
