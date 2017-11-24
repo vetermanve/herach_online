@@ -35,18 +35,6 @@ interface DispatcherInterface
     public function getParams();
     
     /**
-     * @param string $contentType
-     *
-     * @return $this
-     */
-    public function setContentType($contentType);
-    
-    /**
-     * @return string
-     */
-    public function getContentType();
-    
-    /**
      * @return int
      */
     public function getId();
@@ -78,41 +66,6 @@ interface DispatcherInterface
     
     
     public function getHeader($name);
-    
-    /**
-     * @param $data
-     *
-     * $this->getEncoder()->encode($data)
-     *
-     * @return mixed
-     */
-    public function encode($data);
-    
-    public function decode($string);
-    
-    /**
-     * @param IEncoder $encoder
-     *
-     * @return $this
-     */
-    public function setEncoder($encoder);
-    
-    /**
-     * @return \Mu\Dispatcher\Encoder\IEncoder
-     */
-    public function getEncoder();
-    
-    /**
-     * @param null $encodedBody
-     *
-     * @return $this
-     */
-    public function setDecodedBody($encodedBody);
-    
-    /**
-     * @return null
-     */
-    public function getDecodedBody();
     
     /**
      * @return string

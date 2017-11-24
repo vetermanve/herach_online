@@ -7,6 +7,7 @@ use Renderer\TwigEngine;
 use Run\ChannelMessage\ChannelMsg;
 use Run\ChannelMessage\HttpReply;
 use Run\Processor\RunRequestProcessorProto;
+use Run\Rest\RestRequestOptions;
 use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;
 use Run\Spec\HttpResponseSpec;
@@ -33,8 +34,6 @@ class WebProcessor extends RunRequestProcessorProto
     
     public function process(RunRequest $request)
     {
-        $request->getResource();
-    
         $response = new HttpReply();
         $response->setUid($request->getUid());
         $response->setDestination($request->getReply());
@@ -43,16 +42,24 @@ class WebProcessor extends RunRequestProcessorProto
         $response->setHeader('Content-Type', 'text/html; charset=UTF-8');
     
         $resParts = array_filter(explode('/', $request->getResource()));
-        $module = isset($resParts[0]) ? ucfirst($resParts[0]): 'Landing';
-        $controller = isset($resParts[1]) ? ucfirst($resParts[1]) : $module;
+        if (isset($resParts[0]) && $resParts[0]) {
+            $moduleParts = explode('-', $resParts[0]);
+            $moduleName = ucfirst(array_shift($moduleParts));
+            if ($moduleParts) {
+                array_walk($moduleParts, function (&$val) {
+                    $val = ucfirst($val);
+                });
+                $controllerName = implode('', $moduleParts); 
+            } else {
+                $controllerName = $moduleName;    
+            }
+        } else {
+            $moduleName = $controllerName = 'Landing';
+        }
+        
         $method = $request->getMeta(HttpRequestMetaSpec::REQUEST_METHOD) ?? 'index';
         
-        $controllerClass = '\\App\\Web\\'.$module.'\\Controller\\'.$controller;
-        
-        $templatesPaths[] = $this->spaceDir.'/'.$module.'/Template';
-        $templatesPaths[] = $this->spaceDir.'/Run/Template';
-        
-        $template = $controller.'/'.$method;
+        $controllerClass = '\\App\\Web\\'.$moduleName.'\\Controller\\'.$controllerName;
         
         if (!class_exists($controllerClass)) {
             return $this->abnormalResponse(
@@ -76,9 +83,6 @@ class WebProcessor extends RunRequestProcessorProto
                 );
             }
     
-            $controller->setTemplate($template);
-            $controller->setTemplatePaths($templatesPaths);
-            
             if (!method_exists($controller, $method)) {
                 return $this->abnormalResponse(
                     HttpResponseSpec::HTTP_CODE_NOT_FOUND,
@@ -87,7 +91,20 @@ class WebProcessor extends RunRequestProcessorProto
                     $request
                 );
             }
+    
+    
+            // все что нужно шаблонизатору
+            $templatesPaths[] = $this->spaceDir.'/'.$moduleName.'/Template';
+            $templatesPaths[] = $this->spaceDir.'/Run/Template';
+            $template = $controllerName.'/'.$method;
+            $controller->setTemplate($template);
+            $controller->setTemplatePaths($templatesPaths);
             
+            // параметры запроса
+            $options = new RestRequestOptions();
+            $options->setRequest($request);
+            $controller->setRequestOptions($options);
+    
             // Построим сессию
             $session = $this->sessionBuilder->getSession($request);
             $session->start();

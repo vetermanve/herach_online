@@ -6,6 +6,7 @@ namespace App\Web\Run;
 
 use Load\Load;
 use Mu\Env;
+use Mu\Interfaces\DispatcherInterface;
 
 abstract class WebControllerProto
 {
@@ -13,9 +14,16 @@ abstract class WebControllerProto
     
     protected $templatePaths = [];
     
+    /**
+     * @var DispatcherInterface
+     */
+    protected $requestOptions;
+    
     public function render ($data, $template = null) 
     {
         $template = $template ?: $this->template;
+        $data['request_id'] = $this->requestOptions->getReqiestId();
+        $data['env']['debug'] = (bool)$this->requestOptions->getParam('_debug');
         
         return Env::getRenderer()->render($template, $data, $this->templatePaths);
     }
@@ -47,5 +55,18 @@ abstract class WebControllerProto
     public function setTemplatePaths(array $templatePaths)
     {
         $this->templatePaths = $templatePaths;
+    }
+    
+    /**
+     * @param DispatcherInterface $requestOptions
+     */
+    public function setRequestOptions(DispatcherInterface $requestOptions)
+    {
+        $this->requestOptions = $requestOptions;
+    }
+    
+    public function p ($name, $default = null) 
+    {
+        return $this->requestOptions->getParam($name, $default);
     }
 }
