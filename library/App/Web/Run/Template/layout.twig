@@ -7,15 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">
         .logo {
-            margin: 1em; font-size: 2em; color: #2c4985
+            margin: 1rem; font-size: 2em; color: #2c4985
         }
         
         .top-menu {
-            margin: 1em; font-size: 1em; color: #2c4985;
+            margin: 1rem; font-size: 1em; color: #2c4985;
         }
         
         .header {
             background: #cccccc;
+        }
+        
+        .sub-theme {
+            background-color: #ffffdd;
         }
 
         html, body {
@@ -23,11 +27,19 @@
             height: 100%;
             width: 100%;
         }
+        
+        .zero-layer {
+            padding: 0 1rem;
+        }
+        
+        .content {
+            margin: 1rem;
+        }
     </style>
 </head>
 <body>
 <div class="pure-g header">
-    <div class="pure-u-1-5 menu" style="">
+    <div class="pure-u-1-5 menu">
         <div class="logo">
             reanima.store    
         </div>
@@ -39,9 +51,14 @@
     </div>
 </div>
 <div class="pure-g">
-    <div class="pure-u-1 content" style="margin: 4em">
+    <div class="pure-u-1 sub-theme zero-layer">
+        {% block head %}{% endblock %}
+    </div>
+    <div class="pure-u-1 content">
+        <div>
         {% block body %}
         {% endblock %}
+        </div>
     </div>
 </div>
 </body>

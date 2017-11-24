@@ -1,14 +1,15 @@
 <?php
 
 
-namespace Run\Schema;
+namespace App\Base\Run\Schema;
 
 
 use App\Base\Run\BaseRunProcessor;
+use App\Base\Run\Component\MainDependencyManager;
 use Run\Channel\AmqpReplyChannel;
-use Run\Component\MainDependencyManager;
 use Run\Component\UnexpectedShutdownHandler;
 use Run\Provider\HttpAmqpCloud;
+use Run\Schema\RunSchemaProto;
 
 class AmqpConsume extends RunSchemaProto
 {

@@ -25,6 +25,10 @@ class WebProcessor extends RunRequestProcessorProto
         $this->sessionBuilder->follow($this);
         
         $this->spaceDir = dirname(__DIR__);
+    
+        Env::getContainer()->setModule('renderer', function () {
+            return new TwigEngine();
+        });
     }
     
     public function process(RunRequest $request)
@@ -58,14 +62,6 @@ class WebProcessor extends RunRequestProcessorProto
                 $request
             );
         }
-    
-        Env::getContainer()->setModule('renderer', function () use ($templatesPaths) {
-            $renderer = new TwigEngine();
-            $renderer->setTemplatePaths($templatesPaths);
-            $renderer->init();
-            
-            return $renderer;
-        });
         
         /* Try to execute */
         try {
@@ -81,6 +77,7 @@ class WebProcessor extends RunRequestProcessorProto
             }
     
             $controller->setTemplate($template);
+            $controller->setTemplatePaths($templatesPaths);
             
             if (!method_exists($controller, $method)) {
                 return $this->abnormalResponse(

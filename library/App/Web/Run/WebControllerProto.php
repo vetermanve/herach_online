@@ -9,13 +9,15 @@ use Mu\Env;
 
 abstract class WebControllerProto
 {
-    protected $template;
+    protected $template = '';
+    
+    protected $templatePaths = [];
     
     public function render ($data, $template = null) 
     {
         $template = $template ?: $this->template;
         
-        return Env::getRenderer()->render($template, $data);
+        return Env::getRenderer()->render($template, $data, $this->templatePaths);
     }
     
     /**
@@ -29,5 +31,21 @@ abstract class WebControllerProto
     public function load (Load $loadRequest) 
     {
         return Env::getLoader()->addLoad($loadRequest)->processLoad();
+    }
+    
+    /**
+     * @return array
+     */
+    public function getTemplatePaths(): array
+    {
+        return $this->templatePaths;
+    }
+    
+    /**
+     * @param array $templatePaths
+     */
+    public function setTemplatePaths(array $templatePaths)
+    {
+        $this->templatePaths = $templatePaths;
     }
 }

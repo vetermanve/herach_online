@@ -4,10 +4,10 @@ chdir(__DIR__);
 require_once(__DIR__.'/_util/get_all_headers.php');
 require_once(__DIR__.'/bootstrap.php');
 
+use App\Base\Run\Schema\FpmHttpRequest;
 use Run\Util\HttpEnvContext;
 use Run\RunContext;
 use Run\RunCore;
-use Run\Schema\RestHttpRequestFromHttp;
 
 $env = new HttpEnvContext();
 $env->fill([
@@ -19,7 +19,7 @@ $env->fill([
     HttpEnvContext::HTTP_HEADERS   => getallheaders(),
 ]);
 
-$schema = new RestHttpRequestFromHttp();
+$schema = new FpmHttpRequest();
 $schema->setHttpEnv($env); 
 
 $context = new RunContext();

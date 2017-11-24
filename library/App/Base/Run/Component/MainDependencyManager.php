@@ -1,18 +1,15 @@
 <?php
 
 
-namespace Run\Component;
+namespace App\Base\Run\Component;
 
 use Load\Executor\InternalRestLoader;
-use Mu\Amqp\Connection;
-use Mu\Application;
 use Mu\Cache;
 use Mu\Env;
 use Router\Router;
-use Mu\Logger;
+use Run\Component\RunComponentProto;
 use Run\Event\EventDispatcher;
 use Run\Module\ConfigModule;
-use Run\Module\ServicesModule;
 use Run\Rest\ModuleContainer;
 use Run\RunContext;
 

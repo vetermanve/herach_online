@@ -1,16 +1,17 @@
 <?php
 
 
-namespace Run\Schema;
+namespace App\Base\Run\Schema;
 
 use App\Base\Run\BaseRunProcessor;
+use App\Base\Run\Component\MainDependencyManager;
 use Run\Channel\JsonHttpResponseChannel;
-use Run\Component\MainDependencyManager;
 use Run\Component\UnexpectedShutdownHandler;
 use Run\Provider\PhpFpmRequest;
+use Run\Schema\RunSchemaProto;
 use Run\Util\HttpEnvContext;
 
-class RestHttpRequestFromHttp extends RunSchemaProto
+class FpmHttpRequest extends RunSchemaProto
 {
     /**
      * @var HttpEnvContext

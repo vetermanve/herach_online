@@ -2,17 +2,15 @@
 
 include_once 'bootstrap.php';
 
-//function register_interrupt () {
-//    declare(ticks = 1);
-//    \Run\Util\TerminateHandler::i();
-//}
-
-//register_interrupt();
-
+use App\Base\Run\Schema\AmqpConsume;
 use Run\RunContext;
+use Run\RunCore;
+use Run\RuntimeLog;
 
-if(isset($argv[1])) {
+if (isset($argv[1])) {
     parse_str($argv[1], $config);    
+} else {
+    $config = [];
 }
 
 $namespace  = 'bpass';
@@ -59,12 +57,12 @@ if (!$host && $amqpConfig = $context->getScope(RunContext::GLOBAL_CONFIG, 'amqp'
     $context->set(RunContext::AMQP_RESULT_CLOUD_HOST, $amqpConfig['host']); 
 }
 
-$runtime = new \Run\RuntimeLog($context->get(RunContext::IDENTITY));
+$runtime = new RuntimeLog($context->get(RunContext::IDENTITY));
 $runtime->catchErrors();
 
-$core = new \Run\RunCore();
+$core = new RunCore();
 $core->setContext($context);
-$core->setSchema(new Run\Schema\AmqpConsume());
+$core->setSchema(new AmqpConsume());
 $core->setRuntime($runtime);
 $core->configure();
 $core->prepare();
