@@ -5,7 +5,7 @@
 cd $(dirname $0)
 currentPath=$(pwd -P);
 
-registerPath="/var/www/conf/"
+registerPath="/srv/www/conf/"
 
 releaseInfoFileName="release.json"
 releaseConfigFile="cluster/config_file"
