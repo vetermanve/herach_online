@@ -4,11 +4,15 @@
 namespace Database;
 
 
+use Nette\Database\Connection;
 use Nette\Database\Row;
 use PDO;
 
 class PostgresJson extends DatabaseAdapterProto
 {
+    /**
+     * @var Connection
+     */
     private static $_connection;
     
     private $_resource = '';
@@ -23,7 +27,7 @@ class PostgresJson extends DatabaseAdapterProto
             $password = $this->context->get(DatabaseContext::PASS);
             
             $dsn = 'pgsql:dbname='.$db.';host='.$host.';port='.$port;
-            self::$_connection = new \Nette\Database\Connection(
+            self::$_connection = new Connection(
                 $dsn,
                 $user,
                 $password,
@@ -60,6 +64,17 @@ class PostgresJson extends DatabaseAdapterProto
         return $this->_unpackRows($data);
     }
     
+    public function set($id, $data)
+    {
+        $data = $this->_packRows($data);
+        if ($id === null) {
+            $result = $this->connection()->query('INSERT INTO '.$this->_resource.' ? RETURNING * ', ['data' => $data]);
+            return $this->_unpackOneRow($result->fetchAll());
+        } else {
+            return $this->connection()->query('UPDATE '.$this->_resource.' SET data = ? where id = ?', $data, $id);
+        }
+    }
+    
     /**
      * @param $rows
      *
@@ -72,11 +87,19 @@ class PostgresJson extends DatabaseAdapterProto
         
         $results = [];
         foreach ($rows as $row) {
-            $data = json_decode($row->data, true);
-            $data['id'] = $row->id;
+            $data = ['id' => $row->id] + (array)json_decode($row->data, true);
             $results[$data['id']] = $data;
         }
         
         return $results; 
+    }
+    
+    private function _unpackOneRow($rows) {
+        $rows = $this->_unpackRows($rows);
+        return current($rows);
+    }
+    
+    private function _packRows($data) {
+        return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 }

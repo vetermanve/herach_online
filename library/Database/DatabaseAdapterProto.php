@@ -19,6 +19,8 @@ abstract class DatabaseAdapterProto
     
     abstract public function getAll($limit = 100, $offset = 0);
     
+    abstract public function set($id, $data);
+    
     /**
      * @return DatabaseContext
      */

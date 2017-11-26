@@ -9,7 +9,12 @@ class Landing extends WebControllerProto
 {
     public function index () 
     {
+        $count = $this->p('count', 10);
+        
         $projects = new Load('projects');
+        $projects->setParams([
+            'count' => $count, 
+        ]);
         
         $this->load($projects);
         

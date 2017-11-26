@@ -27,6 +27,7 @@ class InternalRestLoader extends LoadExecutorProto
     {
         foreach ($this->loads as $load) {
             $request = new RunRequest($load->getUuid(), $load->getResource());
+            $request->params = $load->getParams();
             
             $this->run->process($request);
             $result = $this->dataChannel->getMessageByUid($load->getUuid());

@@ -8,6 +8,11 @@ use Mu\Env;
 
 class DatabaseFactory
 {
+    /**
+     * @param $resource
+     *
+     * @return DatabaseAdapterProto
+     */
     public function getDatabaseByResource ($resource) : DatabaseAdapterProto 
     {
         $adapter = new PostgresJson();

@@ -16,6 +16,8 @@ class Load
     
     private $uuid;
     
+    private $params = [];
+    
     /**
      * Load constructor.
      *
@@ -57,5 +59,21 @@ class Load
     public function getUuid(): string
     {
         return $this->uuid;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getParams(): array
+    {
+        return $this->params;
+    }
+    
+    /**
+     * @param array $params
+     */
+    public function setParams(array $params)
+    {
+        $this->params = $params;
     }
 }
