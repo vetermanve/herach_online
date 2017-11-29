@@ -3,12 +3,21 @@
 namespace App\Web\Landing\Controller;
 
 use App\Web\Run\WebControllerProto;
-use Renderer\MutantRenderer;
+use Load\Load;
 
 class Landing extends WebControllerProto
 {
     public function index () 
     {
-        return $this->render(['feel' => 'good']);
+        $count = $this->p('count', 10);
+        
+        $projects = new Load('projects');
+        $projects->setParams([
+            'count' => $count, 
+        ]);
+        
+        $this->load($projects);
+        
+        return $this->render(['projects' => $projects->getResults()]);
     }
 }

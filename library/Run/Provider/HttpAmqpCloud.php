@@ -4,7 +4,6 @@
 namespace Run\Provider;
 
 
-use Mu\Amqp\Queue;
 use Mu\Env;
 use Router\Actors\RouterRequestConsumer;
 use Run\RunContext;
@@ -18,11 +17,6 @@ use Run\Util\RestMethodHelper;
 
 class HttpAmqpCloud extends RunProviderProto
 {
-    /**
-     * @var Queue
-     */
-    private $queue;
-    
     private $restarting = true;
     
     /**
@@ -34,9 +28,10 @@ class HttpAmqpCloud extends RunProviderProto
     {
         $queueName = $this->context->get(RunContext::QUEUE_INCOMING, 'http.amqp.cloud.requests.default');
         $amqpCustomHost  = $this->context->get(RunContext::AMQP_REQUEST_CLOUD_HOST);
+        $amqpCustomPort  = $this->context->get(RunContext::AMQP_REQUEST_CLOUD_PORT);
     
         if ($amqpCustomHost) {
-            Env::getRouter()->registerQueue($queueName, $amqpCustomHost);    
+            Env::getRouter()->registerQueue($queueName, $amqpCustomHost, $amqpCustomPort);    
         }
         
         $this->consumer = Env::getRouter()->getConsumer($queueName);
@@ -92,17 +87,23 @@ class HttpAmqpCloud extends RunProviderProto
                            
         // data processing
         {
-            $request->body = trim($amqpRequest[AmqpHttpRequest::DATA]);
+            $request->body = $amqpRequest[AmqpHttpRequest::DATA] ? trim($amqpRequest[AmqpHttpRequest::DATA]) : '';
             $decodedData   = $request->body && strpos($request->body, '{') === 0 ? json_decode($amqpRequest[AmqpHttpRequest::DATA], true) : [];
             $request->data = $decodedData ? $decodedData : [];    
         }
         
-        $method = RestMethodHelper::getRealMethod($amqpRequest[AmqpHttpRequest::METHOD], $request);
+        if ($pathData->getType() !== HttpResourceHelper::TYPE_WEB) {
+            $method = RestMethodHelper::getRealMethod($amqpRequest[AmqpHttpRequest::METHOD], $request);    
+        } else {
+            $method = $pathData->getMethod();
+        }
+        
     
         $request->meta = [
             HttpRequestMetaSpec::REQUEST_METHOD  => $method,
             HttpRequestMetaSpec::REQUEST_VERSION => $pathData->getVersion(),
             HttpRequestMetaSpec::REQUEST_HEADERS => $amqpRequest[AmqpHttpRequest::HEADERS],
+            HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
         ];
     
         $request->meta[HttpRequestMetaSpec::REQUEST_SOURCE] = $request->getMetaItem(HttpRequestMetaSpec::REQUEST_HEADERS, HttpRequestHeaders::ORIGIN, '');
@@ -121,6 +122,5 @@ class HttpAmqpCloud extends RunProviderProto
     public function cancelConsuming()
     {
         $this->restarting = false;
-        $this->runtime->debug('Consuming stopped gracefully on queue ' . $this->queue->getName());
     }
 }

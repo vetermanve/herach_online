@@ -3,9 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        .logo {
+            margin: 1rem ; font-size: 2em; color: #526066;
+        }
+        
+        .top-menu {
+            margin: 1rem; font-size: 2em; color: #eeeeee;
+        }
+
+        .top-menu a, .top-menu a:visited, .top-menu a:active {
+            /*color: #aaaaaa;*/
+            color: #222222;
+            text-decoration: none;
+            -webkit-transition: color 1s ease-out ;
+            -moz-transition: color 1s ease-out ;
+            -o-transition: color 1s ease-out ;
+            transition: color 1s ease-out ;
+        }
+
+        .top-menu a:hover {
+            color: #2c4985;
+        }
+        
+        .header {
+            background: #eeeeee;
+        }
+        
+        .sub-theme {
+            background-color: #ffffdd;
+        }
+
+        html, body {
+            background-color: white;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .zero-layer {
+            padding: 0 1rem;
+        }
+        
+        .content {
+            margin: 1rem;
+        }
+    </style>
 </head>
 <body>
-{% block body %}
-{% endblock %}
+<div class="pure-g header">
+    <div class="pure-u-1-5 menu">
+        <div class="logo">
+            reanima.store    
+        </div>
+    </div>
+    <div class="pure-u-4-5 menu" style="">
+        <div class="top-menu">
+            <a href="/">проекты</a>
+        </div>
+    </div>
+</div>
+<div class="pure-g">
+    <div class="pure-u-1 sub-theme zero-layer">
+        {% block head %}{% endblock %}
+    </div>
+    <div class="pure-u-1 content">
+        <div>
+        {% block body %}
+        {% endblock %}
+        </div>
+    </div>
+    {% if env.debug %}
+    <div class="pure-u-1 logs-footer">
+        <script>
+            $.get('/dev-logs/{{ request_id }}', function (data) {
+                $( ".logs-footer" ).html( data );
+            })
+        </script>
+    </div>
+    {% endif %}
+</div>
 </body>
 </html>

@@ -29,7 +29,10 @@ class RouterConnection extends RouterModuleProto
             self::READ_TIMEOUT    => $this->configuration[RouterConfig::ROUTER_CONNECTION_READ_TIMEOUT],
             self::WRITE_TIMEOUT   => $this->configuration[RouterConfig::ROUTER_CONNECTION_WRITE_TIMEOUT],
             self::CONNECT_TIMEOUT => $this->configuration[RouterConfig::ROUTER_CONNECTION_CONNECT_TIMEOUT],
-            
+
+
+//            'login' => 'dev_all',
+//            'password' => 'dev_all',
             //     *      'login' => amqp.login The login name to use. Note: Max 128 characters.
             //     *      'password' => amqp.password Password. Note: Max 128 characters.
         ];

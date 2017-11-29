@@ -1,0 +1,11 @@
+{% block body %}
+    <style type="text/css">
+        .logs-line {
+            font-family: monospace;
+            padding: 0.2em 1em;
+        }
+    </style>
+    {% for log in logs %}
+        <div class="logs-line">{{ log }}</div>
+    {% endfor %}
+{% endblock %}

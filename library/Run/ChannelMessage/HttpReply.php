@@ -6,7 +6,7 @@ namespace Run\ChannelMessage;
 
 use Run\Spec\HttpResponseSpec;
 
-class HttpReply extends ChannelMsgProto
+class HttpReply extends ChannelMsg
 {
     public function setHeader($key, $val)
     {

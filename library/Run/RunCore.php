@@ -53,7 +53,7 @@ class RunCore extends RunModuleProto
      * 
      * @var RunComponentProto[]
      */
-    private $components;
+    private $components = [];
     
     /**
      * RunCore constructor.
@@ -160,11 +160,8 @@ class RunCore extends RunModuleProto
     
     public function process(RunRequest $request)
     {   
-        $start = microtime(1)*1000;
         $this->lastRequest = $request;
         $this->processor->process($request);
-        $time = (round((microtime(1)*1000 - $start), 1));
-        $this->runtime->runtime('RUN_REQ_END' , $request->params + ['time_ms' => $time, 'resource' => $request->getResource(), 'request_id' => $request->getUid(),]);
     }
     
     /**

@@ -63,7 +63,12 @@ class PhpFpmRequest extends RunProviderProto
         }
     
         $method = $this->httpEnv->getScope(HttpEnvContext::HTTP_SERVER, 'REQUEST_METHOD', 'GET');
-        $method = RestMethodHelper::getRealMethod($method, $request);
+        
+        if ($pathData->getType() !== HttpResourceHelper::TYPE_WEB) {
+            $method = RestMethodHelper::getRealMethod($method, $request);
+        } else {
+            $method = $pathData->getMethod();
+        }
 
         $locale = null;
         if (function_exists('locale_accept_from_http') && isset($headers['accept-language'])) {
@@ -77,6 +82,7 @@ class PhpFpmRequest extends RunProviderProto
             HttpRequestMetaSpec::CLIENT_IP       => $this->httpEnv->getScope(HttpEnvContext::HTTP_SERVER, 'REMOTE_ADDR'),
             HttpRequestMetaSpec::CLIENT_AGENT    => isset($headers['user-agent']) ? $headers['user-agent'] : null,
             HttpRequestMetaSpec::CLIENT_LOCALE   => isset($locale) ? $locale : null,
+            HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
         ];
     
         if ($request->getParamOrData('dddebug') === 4) {

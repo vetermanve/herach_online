@@ -30,7 +30,7 @@ class RouterProblemResolver
         
         $this->reports[$moduleId] = $report;
     
-        Env::getLogger()->addError(__CLASS__.' "'.$report.'" problem on '.$moduleId, [
+        Env::getLogger()->error(__CLASS__.' "'.$report.'" problem on '.$moduleId, [
             'server' => get_object_vars($this),
         ]);
         

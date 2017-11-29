@@ -27,6 +27,10 @@ class RouterQueue extends RouterModuleProto
     public function loadQueue () 
     {
         try {
+            if (!$this->channel->amqpChannel) {
+                throw new \Exception('Empty channel');
+            }
+            
             $queue = new \AMQPQueue($this->channel->amqpChannel);
             
             $queue->setName($this->getConfig(RouterConfig::QUEUE_NAME));

@@ -10,7 +10,7 @@ use Run\Rest\Exception\Redirect;
 use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;
 
-class RestRequestOptions 
+class RestRequestOptions implements DispatcherInterface
 {
     /**
      * @var RunRequest;
@@ -18,24 +18,6 @@ class RestRequestOptions
     private $request;
     
     private $allParams;
-    
-    /**
-     * Это фарш отсюда нужно сносить
-     * всместе с вышестоящим энкодером
-     * 
-     * @var mixed
-     */
-    private $decodedBody;
-    
-    
-    /**
-     * Добавлено для обратной совместимости
-     * Ничего не меняет
-     * @todo убрать, работа с кодировками должна быть на уровне процессора
-     * 
-     * @var string;
-     */
-    private $contentType;
     
     /**
      * @return string|null
@@ -95,18 +77,6 @@ class RestRequestOptions
         }
         
         return $default;
-    }
-    
-    /**
-     * @param string $contentType
-     *
-     * @return $this
-     */
-    public function setContentType($contentType)
-    {
-        $this->contentType = $contentType;
-        
-        return $this;
     }
     
     /**
@@ -204,28 +174,6 @@ class RestRequestOptions
         $this->allParams = $this->request->params + $this->request->data;
     }
     
-    /* Всякая фигня с декодированием */
-    
-    /**
-     * @param null $decodedBody
-     *
-     * @return $this
-     */
-    public function setDecodedBody($decodedBody)
-    {
-        $this->decodedBody = $decodedBody;
-    
-        return $this;
-    }
-    
-    /**
-     * @return null
-     */
-    public function getDecodedBody()
-    {
-        return $this->decodedBody !== null ? $this->decodedBody : $this->request->data;
-    }
-    
     public function getHeader($name)
     {
         return $this->request->getMetaItem(HttpRequestMetaSpec::REQUEST_HEADERS, strtolower($name));
@@ -256,13 +204,5 @@ class RestRequestOptions
     public function getPlatform()
     {
         return $this->getHeader('x-rest-app'); 
-    }
-    
-    /**
-     * @return string
-     */
-    public function getContentType()
-    {
-        return $this->contentType;
     }
 }
