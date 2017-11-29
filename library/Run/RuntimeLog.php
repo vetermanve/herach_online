@@ -11,14 +11,9 @@ class RuntimeLog extends Logger
 {
     const LOGGER_NAME_CONTEXT_KEY = 'loggerName';
     
-    const LOG_LEVEL_RUNTIME = 600;
+    const LOG_LEVEL_RUNTIME = 100;
     
     protected $context = [];
-    
-    /**
-     * @var Logger
-     */
-    private $remoteLogger;
     
     /**
      * @var Tracer
@@ -35,7 +30,6 @@ class RuntimeLog extends Logger
         $this->addRecord(self::LOG_LEVEL_RUNTIME, $message, $context);
     }
     
-    
     /**
      * Logs with an arbitrary level.
      *
@@ -49,25 +43,23 @@ class RuntimeLog extends Logger
     {
         $context += $this->context;
         
-        if ($level != self::LOG_LEVEL_RUNTIME && $this->remoteLogger) {
-            $this->remoteLogger->addRecord($level, $message, $context);
-        }
-        
         $msg = '';
         if ($context) {
             $msg = json_encode($context, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         }
         
-        if (is_numeric($level)) {
-            $level = self::getLevelName($level);
-        }
+        $levelName = is_numeric($level) ? self::getLevelName($level) : $level;
 
-        $msg = date('[Y-m-d H:i:s] '). $this->getName() .'.'. $level.': '. $message ." ".trim($msg);
+        $msg = date('[Y-m-d H:i:s] '). $this->getName() .'.'. $levelName.': '. $message ." ".trim($msg);
         
         static $stdout;
         !$stdout && $stdout = fopen('php://stdout', 'w');
         
         fwrite($stdout, $msg."\n");
+    
+        if ($this->handlers) {
+            parent::addRecord($level, $message, $context);
+        }
         
         return true;
     }
@@ -76,14 +68,6 @@ class RuntimeLog extends Logger
     {
         $this->tracer = new Tracer();
         $this->tracer->catchErrors(E_ALL ^ E_STRICT ^ E_DEPRECATED, [$this, 'addWarning']);
-    }
-    
-    /**
-     * @param Logger $remoteLogger
-     */
-    public function setRemoteLogger($remoteLogger)
-    {
-        $this->remoteLogger = $remoteLogger;
     }
     
     /**

@@ -4,10 +4,10 @@
 namespace Run\Execution\Rest\MsgModificator;
 
 
-use Run\ChannelMessage\ChannelMsgProto;
+use Run\ChannelMessage\ChannelMsg;
 use Run\RunRequest;
 
 abstract class MsgModificatorProto 
 {
-    abstract public function process (RunRequest $request, ChannelMsgProto $message); 
+    abstract public function process (RunRequest $request, ChannelMsg $message); 
 }

@@ -4,10 +4,10 @@ chdir(__DIR__);
 require_once(__DIR__.'/_util/get_all_headers.php');
 require_once(__DIR__.'/bootstrap.php');
 
+use App\Base\Run\Schema\FpmHttpRequest;
 use Run\Util\HttpEnvContext;
 use Run\RunContext;
 use Run\RunCore;
-use Run\Schema\RestHttpRequestFromHttp;
 
 $env = new HttpEnvContext();
 $env->fill([
@@ -19,8 +19,8 @@ $env->fill([
     HttpEnvContext::HTTP_HEADERS   => getallheaders(),
 ]);
 
-$schema = new RestHttpRequestFromHttp();
-$schema->setHttpEnv($env);
+$schema = new FpmHttpRequest();
+$schema->setHttpEnv($env); 
 
 $context = new RunContext();
 $context->fill([
@@ -31,12 +31,20 @@ $context->fill([
 
 $configFile = 'conf/core.ini';
 
-$context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () use ($configFile) {
+$context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () use ($configFile, $context) {
     if (file_exists($configFile)) {
         return parse_ini_file($configFile, true);    
     }
+    
+    $config = [];
+    
+    $host = $context->get(RunContext::HOST, 'localhost');
+    
+    if (strpos($host, 'localhost') !== false) {
+        $config['db']['port'] = '5432';    
+    }
      
-    return [];
+    return $config;
 });
 
 $runtime = new \Run\RuntimeLog($context->get(RunContext::IDENTITY));

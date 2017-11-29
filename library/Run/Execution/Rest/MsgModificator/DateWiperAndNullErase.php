@@ -3,7 +3,7 @@
 namespace Run\Execution\Rest\MsgModificator;
 
 use Mu\Helper\DateTime;
-use Run\ChannelMessage\ChannelMsgProto;
+use Run\ChannelMessage\ChannelMsg;
 use Run\Execution\PluginProto;
 use Run\RunRequest;
 
@@ -23,7 +23,7 @@ class DateWiperAndNullErase extends MsgModificatorProto
         'expired_at'     => 1,
     ];
     
-    public function process(RunRequest $request, ChannelMsgProto $message)
+    public function process(RunRequest $request, ChannelMsg $message)
     {
         if (!isset($message->body) || !is_array($message->body) || !array_key_exists('data', $message->body)) {
             return ;

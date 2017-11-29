@@ -4,12 +4,12 @@
 namespace Run\Channel;
 
 
-use Run\ChannelMessage\ChannelMsgProto;
+use Run\ChannelMessage\ChannelMsg;
 
 class MemoryStoreChannel extends DataChannelProto
 {
     /**
-     * @var ChannelMsgProto
+     * @var ChannelMsg
      */
     private $message;
     
@@ -30,13 +30,13 @@ class MemoryStoreChannel extends DataChannelProto
      *
      * @return null
      */
-    public function send(ChannelMsgProto $msg)
+    public function send(ChannelMsg $msg)
     {
         $this->message = $msg;
     }
     
     /**
-     * @return ChannelMsgProto
+     * @return ChannelMsg
      */
     public function getMessage()
     {

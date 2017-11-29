@@ -36,7 +36,11 @@ class RouterChannel extends RouterModuleProto
     
     private function createChannel() {
         try {
-            $this->amqpChannel = new \AMQPChannel($this->connection->amqpConnection);
+            if ($this->connection->amqpConnection) {
+                $this->amqpChannel = new \AMQPChannel($this->connection->amqpConnection);    
+            } else {
+                $this->_reportProblem('Empty connection');
+            }
         } catch (\Exception $exception) {
             $this->_reportProblem($exception->getMessage());
         }

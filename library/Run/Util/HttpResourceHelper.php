@@ -8,6 +8,7 @@ class HttpResourceHelper
 {
     const R_1_PART_RESOURCE = 0;
     const R_1_PART_ITEM_ID  = 1;
+    const R_1_PART_METHOD   = 2;
     
     const R_3_PART_TYPE     = 0;
     const R_3_PART_VERSION  = 1;
@@ -16,12 +17,15 @@ class HttpResourceHelper
     const R_3_PART_ITEM_ID = 3;
     
     const TYPE_REST  = 'rest';
+    const TYPE_WEB   = 'web';
     const TYPE_OAUTH = 'oauth';
     
     private $string   = '';
     private $resource = '';
     private $version  = 1;
     private $type;
+    private $method;
+    
     
     private $id;
     
@@ -43,25 +47,22 @@ class HttpResourceHelper
         $path = strpos($this->string, '?') ? strstr($this->string, '?', true) : $this->string;
         $data = explode('/', trim($path, '/'));
         
-        if (count($data) === 1) { // /auth
+        if (count($data) > 1 && $data[0] === 'rest') {
+            array_shift($data);
             $this->type     = self::TYPE_REST;
-            $this->resource = $data[self::R_1_PART_RESOURCE];
-        } elseif (count($data) === 2) {  // /user/644
-            $this->type     = self::TYPE_REST;
-            $this->resource = $data[self::R_1_PART_RESOURCE];
-            $this->id       = $data[self::R_1_PART_ITEM_ID];
-        } elseif (count($data) > 2) { // /rest/2.0/auth
-            $this->type     = (string)$data[self::R_3_PART_TYPE];
-            $this->version  = (int)$data[self::R_3_PART_VERSION];
-            $this->resource = (string)$data[self::R_3_PART_RESOURCE];
-            
-            if ($this->type === self::TYPE_OAUTH) { // /oauth/2.0/auth
-                $this->resource = 'oauth2-' . $this->resource;
-            }
+        } else {
+            $this->type     = self::TYPE_WEB;
         }
         
-        if (count($data) == 4) { // /rest/2.0/user/644
-            $this->id = $data[self::R_3_PART_ITEM_ID];
+        if (count($data) === 1) { // /auth
+            $this->resource = $data[self::R_1_PART_RESOURCE];
+        } elseif (count($data) === 2) {  // /user/644
+            $this->resource = $data[self::R_1_PART_RESOURCE];
+            $this->id       = $data[self::R_1_PART_ITEM_ID];
+        } elseif (count($data) > 2) { // /user/644/edit //web specific 
+            $this->id       = $data[self::R_1_PART_ITEM_ID];
+            $this->resource = $data[self::R_1_PART_RESOURCE];
+            $this->method   = $data[self::R_1_PART_METHOD];
         }
     }
     
@@ -95,5 +96,13 @@ class HttpResourceHelper
     public function getType()
     {
         return $this->type;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getMethod()
+    {
+        return $this->method;
     }
 }

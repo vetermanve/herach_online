@@ -4,7 +4,7 @@
 namespace Run\Component;
 
 
-use Run\ChannelMessage\ChannelMsgProto;
+use Run\ChannelMessage\ChannelMsg;
 use Run\RunContext;
 use Run\Spec\HttpRequestMetaSpec;
 use Run\Spec\HttpResponseSpec;
@@ -33,7 +33,7 @@ class UnexpectedShutdownHandler extends RunComponentProto
             'error' => $error,
         ]);
         
-        $msg = new ChannelMsgProto();
+        $msg = new ChannelMsg();
         $msg->setUid($lastRequest->getUid());
         $msg->body = [
             'error' => 'Internal Error.',

@@ -4,7 +4,7 @@
 namespace Run\Channel;
 
 
-use Run\ChannelMessage\ChannelMsgProto;
+use Run\ChannelMessage\ChannelMsg;
 use Run\RunContext;
 use Run\Spec\HttpResponseSpec;
 
@@ -27,7 +27,7 @@ class JsonHttpResponseChannel extends DataChannelProto
      *
      * @return mixed
      */
-    public function send(ChannelMsgProto $msg)
+    public function send(ChannelMsg $msg)
     {
         if (function_exists('http_response_code')) {
             http_response_code($msg->getCode() ?: HttpResponseSpec::HTTP_CODE_OK);
@@ -66,7 +66,7 @@ class JsonHttpResponseChannel extends DataChannelProto
         $this->runtime->debug('REST_RAW_RESPONSE', $msg->getDebugInfo());
     }
     
-    protected function _writeBody(ChannelMsgProto $msg) {
+    protected function _writeBody(ChannelMsg $msg) {
         echo is_string($msg->body) ? $msg->body : json_encode($msg->body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);   
     }
 }
