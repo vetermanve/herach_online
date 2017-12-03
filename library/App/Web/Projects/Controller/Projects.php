@@ -11,6 +11,21 @@ class Projects extends WebControllerProto
         return $this->render([]);
     }
     
+    /**
+     * новый проект
+     * @return 
+     */
+    public function project () 
+    {
+        $data = [
+            'project' => [
+                'title' => 'Новый проект',
+            ],
+        ];
+        
+        return $this->render($data, 'Projects/edit');
+    }
+    
     public function save () 
     {
         return $this->render([], 'Projects/edit');

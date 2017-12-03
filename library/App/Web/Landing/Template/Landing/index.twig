@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block body %}
+    <div>
+        <a href="/projects/new/project">Новый проект</a>
+    </div>
     {% for project in projects %}
     <div class="pure-u-1">
         <h2>{{ project.title}}</h2>

@@ -1,13 +1,54 @@
 {% extends 'layout.twig' %}
 
+{% block head %}<h1>{{ project.title }}</h1>{% endblock %}
+
 {% block body %}
-    <h1>Project {{ project.title }}</h1>
-    <form class="pure-form" action="save" method="POST">
+    <style type="text/css">
+        .full-w {
+            /*width: 100%;   */
+            height: 50vh;
+        }
+        
+        .pure-form input, .pure-form textarea  {
+            box-shadow: none !important;
+            border: none !important;
+        }
+    </style>
+    
+    <form class="pure-form full-w" action="save" method="POST">
         <fieldset class="pure-group">
-            <input type="text" class="pure-input-1-2" placeholder="A title">
-            <textarea class="pure-input-1-2" placeholder="Description"></textarea>
+            <h2><input type="text" class="pure-input-1 auto-save" data-name="pr_title" placeholder="Название"></h2>
+            <textarea class="pure-input-1 full-w auto-save" data-name="pr_desc" placeholder="Описание проекта"></textarea>
         </fieldset>
 
-        <button type="submit" class="pure-button pure-input-1-2 pure-button-primary">Save</button>
+        <button type="submit" class="pure-button pure-input-1 pure-button-primary">Сохранить</button>
     </form>
+
+    <script type="text/javascript">
+        var prefix = document.location
+        prefix = prefix.toString().split("?")[0];
+        
+        var save = function(obj, name) {
+            console.log('save');
+            localStorage.setItem("AUTOSAVE_" + prefix + "_" + name , $(obj).val());
+        };
+
+        var restore = function (obj, name) {
+            var data = localStorage.getItem("AUTOSAVE_"  + prefix + "_" + name);
+            console.log('restore try', data);
+            if (typeof (data) === 'string') {
+                $(obj).val(data);
+                console.log('restore ' + data);
+            }
+        };
+        
+        $('.auto-save').each(function (id, obj_raw) {
+            var obj = $(obj_raw);
+            var name = obj.data('name');
+            console.log('Autosave ' + name);
+            obj.keyup(function() {save(obj, name)});
+            obj.ready(function() {restore(obj, name)});
+        });
+        
+    </script>
 {% endblock %}
