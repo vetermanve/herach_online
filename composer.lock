@@ -160,12 +160,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/database.git",
-                "reference": "18fc1b263dc8353eea0bc4d6e5242e120e885cb0"
+                "reference": "acd0fce79b31f612f2f8c03fcab2c60428d60098"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/database/zipball/18fc1b263dc8353eea0bc4d6e5242e120e885cb0",
-                "reference": "18fc1b263dc8353eea0bc4d6e5242e120e885cb0",
+                "url": "https://api.github.com/repos/nette/database/zipball/acd0fce79b31f612f2f8c03fcab2c60428d60098",
+                "reference": "acd0fce79b31f612f2f8c03fcab2c60428d60098",
                 "shasum": ""
             },
             "require": {
@@ -224,7 +224,7 @@
                 "queries",
                 "sqlite"
             ],
-            "time": "2017-08-24T21:04:31+00:00"
+            "time": "2017-11-08T11:57:16+00:00"
         },
         {
             "name": "nette/finder",
@@ -294,12 +294,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "d8ace5c620be0286ae89c00130a98b4170b27f4d"
+                "reference": "ce424a0987f2ed217de1c52ef76970a950e306be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/d8ace5c620be0286ae89c00130a98b4170b27f4d",
-                "reference": "d8ace5c620be0286ae89c00130a98b4170b27f4d",
+                "url": "https://api.github.com/repos/nette/utils/zipball/ce424a0987f2ed217de1c52ef76970a950e306be",
+                "reference": "ce424a0987f2ed217de1c52ef76970a950e306be",
                 "shasum": ""
             },
             "require": {
@@ -365,7 +365,7 @@
                 "utility",
                 "validation"
             ],
-            "time": "2017-09-26T11:24:17+00:00"
+            "time": "2017-11-28T22:39:49+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -468,12 +468,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "45cffe822057a09e05f7bd09ec5fb88eeecd2334"
+                "reference": "21063bd7166614e96e4a30fd12ca4b230ad36820"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/45cffe822057a09e05f7bd09ec5fb88eeecd2334",
-                "reference": "45cffe822057a09e05f7bd09ec5fb88eeecd2334",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/21063bd7166614e96e4a30fd12ca4b230ad36820",
+                "reference": "21063bd7166614e96e4a30fd12ca4b230ad36820",
                 "shasum": ""
             },
             "require": {
@@ -485,7 +485,7 @@
             },
             "require-dev": {
                 "apigen/apigen": "^4.1",
-                "codeception/aspect-mock": "^1.0 | ^2.0",
+                "codeception/aspect-mock": "^1.0 | ~2.0.0",
                 "doctrine/annotations": "~1.2.0",
                 "goaop/framework": "1.0.0-alpha.2 | ^1.0 | ^2.1",
                 "ircmaxell/random-lib": "^1.1",
@@ -493,7 +493,7 @@
                 "mockery/mockery": "^0.9.4",
                 "moontoast/math": "^1.1",
                 "php-mock/php-mock-phpunit": "^0.3|^1.1",
-                "phpunit/phpunit": "^4.7|>=5.0 <5.4",
+                "phpunit/phpunit": "^4.7|^5.0",
                 "satooshi/php-coveralls": "^0.6.1",
                 "squizlabs/php_codesniffer": "^2.3"
             },
@@ -542,7 +542,7 @@
                 "identifier",
                 "uuid"
             ],
-            "time": "2017-09-22T20:46:04+00:00"
+            "time": "2017-12-01T17:02:13+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",

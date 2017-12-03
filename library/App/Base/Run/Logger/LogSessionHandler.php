@@ -17,7 +17,15 @@ class LogSessionHandler extends AbstractProcessingHandler
     
     protected $logsLimit = 1000;
     
+    /**
+     * @var \Redis
+     */
     private $redisClient;
+    
+    /**
+     * @var callable
+     */
+    private $redisBootstrap;
     
     /**
      * Writes the record down to the log of the implementing handler
@@ -45,8 +53,8 @@ class LogSessionHandler extends AbstractProcessingHandler
     public function flushLogs($key)
     {
         try {
-            $this->redisClient->hMset($key, $this->logs);
-            $this->redisClient->expire($key, 600);
+            $this->_redis()->hMset($key, $this->logs);
+            $this->_redis()->expire($key, 600);
         } catch (Throwable $throwable) {
             trigger_error("Cannot flush session logs to redis: ".$throwable->getMessage(), E_USER_WARNING);
         }
@@ -55,17 +63,25 @@ class LogSessionHandler extends AbstractProcessingHandler
     }
     
     /**
-     * @param \Redis $redis  The redis instance
-     * @param bool|int              $level  The minimum logging level at which this handler will be triggered
-     * @param bool                  $bubble Whether the messages that are handled can bubble up the stack or not
+     * @param callable      $redisBootstrap
+     * @param bool|int $level  The minimum logging level at which this handler will be triggered
+     * @param bool     $bubble Whether the messages that are handled can bubble up the stack or not
+     *
      */
-    public function __construct($redis, $level = Logger::DEBUG, bool $bubble = true)
+    public function __construct($redisBootstrap, $level = Logger::DEBUG, bool $bubble = true)
     {
-        if (!($redis instanceof \Redis)) {
-            throw new \InvalidArgumentException('Redis instance required');
+        $this->redisBootstrap = $redisBootstrap;
+        parent::__construct($level, $bubble);
+    }
+    
+    /**
+     * @return \Redis
+     */
+    private function _redis() {
+        if ($this->redisClient === null) {
+            $this->redisClient = call_user_func($this->redisBootstrap);
         }
         
-        $this->redisClient = $redis;
-        parent::__construct($level, $bubble);
+        return $this->redisClient;
     }
 }
