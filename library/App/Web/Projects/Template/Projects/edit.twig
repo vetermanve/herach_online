@@ -15,7 +15,7 @@
         }
     </style>
     
-    <form class="pure-form full-w" action="save" method="POST">
+    <form class="pure-form full-w" action="save" id="form-edit" method="POST">
         <fieldset class="pure-group">
             <h2><input type="text" class="pure-input-1 auto-save" data-name="pr_title" placeholder="Название"></h2>
             <textarea class="pure-input-1 full-w auto-save" data-name="pr_desc" placeholder="Описание проекта"></textarea>
@@ -25,7 +25,7 @@
     </form>
 
     <script type="text/javascript">
-        var prefix = document.location
+        var prefix = document.location;
         prefix = prefix.toString().split("?")[0];
         
         var save = function(obj, name) {
@@ -48,6 +48,28 @@
             console.log('Autosave ' + name);
             obj.keyup(function() {save(obj, name)});
             obj.ready(function() {restore(obj, name)});
+        });
+
+        // Form submitting
+        var frm = $('#form-edit');
+        frm.submit(function(e) {
+            e.preventDefault();
+            console.log(frm.serializeArray());
+            $.ajax({
+                cache: false,
+                type: frm.attr('method'),
+                url: './result.json',
+                dataType: 'json',
+                data: frm.serializeArray(),
+                success: function (data) {
+                    console.log('Submission was successful.');
+                    console.log(data);
+                },
+                error: function (data) {
+                    console.log('An error occurred.');
+                    console.log(data);
+                }
+            });
         });
         
     </script>
