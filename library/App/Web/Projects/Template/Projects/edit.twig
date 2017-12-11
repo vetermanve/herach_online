@@ -52,6 +52,8 @@
 
         // Form submitting
         var frm = $('#form-edit');
+        $btn = frm.children('button');
+        var bgcol = $btn.css('backgroundColor');
         frm.submit(function(e) {
             e.preventDefault();
             console.log(frm.serializeArray());
@@ -64,10 +66,23 @@
                 success: function (data) {
                     console.log('Submission was successful.');
                     console.log(data);
+                    // "Successful" animation
+                    $btn.fadeTo(400, 0.5);
+                    $btn.animate({backgroundColor: "#00a000"}, 200);
+                    $btn.fadeTo("fast", 1.0);
+                    $btn.animate({backgroundColor: "#00a000"}, 1000);
+                    $btn.animate({backgroundColor: bgcol}, 600);
                 },
                 error: function (data) {
                     console.log('An error occurred.');
                     console.log(data);
+                    // "Error" animation
+                    $btn.animate({backgroundColor: '#dc0000'}, 200);
+                    $btn.animate({ marginLeft: "-15px" }, 150);
+                    $btn.animate({ marginLeft: "15px" }, 150);
+                    $btn.animate({ marginLeft: "0" }, 100);
+                    $btn.animate({backgroundColor: '#dc0000'}, 1000);
+                    $btn.animate({backgroundColor: bgcol}, 600);
                 }
             });
         });
