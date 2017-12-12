@@ -17,9 +17,21 @@ class DatabaseFactory
     {
         $adapter = new PostgresJson();
         
+        $adapter->setContext($this->getDatabaseContextByResource($resource));
+        
+        return $adapter;
+    }
+    
+    /**
+     * @param $resource
+     *
+     * @return DatabaseContext
+     */
+    public function getDatabaseContextByResource ($resource) : DatabaseContext
+    {
         $host = Env::getConfig()->get('host', 'db', '127.0.0.1');
         $port = Env::getConfig()->get('port', 'db', '5432');
-        
+    
         $context = new DatabaseContext();
         $context->fill([
             DatabaseContext::HOST     => $host,
@@ -30,10 +42,6 @@ class DatabaseFactory
             DatabaseContext::USER     => 'reanimabase',
         ]);
         
-        $context->set(DatabaseContext::RESOURCE, $resource);
-        
-        $adapter->setContext($context);
-        
-        return $adapter;
+        return $context;
     }
 }

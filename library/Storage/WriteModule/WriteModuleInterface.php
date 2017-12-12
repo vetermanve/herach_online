@@ -8,5 +8,5 @@ interface WriteModuleInterface
 {
     public function configure();
     
-    public function insert($bind, $callerMethod);
+    public function insert($id, $bind, $callerMethod);
 }

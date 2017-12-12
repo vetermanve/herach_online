@@ -17,8 +17,8 @@ abstract class StorageProto extends StorageModuleProto
      */
     public function __construct()
     {
-        $this->diContainer = new StorageDependency();
         $this->context = new StorageContext();
+        $this->diContainer = new StorageDependency($this->context);
     }
     
     protected function preConfigure() {
@@ -27,7 +27,7 @@ abstract class StorageProto extends StorageModuleProto
             if (Env::isProfiling()) {
                 $logger = Env::getLogger();
                 $profiler->setTimerReportCallback(function ($timer) use ($logger) {
-                    $logger->addDebug('StorageProfiler', $timer);
+                    $logger->debug('StorageProfiler', $timer);
                 });
             }
             

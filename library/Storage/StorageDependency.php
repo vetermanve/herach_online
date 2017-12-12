@@ -17,6 +17,21 @@ class StorageDependency
     
     private $modules = [];
     
+    /**
+     * @var StorageContext
+     */
+    private $context;
+    
+    /**
+     * StorageDependency constructor.
+     *
+     * @param StorageContext $context
+     */
+    public function __construct(StorageContext $context)
+    {
+        $this->context = $context;
+    }
+    
     public function bootstrap($module, $required = true)
     {
         if (!isset($this->modules[$module])) {
@@ -28,7 +43,7 @@ class StorageDependency
         }
         
         if (is_callable($this->modules[$module])) {
-            $this->modules[$module] = $this->modules[$module]();
+            $this->modules[$module] = $this->modules[$module]($this->context);
         }
         
         return $this->modules[$module];

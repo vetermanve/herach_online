@@ -23,10 +23,22 @@ class RestInternalProcessor extends RunRequestProcessorProto
     public function process(RunRequest $request)
     {
         $resParts = array_filter(explode('/', $request->getResource()));
-        $module = isset($resParts[0]) ? ucfirst($resParts[0]): 'Landing';
-        $controller = isset($resParts[1]) ? ucfirst($resParts[1]) : $module;
-    
-        $controllerClass = '\\App\\Rest\\'.$module.'\\Controller\\'.$controller;
+        if (isset($resParts[0]) && $resParts[0]) {
+            $moduleParts = explode('-', $resParts[0]);
+            $moduleName = ucfirst(array_shift($moduleParts));
+            if ($moduleParts) {
+                array_walk($moduleParts, function (&$val) {
+                    $val = ucfirst($val);
+                });
+                $controllerName = implode('', $moduleParts);
+            } else {
+                $controllerName = $moduleName;
+            }
+        } else {
+            $moduleName = $controllerName = 'Landing';
+        }
+        
+        $controllerClass = '\\App\\Rest\\'.$moduleName.'\\Controller\\'.$controllerName;
     
         $response = new HttpReply();
         $response->setUid($request->getUid());
@@ -52,7 +64,7 @@ class RestInternalProcessor extends RunRequestProcessorProto
             if (!$controller instanceof RestControllerProto) {
                 return $this->abnormalResponse(
                     HttpResponseSpec::HTTP_CODE_NOT_FOUND,
-                    'Incorrect resource',
+                    'Unsupported method',
                     $response,
                     $request
                 );

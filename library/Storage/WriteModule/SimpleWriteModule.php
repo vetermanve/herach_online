@@ -35,10 +35,10 @@ class SimpleWriteModule extends StorageModuleProto implements WriteModuleInterfa
      * @return array|bool|null
      *
      */
-    public function insert ($bind, $callerMethod) 
+    public function insert ($id, $bind, $callerMethod) 
     {
         $timer = $this->profiler->openTimer(__METHOD__, $bind, $callerMethod);
-        $request = $this->dataAdapter->getInsertRequest(null, $bind);
+        $request = $this->dataAdapter->getInsertRequest($id, $bind);
         $request->send();
         $request->fetch();
         $this->profiler->finishTimer($timer);

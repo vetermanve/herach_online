@@ -8,6 +8,6 @@ class Uuid
 {
     public static function v4()
     {
-        return UuidRamsey::uuid4();
+        return UuidRamsey::uuid4()->toString();
     }
 }

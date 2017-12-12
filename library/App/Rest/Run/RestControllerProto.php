@@ -30,10 +30,15 @@ abstract class RestControllerProto
         
     }
     
+    public function view ()
+    {
+        return $this->get();   
+    }
+    
     /**
      * @return RestRequestOptions
      */
-    public function getRequest(): RestRequestOptions
+    final public function getRequest(): RestRequestOptions
     {
         return $this->request;
     }
@@ -41,12 +46,12 @@ abstract class RestControllerProto
     /**
      * @param RestRequestOptions $request
      */
-    public function setRequest(RestRequestOptions $request)
+    final public function setRequest(RestRequestOptions $request)
     {
         $this->request = $request;
     }
     
-    public function p($name, $default = null)
+    final public function p($name, $default = null)
     {
         return $this->request->getParam($name, $default);
     }
