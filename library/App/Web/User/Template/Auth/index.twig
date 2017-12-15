@@ -1,0 +1,18 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+    <div class="pure-g">
+        <div class="pure-u-1-3 hide-md"></div>
+        <div class="pure-u-1-3">
+            <form class="pure-form full-w" action="save" id="form-edit" method="POST">
+                <fieldset class="pure-group">
+                    <h1><input type="text" class="pure-input-1 auto-save" data-name="pr_title" placeholder="Логин"></h1>
+                    <h1><input type="text" class="pure-input-1 auto-save" data-name="pr_title" placeholder="Пароль"></h1>
+                </fieldset>
+
+                <button type="submit" class="pure-button pure-input-1 pure-button-primary">Войти</button>
+            </form>
+        </div>
+        <div class="pure-u-1-3 hide-md" ></div>
+    </div>
+{% endblock %}
