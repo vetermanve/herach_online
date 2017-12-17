@@ -8,7 +8,8 @@
     <style type="text/css">
         .full-w {
             /*width: 100%;   */
-            height: 50vh;
+            /*height: 50vh;*/
+            height: calc(100vh - 14em - 36px);
         }
         
         .pure-form input, .pure-form textarea  {
@@ -19,8 +20,8 @@
     
     <form class="pure-form full-w" action="save" id="form-edit" method="POST">
         <fieldset class="pure-group">
-            <h2><input type="text" class="pure-input-1 auto-save" data-name="pr_title" placeholder="Название"></h2>
-            <textarea class="pure-input-1 full-w auto-save" data-name="pr_desc" placeholder="Описание проекта"></textarea>
+            <h2><input type="text" name="title" class="pure-input-1 auto-save" data-name="pr_title" placeholder="Название"></h2>
+            <textarea class="pure-input-1 full-w auto-save" name="description" data-name="pr_desc" placeholder="Описание проекта"></textarea>
         </fieldset>
 
         <button type="submit" class="pure-button pure-input-1 pure-button-primary">Сохранить</button>
@@ -54,22 +55,37 @@
 
         // Form submitting
         var frm = $('#form-edit');
+        $btn = frm.children('button');
+        var bgcol = $btn.css('backgroundColor');
         frm.submit(function(e) {
             e.preventDefault();
             console.log(frm.serializeArray());
             $.ajax({
                 cache: false,
                 type: frm.attr('method'),
-                url: './result.json',
+                url: './../../result.json',
                 dataType: 'json',
                 data: frm.serializeArray(),
                 success: function (data) {
                     console.log('Submission was successful.');
                     console.log(data);
+                    // "Successful" animation
+                    $btn.fadeTo(400, 0.5);
+                    $btn.animate({backgroundColor: "#00a000"}, 200);
+                    $btn.fadeTo("fast", 1.0);
+                    $btn.animate({backgroundColor: "#00a000"}, 1000);
+                    $btn.animate({backgroundColor: bgcol}, 600);
                 },
                 error: function (data) {
                     console.log('An error occurred.');
                     console.log(data);
+                    // "Error" animation
+                    $btn.animate({backgroundColor: '#dc0000'}, 200);
+                    $btn.animate({ marginLeft: "-15px" }, 150);
+                    $btn.animate({ marginLeft: "15px" }, 150);
+                    $btn.animate({ marginLeft: "0" }, 100);
+                    $btn.animate({backgroundColor: '#dc0000'}, 1000);
+                    $btn.animate({backgroundColor: bgcol}, 600);
                 }
             });
         });
