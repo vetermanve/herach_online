@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>{% block title %}Клиника Идей{% endblock %}</title>
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-min.css">
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
@@ -133,8 +133,7 @@
         }
         
         .content {
-            padding: 1rem;
-            background-color: rgba(255,255,255,0.8);
+            padding: 0 1rem ;
         }
 
         .alignleft {
@@ -152,6 +151,24 @@
             box-shadow: none !important;
             border: none !important;
         }
+        
+        .color-bg-main-tr {
+            background-color: rgba(255,255,255,0.8);
+        }
+
+        .color-red {
+            background-color: red;
+        }
+        
+        .padding-1 {
+            padding: 1rem;
+        }
+        
+        .block-25 {
+            height: 5em;
+            text-overflow: ellipsis;
+        }
+        
     </style>
 </head>
 <body>
@@ -179,13 +196,9 @@
     </div>
 </div>
 <div class="main-content-parent">
-    <div class="pure-g main-content">
-        <div class="pure-u-1 content">
-            <div>
-            {% block body %}
-            {% endblock %}
-            </div>
-        </div>
+    <div class="main-content">
+        {% block body %}
+        {% endblock %}
     </div>
 </div>
 {% if env.debug %}
