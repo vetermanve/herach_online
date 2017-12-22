@@ -36,6 +36,10 @@ class JsonHttpResponseChannel extends DataChannelProto
         foreach ($msg->getMeta(HttpResponseSpec::META_HTTP_HEADERS, []) as $header => $value) {
             header($header.':'.$value);
         }
+    
+        if ($time = $msg->getMeta(HttpResponseSpec::META_EXECUTION_TIME)) {
+            header(HttpResponseSpec::META_HTTP_HEADER_EXECUTION_TIME.':'.round($time, 6));
+        }
         
         $channelState = $msg->getChannelState();
         $expires = $channelState->getExpiresAt();
@@ -67,6 +71,6 @@ class JsonHttpResponseChannel extends DataChannelProto
     }
     
     protected function _writeBody(ChannelMsg $msg) {
-        echo is_string($msg->body) ? $msg->body : json_encode($msg->body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);   
+        echo is_string($msg->body) ? $msg->body : json_encode($msg->body !== null ? $msg->body : new \stdClass(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);   
     }
 }

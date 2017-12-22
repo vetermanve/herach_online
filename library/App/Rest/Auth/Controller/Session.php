@@ -4,6 +4,7 @@
 namespace App\Rest\Auth\Controller;
 
 
+use App\Rest\Auth\Lib\SessionLoader;
 use App\Rest\Auth\Storage\SessionStorage;
 use App\Rest\Run\RestControllerProto;
 use Uuid\Uuid;
@@ -14,26 +15,28 @@ class Session extends RestControllerProto
     {
         $id = $this->p('id');
         
-        $storage = new SessionStorage();
-        $session = $storage->read()->get($id, __METHOD__);
-        
-        return $session;
+        return (new SessionLoader())->getSession($id);
     }
     
     public function post()
     {
         $login = $this->p('login');
         $password = $this->p('password');
-        $userId = (md5($login) === $password) ? current(explode('.', $login)) : 0;
+        $userId = ('me.'.$login === $password) && is_numeric($login) ? (int)$login : 0;
         
-        $id = Uuid::v4();
+        $sid = Uuid::v4();
         $session = [
-            'id' => $id,
+            'id' => $sid,
             'user_id' => $userId,
         ];
+        
+        if ($userId) {
+            $this->setState('sid', $sid);
+            $this->setState('uid', $userId);
+        }
     
         $storage = new SessionStorage();
-        $storage->write()->insert($id, $session, __METHOD__);
+        $storage->write()->insert($sid, $session, __METHOD__);
         
         return $session;
     }

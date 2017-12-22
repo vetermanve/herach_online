@@ -9,6 +9,7 @@ use Mu\Interfaces\DispatcherInterface;
 use Run\Rest\Exception\Redirect;
 use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;
+use Run\Util\ChannelState;
 
 class RestRequestOptions implements DispatcherInterface
 {
@@ -16,6 +17,11 @@ class RestRequestOptions implements DispatcherInterface
      * @var RunRequest;
      */
     private $request;
+    
+    /**
+     * @var ChannelState
+     */
+    private $state;
     
     private $allParams;
     
@@ -204,5 +210,21 @@ class RestRequestOptions implements DispatcherInterface
     public function getPlatform()
     {
         return $this->getHeader('x-rest-app'); 
+    }
+    
+    /**
+     * @return ChannelState
+     */
+    public function getState(): ChannelState
+    {
+        return $this->state;
+    }
+    
+    /**
+     * @param ChannelState $state
+     */
+    public function setState(ChannelState $state)
+    {
+        $this->state = $state;
     }
 }

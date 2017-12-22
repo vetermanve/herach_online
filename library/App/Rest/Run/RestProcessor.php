@@ -12,7 +12,7 @@ use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;
 use Run\Spec\HttpResponseSpec;
 
-class RestInternalProcessor extends RunRequestProcessorProto
+class RestProcessor extends RunRequestProcessorProto
 {
     
     public function prepare()
@@ -22,6 +22,8 @@ class RestInternalProcessor extends RunRequestProcessorProto
     
     public function process(RunRequest $request)
     {
+        $request->meta[HttpRequestMetaSpec::EXECUTION_START] = microtime(1);
+        
         $resParts = array_filter(explode('/', $request->getResource()));
         if (isset($resParts[0]) && $resParts[0]) {
             $moduleParts = explode('-', $resParts[0]);
@@ -81,11 +83,12 @@ class RestInternalProcessor extends RunRequestProcessorProto
             
             $options = new RestRequestOptions();
             $options->setRequest($request);
+            $options->setState($response->getChannelState());
             $controller->setRequest($options);
         
             $response->setCode(HttpResponseSpec::HTTP_CODE_OK);
             $response->setBody($controller->{$method}());
-        
+    
         } catch (\Throwable $throwable) {
             return $this->abnormalResponse(
                 HttpResponseSpec::HTTP_CODE_ERROR,
@@ -102,5 +105,11 @@ class RestInternalProcessor extends RunRequestProcessorProto
         $response->setCode($code);
         $response->body = $text;
         $this->sendResponse($response, $request);
+    }
+    
+    public function sendResponse(ChannelMsg $response, RunRequest $request)
+    {
+        $response->setMeta(HttpResponseSpec::META_EXECUTION_TIME, microtime(true) - $request->getMeta(HttpRequestMetaSpec::EXECUTION_START));
+        return parent::sendResponse($response, $request);
     }
 }

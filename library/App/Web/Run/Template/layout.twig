@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
     <script type="text/javascript" src="/vendor/jquery-3.2.1.min.js"></script>
     <script src="/vendor/jquery.color-2.1.2.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script type="text/javascript" >
+        var transport = Object.create(transportProto);
+        var connection = Object.create(ajaxConnection);
+        connection.host = document.location.protocol + '//' + document.location.host + '/rest';
+        transport.setConnection(connection);
+        transport.call('get', 'auth-user', {}, function (data) {
+            
+        });
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">
         

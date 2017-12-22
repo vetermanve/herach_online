@@ -23,11 +23,13 @@ class HttpResponseSpec
     
     const META_HTTP_HEADERS = 'headers';
     const META_HTTP_CODE    = 'code';
+    const META_EXECUTION_TIME = 'ex_time';
     
     const META_HTTP_HEADER_REQUEST_ID  = 'X-Request-Id';
     const META_HTTP_HEADER_STATUS_CODE = 'X-Status-Code';
     const META_HTTP_HEADER_ALLOW_ORIGIN = 'Access-Control-Allow-Origin';
     const META_HTTP_HEADER_LOCATION = 'Location';
+    const META_HTTP_HEADER_EXECUTION_TIME  = 'X-Time';
     
     const MESSAGE    = 'msg';
     const STATUS     = 'status';

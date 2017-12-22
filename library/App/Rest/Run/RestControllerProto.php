@@ -12,22 +12,22 @@ abstract class RestControllerProto
     protected $request;
     
     public function get() {
-        
+        return null;   
     }
     
     public function post () 
     {
-        
+        return null;
     }
     
     public function put () 
     {
-        
+        return null;
     }
     
     public function delete () 
     {
-        
+        return null;
     }
     
     public function view ()
@@ -54,5 +54,15 @@ abstract class RestControllerProto
     final public function p($name, $default = null)
     {
         return $this->request->getParam($name, $default);
+    }
+    
+    public function getState ($name, $default = null) 
+    {
+        return $this->request->getState()->get($name, $default);
+    }
+    
+    public function setState ($name, $value, $ttl = null) 
+    {
+        $this->request->getState()->set($name, $value, $ttl);
     }
 }

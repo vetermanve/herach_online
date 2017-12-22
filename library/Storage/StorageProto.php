@@ -6,6 +6,7 @@ namespace Storage;
 
 use Mu\Env;
 use Storage\ReadModule\ReadModuleInterface;
+use Storage\SearchModule\SearchModuleInterface;
 use Storage\WriteModule\WriteModuleInterface;
 
 abstract class StorageProto extends StorageModuleProto
@@ -66,7 +67,7 @@ abstract class StorageProto extends StorageModuleProto
     }
     
     /**
-     * @return WriteModuleInterface
+     * @return SearchModuleInterface
      */
     public function search () 
     {

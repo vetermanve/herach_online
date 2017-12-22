@@ -2,7 +2,7 @@
 
 namespace Load\Executor;
 
-use App\Rest\Run\RestInternalProcessor;
+use App\Rest\Run\RestProcessor;
 use Mu\Env;
 use Run\Channel\MemoryStoreChannelStack;
 use Run\RunContext;
@@ -46,7 +46,7 @@ class InternalRestLoader extends LoadExecutorProto
         $this->dataChannel = new MemoryStoreChannelStack();
         
         $this->run->setContext(new RunContext());
-        $this->run->setProcessor(new RestInternalProcessor());
+        $this->run->setProcessor(new RestProcessor());
         $this->run->setDataChannel($this->dataChannel);
         $this->run->setRuntime(new RuntimeLog('InternalRestLoader'));
         

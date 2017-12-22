@@ -27,4 +27,5 @@ class HttpRequestMetaSpec
     const REQUEST_VERSION    = 'req_version';
     const REQUEST_HEADERS    = 'req_headers';
     
+    const EXECUTION_START = 'ex_start';
 }

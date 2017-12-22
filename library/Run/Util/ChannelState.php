@@ -7,15 +7,19 @@ namespace Run\Util;
 class ChannelState
 {
     /* Cookies hack */
-    const PACK_DELIMITER = ':';
+    const PACK_DELIMITER = '---';
     
     const ENCODE_JSON_SIMPLE = 'js';
+    const ENCODE_CAT = 'c';
+    const ENCODE_NONE = 'n';
     
     const DATA_ENCODING   = 0;
     const DATA_EXPIRATION = 1;
     const DATA_BODY       = 2;
     
     const DEFAULT_TTL = 2592000; // 30 дней  
+    
+    private $encoder = self::ENCODE_NONE;
     
     /**
      * Данные состояния канала
@@ -75,8 +79,10 @@ class ChannelState
         $this->unpack();
     }
     
-    public function set ($key, $data, $ttl = self::DEFAULT_TTL) 
+    public function set ($key, $data, $ttl = null) 
     {
+        $ttl = $ttl ?? self::DEFAULT_TTL;
+        
         $this->data[$key]      = $data;
         $this->expiresAt[$key] = time() + $ttl;
         $this->touched[$key] = $key;
@@ -124,12 +130,20 @@ class ChannelState
             $expireAt = isset($this->expiresAt[$key]) ? $this->expiresAt[$key] : $time + self::DEFAULT_TTL;
             if (is_null($value)) {
                 $this->packed[$key] = null;
-            } else {
+            } else if($this->encoder == self::ENCODE_JSON_SIMPLE) {
                 $this->packed[$key] = self::ENCODE_JSON_SIMPLE
                     . self::PACK_DELIMITER
                     . $expireAt
                     . self::PACK_DELIMITER
                     . json_encode($value, JSON_UNESCAPED_UNICODE);
+            } else if($this->encoder == self::ENCODE_CAT) {
+                $this->packed[$key] = self::ENCODE_JSON_SIMPLE
+                    . self::PACK_DELIMITER
+                    . $expireAt
+                    . self::PACK_DELIMITER
+                    . $value;
+            } else {
+                $this->packed[$key] = $value;
             }
         }
         

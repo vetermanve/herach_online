@@ -73,7 +73,7 @@ class BaseRunProcessor extends RunRequestProcessorProto
         
         switch ($type) {
             case 'rest': 
-                $processor = new \App\Rest\Run\RestInternalProcessor();
+                $processor = new \App\Rest\Run\RestProcessor();
                 break;
             case 'web':
             default:
