@@ -23,11 +23,11 @@ class Projects extends WebControllerProto
             ],
         ];
         
-        return $this->render($data, 'Projects/edit');
+        return $this->render($data, 'edit');
     }
     
     public function save () 
     {
-        return $this->render([], 'Projects/edit');
+        return $this->render([], 'edit');
     }
 }

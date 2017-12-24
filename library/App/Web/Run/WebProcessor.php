@@ -94,9 +94,9 @@ class WebProcessor extends RunRequestProcessorProto
     
     
             // все что нужно шаблонизатору
-            $templatesPaths[] = $this->spaceDir.'/'.$moduleName.'/Template';
+            $templatesPaths[] = $this->spaceDir.'/'.$moduleName.'/Template/'.$controllerName;
             $templatesPaths[] = $this->spaceDir.'/Run/Template';
-            $template = $controllerName.'/'.$method;
+            $template = $method;
             $controller->setTemplate($template);
             $controller->setTemplatePaths($templatesPaths);
             
