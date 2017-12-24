@@ -4,20 +4,16 @@
 namespace App\Web\Run;
 
 
+use App\Base\Run\BaseControllerProto;
 use Load\Load;
 use Mu\Env;
-use Mu\Interfaces\DispatcherInterface;
 
-abstract class WebControllerProto
+abstract class WebControllerProto extends BaseControllerProto
 {
     protected $template = '';
     
     protected $templatePaths = [];
     
-    /**
-     * @var DispatcherInterface
-     */
-    protected $requestOptions;
     
     public function render ($data, $template = null) 
     {
@@ -55,18 +51,5 @@ abstract class WebControllerProto
     public function setTemplatePaths(array $templatePaths)
     {
         $this->templatePaths = $templatePaths;
-    }
-    
-    /**
-     * @param DispatcherInterface $requestOptions
-     */
-    public function setRequestOptions(DispatcherInterface $requestOptions)
-    {
-        $this->requestOptions = $requestOptions;
-    }
-    
-    public function p ($name, $default = null) 
-    {
-        return $this->requestOptions->getParam($name, $default);
     }
 }

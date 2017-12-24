@@ -4,8 +4,6 @@
 namespace Mu\Interfaces;
 
 
-use Mu\Dispatcher\Encoder\IEncoder;
-
 interface DispatcherInterface
 {
     /**
@@ -110,4 +108,25 @@ interface DispatcherInterface
      * @return string|null
      */
     public function getPlatform();
+    
+    /**
+     * Получить состояние
+     * 
+     * @param string $name
+     * @param null $default
+     *
+     * @return mixed
+     */
+    public function getState (string $name, $default = null);
+    
+    /**
+     * Записать состояние
+     * 
+     * @param string $name
+     * @param        $value
+     * @param null   $ttl
+     *
+     * @return mixed
+     */
+    public function setState (string $name, $value, $ttl = null);
 }

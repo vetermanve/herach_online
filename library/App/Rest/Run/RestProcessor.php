@@ -83,8 +83,8 @@ class RestProcessor extends RunRequestProcessorProto
             
             $options = new RestRequestOptions();
             $options->setRequest($request);
-            $options->setState($response->getChannelState());
-            $controller->setRequest($options);
+            
+            $controller->setRequestOptions($options);
         
             $response->setCode(HttpResponseSpec::HTTP_CODE_OK);
             $response->setBody($controller->{$method}());

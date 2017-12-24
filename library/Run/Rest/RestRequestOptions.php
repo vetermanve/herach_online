@@ -4,7 +4,6 @@
 namespace Run\Rest;
 
 
-use Mu\Dispatcher\Encoder\IEncoder;
 use Mu\Interfaces\DispatcherInterface;
 use Run\Rest\Exception\Redirect;
 use Run\RunRequest;
@@ -178,6 +177,7 @@ class RestRequestOptions implements DispatcherInterface
     {
         $this->request = $request;
         $this->allParams = $this->request->params + $this->request->data;
+        $this->state = $request->getChannelState();
     }
     
     public function getHeader($name)
@@ -213,18 +213,29 @@ class RestRequestOptions implements DispatcherInterface
     }
     
     /**
-     * @return ChannelState
+     * Получить состояние
+     *
+     * @param string $name
+     * @param null   $default
+     *
+     * @return mixed
      */
-    public function getState(): ChannelState
+    public function getState(string $name, $default = null)
     {
-        return $this->state;
+        return $this->state->get($name, $default);
     }
     
     /**
-     * @param ChannelState $state
+     * Записать состояние
+     *
+     * @param string $name
+     * @param        $value
+     * @param null   $ttl
+     *
+     * @return mixed
      */
-    public function setState(ChannelState $state)
+    public function setState(string $name, $value, $ttl = null)
     {
-        $this->state = $state;
+        $this->state->set($name, $value, $ttl);
     }
 }
