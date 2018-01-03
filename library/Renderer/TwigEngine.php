@@ -15,15 +15,22 @@ class TwigEngine implements MuRenderer
     public function render(string $templateName, array $data = [], $templatePaths = [])
     {
         $envId = crc32(json_encode($templatePaths));
+        $debug = true;
         
-        if (!isset($this->environments[$envId])) {
-            $loader = new Twig_Loader_Filesystem($templatePaths);
-            $env =  new Twig_Environment($loader);
-            $this->environments[$envId] = $env;
-        } else {
-            $env = $this->environments[$envId];
+        try {
+            if (!isset($this->environments[$envId])) {
+                $loader = new Twig_Loader_Filesystem($templatePaths);
+                $env =  new Twig_Environment($loader);
+                $this->environments[$envId] = $env;
+            } else {
+                $env = $this->environments[$envId];
+            }
+            
+            $page = $env->render($templateName.'.twig', $data);    
+        } catch (\Twig_Error $error) {
+            $page = 'Page error: '.($debug ? $error->getMessage() : '');
         }
-        
-        return $env->render($templateName.'.twig', $data);
+    
+        return $page; 
     }
 }

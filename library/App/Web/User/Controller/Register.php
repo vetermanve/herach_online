@@ -23,8 +23,6 @@ class Register extends WebControllerProto
             ], 'already_registered');
         }
         
-        $this->render([]);
-        
-        return __METHOD__;
+        return $this->render([]);
     }
 }

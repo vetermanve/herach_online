@@ -1,0 +1,23 @@
+{
+  "name": "public",
+  "authors": [
+    "Denisov Mikhail <manwebdev@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "src"
+  ],
+  "dependencies": {
+    "jquery-color": "^2.1.2",
+    "magnific-popup": "^1.1.0"
+  }
+}

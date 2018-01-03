@@ -118,7 +118,7 @@ class WebProcessor extends RunRequestProcessorProto
         } catch (\Throwable $throwable) {
             return $this->abnormalResponse(
                 HttpResponseSpec::HTTP_CODE_ERROR,
-                'Internal error : '. $throwable->getMessage().' on '.$throwable->getTraceAsString(),
+                'Internal error ('.get_class($throwable).') : '. $throwable->getMessage().' on '.$throwable->getTraceAsString(),
                 $response,
                 $request
             );

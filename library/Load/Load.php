@@ -40,9 +40,11 @@ class Load
     /**
      * @param array $results
      */
-    public function setResults(array $results)
+    public function setResults($results)
     {
-        $this->results = $results;
+        if ($results) {
+            $this->results = $results;    
+        }
     }
     
     /**

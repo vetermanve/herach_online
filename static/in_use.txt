@@ -1,0 +1,4 @@
+static/bower_components/jquery/dist/jquery.min.js
+static/bower_components/jquery-color/jquery.color.js
+static/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js
+static/bower_components/magnific-popup/dist/magnific-popup.css

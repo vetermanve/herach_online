@@ -4,33 +4,13 @@
 namespace Storage\ReadModule;
 
 
-use Storage\Data\DataAdapterInterface;
-use Storage\Request\StorageDataRequest;
-use Storage\StorageDependency;
-use Storage\StorageModuleProto;
-use Storage\StorageProfiler;
+use Storage\StorageDataAccessModuleProto;
 
-class SimpleReadModule extends StorageModuleProto implements ReadModuleInterface
+class SimpleReadModule extends StorageDataAccessModuleProto implements ReadModuleInterface
 {
-    /**
-     * @var DataAdapterInterface
-     */
-    protected $dataAdapter;
-    
-    /**
-     * @var StorageProfiler
-     */
-    protected $profiler;
-    
     private $idKey = 'id';
     
     private $scopeKey;
-    
-    public function configure ()
-    {
-        $this->dataAdapter = $this->diContainer->bootstrap(StorageDependency::DATA_ADAPTER);
-        $this->profiler = $this->diContainer->bootstrap(StorageDependency::PROFILER);
-    }
     
     public function get($id, $caller, $default = null)
     {

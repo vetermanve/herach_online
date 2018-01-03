@@ -1,5 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
-/vendor
+/static/bower_components/
+/vendor/
 /cluster/*
 !/cluster/configGeneration.php

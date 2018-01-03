@@ -11,6 +11,7 @@ class JBaseDataAdapter extends DataAdapterProto
 {
     const READ_ACCESS = 'r';
     const CREATE_ACCESS = 'w';
+    const ADD_ACCESS = 'x';
     
     const F_DATA = 'd';
     const F_TOUCHED = 't';
@@ -42,11 +43,21 @@ class JBaseDataAdapter extends DataAdapterProto
     public function getPointer($id, $method = self::READ_ACCESS) {
         $filePath = $this->_getTablePath().$id;
         
-        if ($method === self::READ_ACCESS && !file_exists($filePath)) {
+        $fileExists = file_exists($filePath);
+        if ($method === self::READ_ACCESS && !$fileExists) {
+            return null;
+        }
+        
+        if ($method === self::ADD_ACCESS && $fileExists) {
             return null;
         }
             
         return fopen($filePath, $method);    
+    }
+    
+    public function getAllItems() {
+        $list = scandir($this->_getTablePath());
+        return array_diff($list, ['.','..']);
     }
     
     /**
@@ -61,8 +72,9 @@ class JBaseDataAdapter extends DataAdapterProto
         $request = new StorageDataRequest(
             [$id, $insertBind],
             function ($id, $bind) use ($self) {
-                $res = $self->getPointer($id, self::CREATE_ACCESS);
-                return fwrite($res, $this->_packData($bind));
+                $pointer = $self->getPointer($id, self::ADD_ACCESS);
+                $res = fwrite($pointer, $this->_packData($bind));
+                return $res ? $bind : null;
             }
         );
         
@@ -150,7 +162,34 @@ class JBaseDataAdapter extends DataAdapterProto
      */
     public function getSearchRequest($filter, $limit = 1, $conditions = [])
     {
-        // TODO: Implement getSearchRequest() method.
+        $self = $this;
+        $request = new StorageDataRequest(
+            [$filter],
+            function ($filter) use ($self) {
+                $items = $self->getAllItems();
+                $results = [];
+                foreach ($items as $id) {
+                    $pointer = $self->getPointer($id);
+                    $isOk = true;
+                    if ($pointer) {
+                        $record = json_decode(stream_get_contents($pointer), true);
+                        foreach ($filter as $key => $value) {
+                            if (!(isset($record[$key]) && $record[$key] == $value)) {
+                                $isOk = false;
+                            }
+                        }
+                        
+                        if ($isOk && isset($record[self::F_DATA])) {
+                            $results[$id] = $record[self::F_DATA] + [$this->primaryKey => $id];
+                        }
+                    }
+                }
+            
+                return $results;
+            }
+        );
+    
+        return $request;
     }
     
     

@@ -20,11 +20,13 @@ class Session extends RestControllerProto
     
     public function post()
     {
-        $login = $this->p('login');
+        $login = trim($this->p('login'));
         $password = $this->p('password');
-        $userId = ('me.'.$login === $password) && is_numeric($login) ? (int)$login : 0;
+        
+        $userId = ($password === 'me.'.$login ) ? $login : 0;
         
         $sid = Uuid::v4();
+        
         $session = [
             'id' => $sid,
             'user_id' => $userId,

@@ -6,16 +6,21 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-min.css">
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
-    <script type="text/javascript" src="/vendor/jquery-3.2.1.min.js"></script>
-    <script src="/vendor/jquery.color-2.1.2.min.js"></script>
-    <script src="/js/main.js"></script>
+    <link rel="stylesheet" href="/vendor/magnific-popup.css">
+    <script type="text/javascript" src="/vendor/jquery.min.js"></script>
+    <script type="text/javascript" src="/vendor/jquery.magnific-popup.min.js"></script>
+    <script type="text/javascript" src="/js/main.js"></script>
     <script type="text/javascript" >
         var transport = Object.create(transportProto);
         var connection = Object.create(ajaxConnection);
         connection.host = document.location.protocol + '//' + document.location.host + '/rest';
         transport.setConnection(connection);
         transport.call('get', 'auth-user', {}, function (data) {
-            
+            if (typeof data.user_id !== 'undefined') {
+                transport.call('get', 'user', {id : data.user_id}, function (user) {
+                    $("#login a").text(user.nickname);
+                })
+            }
         });
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -90,17 +95,21 @@
         a, a:visited, a:active {
             /*color: #aaaaaa;*/
             color: #222222;
-            text-decoration: none;
+            text-decoration: underline;
             -webkit-transition: color 0.1s ease-out ;
             -moz-transition: color 0.1s ease-out ;
             -o-transition: color 0.1s ease-out ;
             transition: color 0.1s ease-out ;
         }
 
-        .top-menu a:hover {
+        a:hover {
             color: #6196d2;
         }
-        
+
+        .menu a {
+            text-decoration: none;
+        }
+
         .header-area {
             background: rgba(0,98,152, 0.8);
             height: 4em;
@@ -193,7 +202,9 @@
             <div class="top-menu align-parent">
                 <a href="/projects/new/project">+проект</a>
                 <a href="/">все проекты</a>
-                <a href="/user-auth/" class="alignright">войти</a>
+                <span id="login">
+                    <a href="/user-auth/" class="alignright">войти</a>
+                </span>
             </div>
         </div>
     </div>

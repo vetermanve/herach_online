@@ -4,31 +4,11 @@
 namespace Storage\WriteModule;
 
 
-use Storage\Data\DataAdapterInterface;
 use Storage\Request\StorageDataRequest;
-use Storage\StorageDependency;
-use Storage\StorageModuleProto;
-use Storage\StorageProfiler;
+use Storage\StorageDataAccessModuleProto;
 
-class AsyncWriteModule  extends StorageModuleProto implements WriteModuleInterface
+class AsyncWriteModule  extends StorageDataAccessModuleProto implements WriteModuleInterface
 {
-    /**
-     * @var DataAdapterInterface
-     */
-    protected $dataAdapter;
-    
-    /**
-     * @var StorageProfiler
-     */
-    protected $profiler;
-    
-    
-    public function configure ()
-    {
-        $this->dataAdapter = $this->diContainer->bootstrap(StorageDependency::DATA_ADAPTER);
-        $this->profiler = $this->diContainer->bootstrap(StorageDependency::PROFILER);
-    }
-    
     /**
      * @param $id
      * @param $bind

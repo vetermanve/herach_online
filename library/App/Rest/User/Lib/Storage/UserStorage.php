@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Rest\Auth\Storage;
+namespace App\Rest\User\Lib\Storage;
 
 
 use App\Rest\Storage\DataAdapterFactory;
@@ -9,13 +9,12 @@ use Storage\SimpleStorage;
 use Storage\StorageContext;
 use Storage\StorageDependency;
 
-class SessionStorage extends SimpleStorage
+class UserStorage extends SimpleStorage
 {
-    const USER_ID = 'user_id'; 
     
     public function loadConfig()
     {
-        $this->context->set(StorageContext::RESOURCE, 'session');
+        $this->context->set(StorageContext::RESOURCE, 'user-profile');
     }
     
     public function customizeDi(StorageDependency $container, StorageContext $context)
