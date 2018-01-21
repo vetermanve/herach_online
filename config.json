@@ -3,7 +3,7 @@
     "default" : {
       "database" : "reanima_store",
       "type" : "jbase",
-      "connection" : "/macdata/projects/mutants/jbase"
+      "connection" : "/srv/data/jbase"
     }
   },
   "error" : {
