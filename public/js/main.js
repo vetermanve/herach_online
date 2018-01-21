@@ -3,18 +3,25 @@
  */
 
 var transportProto = {
-    connection : {},
-    meta : {},
-    setConnection : function (connection) {
-        this.connection = connection
+    REST         : 'rest',
+    PAGE         : 'page',
+    connections  : {},
+    meta         : {},
+    setConnection: function (connection, type) {
+        type = type || this.REST;
+        this.connections[type] = connection
     },
-    call : function (method, resource, data, success, error) {
-        this.connection.call(method, resource, data, success, error);
+    call         : function (method, resource, data, success, error) {
+        this.connections[this.REST].call(method, resource, data, success, error);
+    },
+    loadPage     : function (method, resource, data, success, error) {
+        this.connections[this.PAGE].call(method, resource, data, success, error);
     }
 };
 
 var ajaxConnection = {
     host : 'http://localhost/rest/',
+    type : 'json',
     init : function (meta) {
         this.host = meta['host'] || this.host;
     },
@@ -24,7 +31,7 @@ var ajaxConnection = {
             url : self.host + '/' + resource,
             cache: false,
             type: method,
-            dataType: 'json',
+            dataType: self.type,
             data: data,
             success: function (data) {
                 self.log('successful ' + method +  ':' + resource, data);
@@ -45,11 +52,25 @@ var ajaxConnection = {
     }
 };
 
-var setupForm = function(obj, resource, success, error) {
+var setupForm = function(obj, resource, success, error, method, beforeSend) {
+    method = method || 'post';
     var frm = $(obj);
-    console.log(frm);
     frm.submit(function(e) {
+        var data = frm.serializeArray();
         e.preventDefault();
-        transport.call('post', resource, frm.serializeArray(), success, error);
+        if (beforeSend) {
+            try {
+                data = beforeSend(data) || data;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        transport.call(method, resource, data, success, error);
     });
+};
+
+var nav = {
+    go : function (page) {
+        this.location.pathname = document.location.href = page;  
+    }
 };

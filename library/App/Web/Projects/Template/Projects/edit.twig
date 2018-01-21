@@ -29,32 +29,6 @@
     </form>
 
     <script type="text/javascript">
-        var prefix = document.location;
-        prefix = prefix.toString().split("?")[0];
-        
-        var save = function(obj, name) {
-            console.log('save');
-            localStorage.setItem("AUTOSAVE_" + prefix + "_" + name , $(obj).val());
-        };
-
-        var restore = function (obj, name) {
-            var data = localStorage.getItem("AUTOSAVE_"  + prefix + "_" + name);
-            console.log('restore try', data);
-            if (typeof (data) === 'string') {
-                $(obj).val(data);
-                console.log('restore ' + data);
-            }
-        };
-        
-        $('.auto-save').each(function (id, obj_raw) {
-            var obj = $(obj_raw);
-            var name = obj.data('name');
-            console.log('Autosave ' + name);
-            obj.keyup(function() {save(obj, name)});
-            obj.ready(function() {restore(obj, name)});
-        });
-
-
         var frm = $('#form-edit');
         var $btn = frm.children('button');
         var bgcol = $btn.css('backgroundColor');

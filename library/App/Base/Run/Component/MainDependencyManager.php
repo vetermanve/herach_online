@@ -4,6 +4,7 @@
 namespace App\Base\Run\Component;
 
 use Load\Executor\InternalRestLoader;
+use Modular\ModularContextProto;
 use Mu\Cache;
 use Mu\Env;
 use Router\Router;
@@ -19,6 +20,12 @@ class MainDependencyManager extends RunComponentProto
     {
         $self = $this;
         
+        $context = $this->context;
+        
+        if ($context->getPath([RunContext::GLOBAL_CONFIG, 'error', 'debug'])) {
+            $this->context->setEnv(RunContext::ENV_DEBUG, true);
+        }
+        
         $container = new ModuleContainer();
         Env::setContainer($container);
         
@@ -29,6 +36,13 @@ class MainDependencyManager extends RunComponentProto
         $config->loadDataFromContext(RunContext::GLOBAL_CONFIG);
         
         $container->setModule('config', $config);
+    
+        $container->setModule('env_context', function () use ($context) {
+            $data = $context->get(RunContext::GLOBAL_CONFIG, []);
+            $context = new ModularContextProto();
+            $context->fill($data);
+            return $context;
+        });
         
         $container->setModule('events', function () {
             return new EventDispatcher(); 
