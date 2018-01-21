@@ -4,9 +4,7 @@
 namespace Router;
 
 
-use Mu\Amqp\Message;
 use Mu\Env;
-use Router\Actors\RouterReplyReader;
 use Router\Actors\RouterRequestConsumer;
 use Router\Exceptions\EmptyRouterMessage;
 use Router\Model\RouterServer;
@@ -59,7 +57,7 @@ class Router
      */
     public function init($config = null)
     {
-        $config = $config ?: Env::getConfig();
+        $config = $config ?: Env::getLegacyConfig();
         $host   = $config->get('host', 'amqp', RouterConfig::AMQP_RABBIT_DEFAULT_HOST);
         $port   = $config->get('port', 'amqp', RouterConfig::AMQP_RABBIT_DEFAULT_PORT);
         
@@ -226,10 +224,6 @@ class Router
     {
         if (is_string($message) || is_numeric($message)) {
             return $message;
-        }
-        
-        if ($message instanceof Message) {
-            return $message->getPayload();
         }
         
         if (is_array($message)) {

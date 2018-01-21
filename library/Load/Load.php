@@ -37,6 +37,16 @@ class Load
         return $this->results;
     }
     
+    public function getResultsCount () 
+    {
+        return count($this->results);
+    }
+    
+    public function getFirstResult ($default = null) 
+    {
+        return count($this->results) ? reset($this->results) : $default;
+    }
+    
     /**
      * @param array $results
      */

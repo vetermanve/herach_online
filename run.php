@@ -29,22 +29,16 @@ $context->fill([
     RunContext::IS_SECURE_CONNECTION => stripos($_SERVER['SERVER_PROTOCOL'],'https') === true
 ]);
 
-$configFile = 'conf/core.ini';
+///
+$configFile = 'config.json';
 
 $context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () use ($configFile, $context) {
     if (file_exists($configFile)) {
-        return parse_ini_file($configFile, true);    
+        $data = json_decode(file_get_contents($configFile), true) ?? [];
+        return $data;
     }
     
-    $config = [];
-    
-    $host = $context->get(RunContext::HOST, 'localhost');
-    
-    if (strpos($host, 'localhost') !== false) {
-        $config['db']['port'] = '5432';    
-    }
-     
-    return $config;
+    return [];
 });
 
 $runtime = new \Run\RuntimeLog($context->get(RunContext::IDENTITY));

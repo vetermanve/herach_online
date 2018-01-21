@@ -24,4 +24,16 @@ class SimpleWriteModule extends StorageDataAccessModuleProto implements WriteMod
         
         return $request->getResult();
     }
+    
+    
+    public function remove($id, $callerMethod)
+    {
+        $timer = $this->profiler->openTimer(__METHOD__, '', $callerMethod);
+        $request = $this->dataAdapter->getDeleteRequest([$id]);
+        $request->send();
+        $request->fetch();
+        $this->profiler->finishTimer($timer);
+    
+        return $request->getResult();
+    }
 }

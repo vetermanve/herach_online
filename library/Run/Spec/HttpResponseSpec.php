@@ -30,6 +30,7 @@ class HttpResponseSpec
     const META_HTTP_HEADER_ALLOW_ORIGIN = 'Access-Control-Allow-Origin';
     const META_HTTP_HEADER_LOCATION = 'Location';
     const META_HTTP_HEADER_EXECUTION_TIME  = 'X-Time';
+    const META_HTTP_HEADER_CONTENT_TYPE  = 'Content-Type';
     
     const MESSAGE    = 'msg';
     const STATUS     = 'status';
@@ -38,14 +39,17 @@ class HttpResponseSpec
     const DATA       = 'data';
     const USER_ID    = 'user_id';
     
+    const CONTENT_JSON = 'application/json; charset=UTF-8';
+    const CONTENT_HTML = 'text/html; charset=UTF-8';
+    
     public static $absoluteHeaders = [
-        'Access-Control-Allow-Headers'     => 'Origin, Accept, X-Suppress-HTTP-Code, Content-Type, X-Rest-App, Authorization',
-        'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, DELETE, HEAD, PUT, COUNT',
-        'Access-Control-Expose-Headers'    => 'X-Status-Code, Content-Type, X-Application',
-        'Access-Control-Allow-Credentials' => 'true',
-        'Content-Type'                     => 'application/json; charset=UTF-8',
-        'Cache-Control'                    => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
-        'Pragma'                           => 'no-cache',
-        'Expires'                          => '0',
+        'Access-Control-Allow-Headers'      => 'Origin, Accept, X-Suppress-HTTP-Code, Content-Type, X-Rest-App, Authorization',
+        'Access-Control-Allow-Methods'      => 'POST, GET, OPTIONS, DELETE, HEAD, PUT, COUNT',
+        'Access-Control-Expose-Headers'     => 'X-Status-Code, Content-Type, X-Application',
+        'Access-Control-Allow-Credentials'  => 'true',
+        self::META_HTTP_HEADER_CONTENT_TYPE => self::CONTENT_JSON,
+        'Cache-Control'                     => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
+        'Pragma'                            => 'no-cache',
+        'Expires'                           => '0',
     ];
 }

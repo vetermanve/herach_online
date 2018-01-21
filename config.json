@@ -1,0 +1,12 @@
+{
+  "db": {
+    "default" : {
+      "database" : "coffee",
+      "type" : "jbase",
+      "connection" : "/macdata/projects/coffee/jbase"
+    }
+  },
+  "error" : {
+    "debug" : true
+  }
+}
