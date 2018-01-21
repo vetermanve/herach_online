@@ -1,9 +1,9 @@
 {
   "db": {
     "default" : {
-      "database" : "coffee",
+      "database" : "reanima_store",
       "type" : "jbase",
-      "connection" : "/macdata/projects/coffee/jbase"
+      "connection" : "/macdata/projects/mutants/jbase"
     }
   },
   "error" : {
