@@ -8,6 +8,7 @@ use Run\ChannelMessage\ChannelMsg;
 use Run\ChannelMessage\HttpReply;
 use Run\Processor\RunRequestProcessorProto;
 use Run\Rest\RestRequestOptions;
+use Run\RunContext;
 use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;
 use Run\Spec\HttpResponseSpec;
@@ -34,12 +35,16 @@ class WebProcessor extends RunRequestProcessorProto
     
     public function process(RunRequest $request)
     {
+        if ($this->context->getEnv(RunContext::ENV_DEBUG)) {
+            $request->params['_debug'] = true;
+        }
+        
         $response = new HttpReply();
         $response->setUid($request->getUid());
         $response->setDestination($request->getReply());
         $response->setChannelState($request->getChannelState());
         $response->setHeaders(HttpResponseSpec::$absoluteHeaders);
-        $response->setHeader('Content-Type', 'text/html; charset=UTF-8');
+        $response->setHeader(HttpResponseSpec::META_HTTP_HEADER_CONTENT_TYPE, HttpResponseSpec::CONTENT_HTML);
     
         $resParts = array_filter(explode('/', $request->getResource()));
         if (isset($resParts[0]) && $resParts[0]) {
@@ -123,7 +128,6 @@ class WebProcessor extends RunRequestProcessorProto
                 $request
             );
         } 
-        ///macdata/projects/mutants/reanima-back/library/App/Web/Run/Template
         
         $this->sendResponse($response, $request);
     }

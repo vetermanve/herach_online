@@ -38,4 +38,16 @@ class User extends WebControllerProto
             'user_id' => $session['user_id'],
         ]);
     }
+    
+    public function list () 
+    {
+        $userLoad = new Load('user');
+        $this->load($userLoad);
+    
+        $user = $userLoad->getResults();
+    
+        return $this->render([
+            'users' => $user,
+        ]);
+    }
 }

@@ -42,11 +42,55 @@ class RunContext extends ModularContextProto
     public function &getLink($key, $writeDefault)
     {
         if (isset($this->activation[$key])) {
-            $writeDefault = $this->activation[$key]();
-            unset($this->activation[$key]);
+            $this->data[$key] = $this->_activate($key);
         }
         
         return parent::getLink($key, $writeDefault);
+    }
+    
+    public function get($key, $default = null)
+    {
+        if (isset($this->activation[$key])) {
+            $this->data[$key] = $this->_activate($key);
+        }
+        
+        return parent::get($key, $default);
+    }
+    
+    public function getScope($scope, $key, $default = null)
+    {
+        if (isset($this->activation[$key])) {
+            $this->data[$key] = $this->_activate($key);
+        }
+        
+        return parent::getScope($scope, $key, $default);
+    }
+    
+    public function getPath ($path, $default = null) 
+    {
+        $path = is_string($path) ? explode('.', $path) : $path;
+        $root = &$this->data;
+        
+        $firstLayer = reset($path);
+        if (isset($this->activation[$firstLayer])) {
+            $this->data[$firstLayer] = $this->_activate($firstLayer);
+        }
+        
+        foreach ($path as $el) {
+            if (isset($root[$el])) {
+                $root = &$root[$el];
+            } else {
+                return $default;
+            }
+        }
+        
+        return $root;
+    }
+    
+    private function _activate($key) {
+        $data = $this->activation[$key]();
+        unset($this->activation[$key]);
+        return $data;
     }
     
 }

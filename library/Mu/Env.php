@@ -2,7 +2,7 @@
 
 namespace Mu;
 
-use Mu\Interfaces\ConfigInterface;
+use Modular\ModularContextProto;
 use Mu\Interfaces\ContainerInterface;
 use Mu\Interfaces\SessionInterface;
 use Monolog\Logger;
@@ -33,24 +33,32 @@ class Env
      */
     public static function isDebugMode()
     {
-        self::$isDebug === null && self::$isDebug = (bool)filter_var(self::getConfig()->get('debug', 'error'), FILTER_VALIDATE_BOOLEAN);
+        self::$isDebug === null && self::$isDebug = (bool)filter_var(self::getEnvContext()->getScope('error', 'debug'), FILTER_VALIDATE_BOOLEAN);
         return self::$isDebug;
     }
 
     public static function isProfiling()
     {
-        self::$isProfiling === null && self::$isProfiling = self::isDebugMode() || self::getConfig()->get('profiling', 'error'); 
+        self::$isProfiling === null && self::$isProfiling = self::isDebugMode() || self::getEnvContext()->getScope('error', 'profiling'); 
         return self::$isProfiling;
     }
 
     /**
      * @return \Mu\Interfaces\ConfigInterface
      */
-    public static function getConfig()
+    public static function getLegacyConfig()
     {
         return self::getContainer()->bootstrap('config');
     }
-
+    
+    /**
+     * @return ModularContextProto
+     */
+    public static function getEnvContext()
+    {
+        return self::getContainer()->bootstrap('env_context');
+    }
+    
     
     /**
      * @return \Mu\Cache\Redis

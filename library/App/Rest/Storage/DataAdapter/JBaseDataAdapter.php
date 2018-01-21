@@ -55,6 +55,11 @@ class JBaseDataAdapter extends DataAdapterProto
         return fopen($filePath, $method);    
     }
     
+    public function closePointer ($resource) 
+    {
+        return fclose($resource);
+    }
+    
     public function getAllItems() {
         $list = scandir($this->_getTablePath());
         return array_diff($list, ['.','..']);
@@ -74,7 +79,8 @@ class JBaseDataAdapter extends DataAdapterProto
             function ($id, $bind) use ($self) {
                 $pointer = $self->getPointer($id, self::ADD_ACCESS);
                 $res = fwrite($pointer, $this->_packData($bind));
-                return $res ? $bind : null;
+                $self->closePointer($pointer);
+                return $res ? [$this->primaryKey => $id] + $bind : null;
             }
         );
         
@@ -130,6 +136,7 @@ class JBaseDataAdapter extends DataAdapterProto
                         if (isset($record[self::F_DATA])) {
                             $results[$id] = $record[self::F_DATA] + [$this->primaryKey => $id];
                         }
+                        $self->closePointer($pointer);
                     } else {
                         $results[$id] = null;
                     }
@@ -149,7 +156,22 @@ class JBaseDataAdapter extends DataAdapterProto
      */
     public function getDeleteRequest($ids)
     {
-        // TODO: Implement getDeleteRequest() method.
+        $self = $this;
+        $request = new StorageDataRequest(
+            [$ids],
+            function ($ids) use ($self) {
+                $tablePath = $self->_getTablePath();
+                $results = [];
+                foreach ($ids as $id) {
+                    $filePath = $tablePath.$id;
+                    $results[$id] = unlink($filePath);
+                }
+            
+                return $results;
+            }
+        );
+        
+        return $request;
     }
     
     /**
@@ -164,8 +186,8 @@ class JBaseDataAdapter extends DataAdapterProto
     {
         $self = $this;
         $request = new StorageDataRequest(
-            [$filter],
-            function ($filter) use ($self) {
+            [$filter, $limit],
+            function ($filter, $limit) use ($self) {
                 $items = $self->getAllItems();
                 $results = [];
                 foreach ($items as $id) {
@@ -174,13 +196,19 @@ class JBaseDataAdapter extends DataAdapterProto
                     if ($pointer) {
                         $record = json_decode(stream_get_contents($pointer), true);
                         foreach ($filter as $key => $value) {
-                            if (!(isset($record[$key]) && $record[$key] == $value)) {
+                            if (!(isset($record[self::F_DATA][$key]) && $record[self::F_DATA][$key] == $value)) {
                                 $isOk = false;
                             }
                         }
                         
                         if ($isOk && isset($record[self::F_DATA])) {
-                            $results[$id] = $record[self::F_DATA] + [$this->primaryKey => $id];
+                            $results[$id] = [$this->primaryKey => $id] + $record[self::F_DATA];
+                        }
+                        
+                        $self->closePointer($pointer);
+                        
+                        if (count($results) >= $limit) {
+                            break;
                         }
                     }
                 }

@@ -29,8 +29,8 @@ class DatabaseFactory
      */
     public function getDatabaseContextByResource ($resource) : DatabaseContext
     {
-        $host = Env::getConfig()->get('host', 'db', '127.0.0.1');
-        $port = Env::getConfig()->get('port', 'db', '5432');
+        $host = Env::getLegacyConfig()->get('host', 'db', '127.0.0.1');
+        $port = Env::getLegacyConfig()->get('port', 'db', '5432');
     
         $context = new DatabaseContext();
         $context->fill([

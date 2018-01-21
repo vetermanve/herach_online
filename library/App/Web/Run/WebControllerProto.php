@@ -14,6 +14,19 @@ abstract class WebControllerProto extends BaseControllerProto
     
     protected $templatePaths = [];
     
+    public function _getCurrentUserId () 
+    {
+        $auth = new Load('auth-session');
+        $auth->setParams([
+            'id' => $this->getState('sid'),
+        ]);
+        $this->load($auth);
+    
+        $session = $auth->getResults();
+        Env::getLogger()->info('Session ', $session);
+        
+        return isset($session['user_id']) ? $session['user_id'] : 0;
+    }
     
     public function render ($data, $template = null) 
     {

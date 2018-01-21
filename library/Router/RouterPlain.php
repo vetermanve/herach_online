@@ -4,7 +4,6 @@
 namespace Router;
 
 
-use Mu\Amqp\Message;
 use Mu\Env;
 use Router\Exceptions\EmptyRouterMessage;
 use Uuid\Uuid;
@@ -50,7 +49,7 @@ class RouterPlain
      */
     public function init($config = null)
     {
-        $config = $config ?: Env::getConfig();
+        $config = $config ?: Env::getLegacyConfig();
         $host = $config->get('host', 'amqp', 'localhost');
         $port = $config->get('port', 'amqp', 5672);
         
@@ -303,10 +302,6 @@ class RouterPlain
             return $message;
         }
         
-        if ($message instanceof Message) {
-            return $message->getPayload();
-        }
-        
         if (is_array($message)) {
             return json_encode($message, JSON_UNESCAPED_UNICODE);
         }
@@ -366,7 +361,7 @@ class RouterPlain
         try {
             $connection->connect();
         } catch (\Exception $e) {
-            Env::getLogger()->addError($e->getMessage(), $connectionData);
+            Env::getLogger()->error($e->getMessage(), $connectionData);
             throw $e;
         }
         

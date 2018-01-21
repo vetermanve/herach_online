@@ -11,6 +11,10 @@ use Storage\StorageDependency;
 
 class UserStorage extends SimpleStorage
 {
+    const ID = 'id';
+    const NICKNAME = 'nickname';
+    const SOLT     = 'solt';
+    const PASSWORD = 'password';
     
     public function loadConfig()
     {
