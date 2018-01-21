@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-min.css">
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
-    <link rel="stylesheet" href="/vendor/magnific-popup.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <script type="text/javascript" src="/vendor/jquery.min.js"></script>
-    <script type="text/javascript" src="/vendor/jquery.magnific-popup.min.js"></script>
-    <script type="text/javascript" src="/js/main.js"></script>
+    <link rel="stylesheet" href="{{ static_host }}/vendor/magnific-popup.css">
+    <link rel="stylesheet" href="{{ static_host }}/css/main.css">
+    <script type="text/javascript" src="{{ static_host }}/vendor/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/vendor/jquery.magnific-popup.min.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/js/main.js"></script>
     <script type="text/javascript" >
         var transport = Object.create(transportProto);
         
@@ -103,6 +103,6 @@
     </div>
 </div>
 {% endif %}
-<script type="text/javascript" src="/js/autosave.js"></script>
+<script type="text/javascript" src="{{ static_host }}/js/autosave.js"></script>
 </body>
 </html>

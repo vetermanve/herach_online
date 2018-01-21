@@ -33,6 +33,7 @@ abstract class WebControllerProto extends BaseControllerProto
         $template = $template ?: $this->template;
         $data['request_id'] = $this->requestOptions->getReqiestId();
         $data['env']['debug'] = (bool)$this->requestOptions->getParam('_debug');
+        $data['static_host'] = Env::getEnvContext()->getScope('static','host', '');
         
         return Env::getRenderer()->render($template, $data, $this->templatePaths);
     }

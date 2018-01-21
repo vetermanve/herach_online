@@ -8,5 +8,8 @@
   },
   "error" : {
     "debug" : true
+  },
+  "static" : {
+    "host" : ""
   }
 }
