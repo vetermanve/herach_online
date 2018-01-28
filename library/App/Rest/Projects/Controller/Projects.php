@@ -14,10 +14,23 @@ class Projects extends RestControllerProto
     {
         $count = $this->p('count', 1);
         
+        if ($id = $this->p('id')) {
+            $ids = [$id]; 
+        } else {
+            $ids = $this->p('ids');
+        }
+    
         $storage = new ProjectStorage();
-        $data    = $storage->search()->find([], $count, __METHOD__);
         
-        return $data;
+        $filter = [];
+        
+        if ($ids) {
+            $data = $storage->read()->mGet($ids, __METHOD__, []);
+        } else {
+            $data = $storage->search()->find($filter, $count, __METHOD__);
+        }
+    
+        return array_values($data);
     }
     
     public function post()
