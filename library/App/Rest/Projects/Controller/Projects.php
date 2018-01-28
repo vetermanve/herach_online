@@ -4,39 +4,33 @@
 namespace App\Rest\Projects\Controller;
 
 
-use App\Rest\Projects\Model\Project;
+use App\Rest\Projects\Storage\ProjectStorage;
 use App\Rest\Run\RestControllerProto;
-use Database\DatabaseFactory;
+use Uuid\Uuid;
 
 class Projects extends RestControllerProto
 {
-    public function get () 
+    public function get()
     {
         $count = $this->p('count', 1);
         
-        $dbFactory = new DatabaseFactory();
-        $table = $dbFactory->getDatabaseByResource(Project::DB_TABLE);
-        $data = $table->getAll($count);
-        
-        foreach ($data as &$item) {
-            if (isset($item['name'])) {
-                $item[Project::F_TITLE] = $item['name'];    
-            }
-        } unset($item);
+        $storage = new ProjectStorage();
+        $data    = $storage->search()->find([], $count, __METHOD__);
         
         return $data;
     }
     
-    public function post () 
+    public function post()
     {
+        $id = $this->p(ProjectStorage::ID, null) ?? Uuid::v4();
+        
         $data = [
-            Project::F_TITLE => $this->p(Project::F_TITLE),
-            Project::F_DESC => $this->p(Project::F_DESC)
+            ProjectStorage::F_TITLE => $this->p(ProjectStorage::F_TITLE),
+            ProjectStorage::F_DESC  => $this->p(ProjectStorage::F_DESC)
         ];
-    
-        $dbFactory = new DatabaseFactory();
-        $table = $dbFactory->getDatabaseByResource(Project::DB_TABLE);
-        $result = $table->set(null, $data);
+        
+        $storage = new ProjectStorage();
+        $result  = $storage->write()->insert($id, $data, __METHOD__);
         
         return $result;
     }
