@@ -28,7 +28,7 @@ $performance = 1;
 $version     = $releaseInfo['id'];
 
 $cloud = [
-    'all'     => 20,
+    'all'     => 4,
 //    'user'    => 10,
 //    'api'     => 4,
 //    'testing' => 2,
