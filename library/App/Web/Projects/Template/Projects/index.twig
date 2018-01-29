@@ -1,0 +1,11 @@
+{% extends 'layout.twig' %}
+
+{% block head %}
+    <h1>{{ project.title }}</h1>
+{% endblock %}
+
+{% block body %}
+    <div class="content">
+        <p class="pre-line">{{ project.desc }}</p>
+    </div>
+{% endblock %}

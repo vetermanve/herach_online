@@ -83,6 +83,8 @@ a:hover {
     text-decoration: none;
 }
 
+/* main layout theme */
+
 .header-area {
     background: rgba(0,98,152, 0.8);
     height: 4em;
@@ -91,6 +93,27 @@ a:hover {
 .sub-theme {
     background-color: rgba(239, 209, 159, 0.8);
 }
+
+.content {
+    padding: 0 1rem 1rem 1rem ;
+    min-height: 60vh;
+}
+
+.layout-footer {
+    background: rgba(0,98,152, 0.8);
+    padding: 2em 0;
+}
+
+.pre-line {
+    white-space: pre-line;
+}
+
+/* end main layout */
+
+.zero-layer {
+    padding: 0 1rem;
+}
+
 
 html, body {
     height: 100%;
@@ -110,14 +133,6 @@ html, body {
 
 html {
     text-align: center;
-}
-
-.zero-layer {
-    padding: 0 1rem;
-}
-
-.content {
-    padding: 0 1rem ;
 }
 
 .alignleft {
@@ -149,8 +164,10 @@ html {
 }
 
 .block-25 {
-    height: 5em;
+    /*height: 5em;*/
     text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: pre-line;
 }
 
 .logs-footer {
