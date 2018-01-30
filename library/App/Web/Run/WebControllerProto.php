@@ -46,6 +46,11 @@ abstract class WebControllerProto extends BaseControllerProto
         $this->template = $template;
     }
     
+    /**
+     * @param Load $loadRequest
+     *
+     * @return mixed
+     */
     public function load (Load $loadRequest) 
     {
         return Env::getLoader()->addLoad($loadRequest)->processLoad();

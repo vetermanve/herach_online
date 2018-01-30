@@ -10,7 +10,7 @@
         .full-w {
             /*width: 100%;   */
             /*height: 50vh;*/
-            height: calc(100vh - 21em);
+            height: 50vh;
         }
         
         .pure-form input, .pure-form textarea  {
@@ -19,10 +19,10 @@
         }
     </style>
     
-    <form class="pure-form full-w" action="save" id="form-edit" method="POST">
+    <form class="pure-form" action="save" id="form-edit" method="POST">
         <fieldset class="pure-group">
             <h2><input type="text" name="title" class="pure-input-1 auto-save" data-name="pr_title" placeholder="Название"></h2>
-            <textarea class="pure-input-1 full-w auto-save" name="desc" data-name="pr_desc" placeholder="Описание проекта"></textarea>
+            <textarea class="pure-input-1 auto-save full-w" name="desc" data-name="pr_desc" placeholder="Описание проекта"></textarea>
         </fieldset>
 
         <button type="submit" class="pure-button pure-input-1 pure-button-primary">Сохранить</button>
@@ -33,12 +33,20 @@
         var $btn = frm.children('button');
         var bgcol = $btn.css('backgroundColor');
         
-        setupForm(frm, 'projects', function () {
-                $btn.fadeTo(400, 0.5);
-                $btn.animate({backgroundColor: "#00a000"}, 200);
-                $btn.fadeTo("fast", 1.0);
-                $btn.animate({backgroundColor: "#00a000"}, 1000);
-                $btn.animate({backgroundColor: bgcol}, 600);
+        setupForm(frm, 'projects', function (data) {
+                var projectId = data.id;
+                if (data.id) {
+                    $btn.fadeTo(400, 0.5);
+                    $btn.animate({backgroundColor: "#00a000"}, 200);
+                    $btn.fadeTo("fast", 1.0);
+                    $btn.animate({backgroundColor: "#00a000"}, 1000);
+                    $btn.animate({backgroundColor: bgcol}, 600);
+                    setTimeout(function () {
+                        nav.go('/projects/'+projectId);
+                    }, 1000);
+                } else {
+                    alert("Something went wrong");   
+                }
             },
             function () {
                 $btn.animate({backgroundColor: '#dc0000'}, 200);

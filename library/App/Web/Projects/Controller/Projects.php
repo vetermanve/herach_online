@@ -3,6 +3,7 @@
 namespace App\Web\Projects\Controller;
 
 use App\Web\Run\WebControllerProto;
+use Load\Load;
 
 class Projects extends WebControllerProto
 {
@@ -11,6 +12,24 @@ class Projects extends WebControllerProto
         return $this->render([]);
     }
     
+    public function index () 
+    {
+        $id = $this->p('id');
+        
+        $load = new Load('projects');
+        $load->setParams([
+            'id' => $id,
+            'count' => 1,
+        ]);
+        
+        $this->load($load);
+        
+        $projectData = $load->getFirstResult([]); 
+        
+        return $this->render([
+            'project' => $projectData,
+        ]);
+    }
     /**
      * новый проект
      * @return 
