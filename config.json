@@ -6,6 +6,10 @@
       "connection" : "/srv/data/jbase"
     }
   },
+  "amqp" : {
+    "host" : "localhost",
+    "port" : 5672
+  },
   "error" : {
     "debug" : true
   },
