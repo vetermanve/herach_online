@@ -29,17 +29,8 @@ $context->fill([
     RunContext::IS_SECURE_CONNECTION => stripos($_SERVER['SERVER_PROTOCOL'],'https') === true
 ]);
 
-///
-$configFile = 'config.json';
 
-$context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () use ($configFile, $context) {
-    if (file_exists($configFile)) {
-        $data = json_decode(file_get_contents($configFile), true) ?? [];
-        return $data;
-    }
-    
-    return [];
-});
+$context->set(RunContext::GLOBAL_CONFIG, include 'read_config.php');
 
 $runtime = new \Run\RuntimeLog($context->get(RunContext::IDENTITY));
 $runtime->catchErrors();

@@ -20,15 +20,7 @@ $host       = isset($config['host']) ? $config['host'] : null;
 
 $incomingQueue = $namespace . '.' . $dataCenter . '.' . $cloud;
 
-
 $identity = 'd.' . getmypid() . '@' . gethostname();
-
-if (file_exists('release.json')) {
-    $releaseData = json_decode(file_get_contents('release.json'), 1);
-    if (isset($releaseData['id'])) {
-        $identity = $releaseData['id'].'.'.$identity;
-    }
-}
 
 $context = new RunContext();
 $context->fill([
@@ -38,15 +30,7 @@ $context->fill([
     RunContext::IDENTITY                => $identity
 ]);
 
-$configFile = 'config.json';
-$context->setKeyActivation(RunContext::GLOBAL_CONFIG, function () use ($configFile, $context) {
-    if (file_exists($configFile)) {
-        $data = json_decode(file_get_contents($configFile), true) ?? [];
-        return $data;
-    }
-    
-    return [];
-});
+$context->set(RunContext::GLOBAL_CONFIG, include 'read_config.php');
 
 if (!$host && $amqpConfig = $context->getScope(RunContext::GLOBAL_CONFIG, 'amqp')) {
     $context->set(RunContext::AMQP_REQUEST_CLOUD_HOST, $amqpConfig['host']); 
