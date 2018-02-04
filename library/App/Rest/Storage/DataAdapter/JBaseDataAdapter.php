@@ -78,6 +78,9 @@ class JBaseDataAdapter extends DataAdapterProto
             [$id, $insertBind],
             function ($id, $bind) use ($self) {
                 $pointer = $self->getPointer($id, self::ADD_ACCESS);
+                if (!$pointer) {
+                    return null;
+                }
                 $res = fwrite($pointer, $this->_packData($bind));
                 $self->closePointer($pointer);
                 return $res ? [$this->primaryKey => $id] + $bind : null;
