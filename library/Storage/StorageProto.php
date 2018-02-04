@@ -53,7 +53,7 @@ abstract class StorageProto extends StorageModuleProto
      */
     public function getProfiler () 
     {
-        !$this->configured && $this->runConfigure();
+        $this->configured || $this->runConfigure();
         return $this->diContainer->bootstrap(StorageDependency::PROFILER);
     }
     
@@ -62,7 +62,7 @@ abstract class StorageProto extends StorageModuleProto
      */
     public function write () 
     {
-        !$this->configured && $this->runConfigure();
+        $this->configured || $this->runConfigure();
         return $this->diContainer->bootstrap(StorageDependency::WRITE_MODULE);
     }
     
@@ -71,7 +71,7 @@ abstract class StorageProto extends StorageModuleProto
      */
     public function search () 
     {
-        !$this->configured && $this->runConfigure();
+        $this->configured || $this->runConfigure();
         return $this->diContainer->bootstrap(StorageDependency::SEARCH_MODULE);
     }
     
@@ -80,7 +80,7 @@ abstract class StorageProto extends StorageModuleProto
      */
     public function read () 
     {
-        !$this->configured && $this->runConfigure();
+        $this->configured || $this->runConfigure();
         return $this->diContainer->bootstrap(StorageDependency::READ_MODULE);
     }
     
@@ -89,7 +89,7 @@ abstract class StorageProto extends StorageModuleProto
      */
     public function profiler () 
     {
-        !$this->configured && $this->runConfigure();
+        $this->configured || $this->runConfigure();
         return $this->diContainer->bootstrap(StorageDependency::PROFILER);
     }
 }

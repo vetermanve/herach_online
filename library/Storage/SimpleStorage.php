@@ -8,6 +8,14 @@ use Storage\ReadModule\SimpleReadModule;
 use Storage\SearchModule\SimpleSearchModule;
 use Storage\WriteModule\SimpleWriteModule;
 
+/**
+ * Class SimpleStorage
+ * 
+ * @package App\Rest\Auth\Storage
+ * @method SimpleReadModule read()
+ * @method SimpleWriteModule write()
+ * @method SimpleSearchModule search()
+ */
 abstract class SimpleStorage extends StorageProto
 {
     public function setupDi()
