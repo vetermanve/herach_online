@@ -16,6 +16,7 @@ class ProjectStorage extends SimpleStorage
     const F_ID    = 'id';
     const F_TITLE = 'title';
     const F_DESC  = 'desc';
+    const F_OWNER_ID = 'owner_id';
     
     public function loadConfig()
     {
