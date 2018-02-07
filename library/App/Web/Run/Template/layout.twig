@@ -28,8 +28,14 @@
         transport.call('get', 'auth-user', {}, function (data) {
             if (typeof data.user_id !== 'undefined') {
                 transport.call('get', 'user', {id: data.user_id}, function (user) {
-                    $("#login a").text(user.nickname);
+                    $("#user-page a").text(user.nickname);
+                    $("#sign-in").hide();
+                    $("#login").show();
                 })
+            } else {
+                $("#sign-in").hide();
+                $("#user-page").show();
+                $("#login").show();
             }
         });
 
@@ -51,8 +57,13 @@
             <div class="top-menu align-parent">
                 <a href="/projects/new/project">+проект</a>
                 <a href="/">все проекты</a>
-                <span id="login">
-                    <a href="/user-auth/" class="alignright">войти</a>
+                <span id="login" class="alignright" style="display: none">
+                    <span id="sign-in">
+                        <a href="/user-auth/" >войти</a>
+                    </span>
+                    <span id="user-page"> 
+                        <a href="/user/">моя страница</a>
+                    </span>
                 </span>
             </div>
         </div>

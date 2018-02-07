@@ -25,6 +25,14 @@ class InternalRestLoader extends LoadExecutorProto
     
     public function processLoad()
     {
+        if (!$this->loads) {
+            return;
+        }
+        
+        if (!$this->run) {
+            $this->init();
+        }
+        
         foreach ($this->loads as $load) {
             $request = new RunRequest($load->getUuid(), $load->getResource());
             $request->params = $load->getParams();
@@ -42,6 +50,10 @@ class InternalRestLoader extends LoadExecutorProto
     
     public function init()
     {
+        if ($this->run) {
+            return ;
+        }
+        
         $this->run = new RunCore();
         $this->dataChannel = new MemoryStoreChannelStack();
         
