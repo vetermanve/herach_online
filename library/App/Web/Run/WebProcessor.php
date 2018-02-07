@@ -99,15 +99,11 @@ class WebProcessor extends RunRequestProcessorProto
     
     
             // все что нужно шаблонизатору
-            $templatesPaths[] = $this->spaceDir.'/'.$moduleName.'/Template/'.$controllerName;
-            $templatesPaths[] = $this->spaceDir.'/Run/Template';
-            $template = $method;
-            $controller->setTemplate($template);
-            $controller->setTemplatePaths($templatesPaths);
             
             // параметры запроса
             $options = new RestRequestOptions();
             $options->setRequest($request);
+            $controller->setMethod($method);
             $controller->setRequestOptions($options);
     
             // Построим сессию
@@ -118,7 +114,7 @@ class WebProcessor extends RunRequestProcessorProto
             Env::getContainer()->setModule('session', $session);
             
             $response->setCode(HttpResponseSpec::HTTP_CODE_OK);
-            $response->setBody($controller->{$method}());
+            $response->setBody($controller->run());
             
         } catch (\Throwable $throwable) {
             return $this->abnormalResponse(
