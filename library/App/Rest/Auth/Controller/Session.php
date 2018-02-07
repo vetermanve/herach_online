@@ -43,7 +43,8 @@ class Session extends RestControllerProto
             return null;    
         }
         
-        $sid = $this->getState('sid', Uuid::v4());
+        $sid = $this->getState('sid') ?: Uuid::v4();
+        
         $userId = $user[UserStorage::ID];
         
         $sessionInsert = [

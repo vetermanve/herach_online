@@ -339,12 +339,12 @@ class RouterServer
     
     public function log ($msg, $context = []) 
     {
-        Env::isProfiling() && Env::getLogger()->addDebug($msg, $context);
+        Env::isProfiling() && Env::getLogger()->debug($msg, $context);
     }
     
     public function runtime ($msg, $context = []) 
     {   
-        false && Env::isDebugMode() && Env::getLogger()->addDebug($msg, $context);
+        false && Env::isDebugMode() && Env::getLogger()->debug($msg, $context);
     }
     
     public function disconnectAll()

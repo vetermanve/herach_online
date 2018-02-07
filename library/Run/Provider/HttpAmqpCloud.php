@@ -61,17 +61,7 @@ class HttpAmqpCloud extends RunProviderProto
         // getting params
         parse_str($amqpRequest[AmqpHttpRequest::QUERY], $params);
     
-        // path hack for old nginx 
         $path = $amqpRequest[AmqpHttpRequest::PATH];
-        if (isset($params['path'])) {
-            if (strpos($path, 'index.php')) {
-                $path = str_replace('index.php', $params['path'], $path);
-            } else {
-                $path = $params['path'];
-            }
-        
-            unset($params['path']);
-        }
     
         // getting routing data
         $pathData = new HttpResourceHelper($path);
@@ -86,11 +76,20 @@ class HttpAmqpCloud extends RunProviderProto
         $request->params = $params;
                            
         // data processing
-        {
-            $request->body = $amqpRequest[AmqpHttpRequest::DATA] ? trim($amqpRequest[AmqpHttpRequest::DATA]) : '';
-            $decodedData   = $request->body && strpos($request->body, '{') === 0 ? json_decode($amqpRequest[AmqpHttpRequest::DATA], true) : [];
-            $request->data = $decodedData ? $decodedData : [];    
-        }
+        $request->body = $amqpRequest[AmqpHttpRequest::DATA] ? trim($amqpRequest[AmqpHttpRequest::DATA]) : '';
+        if ($request->body) {
+            if (strpos($request->body, '{') === 0) {
+                $bodyData = json_decode($request->body, true);
+                if (is_array($bodyData)) {
+                    $request->data = $bodyData;
+                }
+            } elseif (strpos($request->body, '=')) {
+                parse_str($request->body, $bodyData);
+                if (is_array($bodyData)) {
+                    $request->data = $bodyData;
+                }
+            }
+        }    
         
         if ($pathData->getType() !== HttpResourceHelper::TYPE_WEB) {
             $method = RestMethodHelper::getRealMethod($amqpRequest[AmqpHttpRequest::METHOD], $request);    
