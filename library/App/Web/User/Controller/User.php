@@ -6,6 +6,7 @@ namespace App\Web\User\Controller;
 
 use App\Web\Run\WebControllerProto;
 use Load\Load;
+use Mu\Env;
 
 class User extends WebControllerProto
 {
@@ -19,23 +20,44 @@ class User extends WebControllerProto
         $this->load($authLoad);
         
         $session = $authLoad->getResults();
+        $currentUserId = $session['user_id'] ?? 0;
         
-        if (!$session) {
-            return 'Not authorised';
+        if (!$currentUserId) {
+            throw new \Exception("Not authorised", 401);
         }
         
-        $userLoad = new Load('user');
-        $userLoad->setParams([
-            'id' => $session['user_id'],
-        ]);
+        $loader = Env::getLoader();
         
-        $this->load($userLoad);
+        // load user
+        {
+            $userLoad = new Load('user');
+            $userLoad->setParams([
+                'id' => $currentUserId,
+            ]);
+            
+            $loader->addLoad($userLoad);
+        }
+        
+        // load user projects
+        {
+            $projectsLoad = new Load('projects');
+            $projectsLoad->setParams([
+                'owner_id' => $currentUserId, 
+                'count' => 6,
+            ]);
+            
+            $loader->addLoad($projectsLoad);
+        }
+        
+        $loader->init();
+        $loader->processLoad();
             
         $user = $userLoad->getResults();
             
         return $this->render([
             'user' => $user,
             'user_id' => $session['user_id'],
+            'projects' => $projectsLoad->getResults(),
         ]);
     }
     

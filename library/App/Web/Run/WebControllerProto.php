@@ -53,7 +53,17 @@ abstract class WebControllerProto extends BaseControllerProto
      */
     public function load (Load $loadRequest) 
     {
-        return Env::getLoader()->addLoad($loadRequest)->processLoad();
+        return $this->getLoader()->addLoad($loadRequest)->processLoad();
+    }
+    
+    /**
+     * @return \Load\Executor\LoadExecutorProto
+     */
+    public function getLoader () 
+    {
+        $loader = Env::getLoader();
+        $loader->init();
+        return $loader;
     }
     
     /**

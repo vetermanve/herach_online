@@ -24,6 +24,10 @@ class Projects extends RestControllerProto
         
         $filter = [];
         
+        if ($ownerId = $this->p(ProjectStorage::F_OWNER_ID)) {
+            $filter[ProjectStorage::F_OWNER_ID] = $ownerId; 
+        }
+        
         if ($ids) {
             $data = $storage->read()->mGet($ids, __METHOD__, []);
         } else {
@@ -36,10 +40,16 @@ class Projects extends RestControllerProto
     public function post()
     {
         $id = $this->p(ProjectStorage::ID, null) ?? Uuid::v4();
+        $currentUserId = $this->_getCurrentUserId();
+        
+        if (!$currentUserId) {
+            throw new \Exception("Not authorised", 401);
+        }
         
         $data = [
             ProjectStorage::F_TITLE => $this->p(ProjectStorage::F_TITLE),
-            ProjectStorage::F_DESC  => $this->p(ProjectStorage::F_DESC)
+            ProjectStorage::F_DESC  => $this->p(ProjectStorage::F_DESC),
+            ProjectStorage::F_OWNER_ID => $currentUserId,
         ];
         
         $storage = new ProjectStorage();
