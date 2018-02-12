@@ -100,7 +100,6 @@ class HttpAmqpCloud extends RunProviderProto
     
         $request->meta = [
             HttpRequestMetaSpec::REQUEST_METHOD  => $method,
-            HttpRequestMetaSpec::REQUEST_VERSION => $pathData->getVersion(),
             HttpRequestMetaSpec::REQUEST_HEADERS => $amqpRequest[AmqpHttpRequest::HEADERS],
             HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
         ];
