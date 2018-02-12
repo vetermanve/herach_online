@@ -88,22 +88,15 @@ class WebProcessor extends RunRequestProcessorProto
                 );
             }
     
-            if (!method_exists($controller, $method)) {
+            $controller->setMethod($method);
+            if (!$controller->validateMethod()) {
                 return $this->abnormalResponse(
                     HttpResponseSpec::HTTP_CODE_NOT_FOUND,
-                    'Incorrect resource',
+                    'Incorrect method:'.$method,
                     $response,
                     $request
                 );
             }
-    
-    
-            // все что нужно шаблонизатору
-            $templatesPaths[] = $this->spaceDir.'/'.$moduleName.'/Template/'.$controllerName;
-            $templatesPaths[] = $this->spaceDir.'/Run/Template';
-            $template = $method;
-            $controller->setTemplate($template);
-            $controller->setTemplatePaths($templatesPaths);
             
             // параметры запроса
             $options = new RestRequestOptions();
@@ -118,7 +111,7 @@ class WebProcessor extends RunRequestProcessorProto
             Env::getContainer()->setModule('session', $session);
             
             $response->setCode(HttpResponseSpec::HTTP_CODE_OK);
-            $response->setBody($controller->{$method}());
+            $response->setBody($controller->run());
             
         } catch (\Throwable $throwable) {
             return $this->abnormalResponse(

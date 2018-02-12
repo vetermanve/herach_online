@@ -20,10 +20,13 @@ class User extends WebControllerProto
         $this->load($authLoad);
         
         $session = $authLoad->getResults();
-        $currentUserId = $session['user_id'] ?? 0;
-        
-        if (!$currentUserId) {
-            throw new \Exception("Not authorised", 401);
+        $userId = $this->p('id');
+        if ($userId === 'me') {
+            $userId = $session['user_id'];
+        }
+    
+        if (!$userId) {
+            throw new \Exception("Bad Request", 409);
         }
         
         $loader = Env::getLoader();
@@ -32,7 +35,7 @@ class User extends WebControllerProto
         {
             $userLoad = new Load('user');
             $userLoad->setParams([
-                'id' => $currentUserId,
+                'id' => $userId,
             ]);
             
             $loader->addLoad($userLoad);
@@ -42,7 +45,7 @@ class User extends WebControllerProto
         {
             $projectsLoad = new Load('projects');
             $projectsLoad->setParams([
-                'owner_id' => $currentUserId, 
+                'owner_id' => $userId, 
                 'count' => 6,
             ]);
             

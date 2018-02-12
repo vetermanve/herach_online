@@ -2,22 +2,9 @@
 
 namespace App\Web\Landing\Controller;
 
-use App\Web\Run\WebControllerProto;
-use Load\Load;
+use App\Web\Projects\Controller\Projects;
 
-class Landing extends WebControllerProto
+class Landing extends Projects
 {
-    public function index () 
-    {
-        $count = $this->p('count', 100);
-        
-        $projects = new Load('projects');
-        $projects->setParams([
-            'count' => $count, 
-        ]);
-        
-        $this->load($projects);
-        
-        return $this->render(['projects' => $projects->getResults()]);
-    }
+    
 }

@@ -8,10 +8,6 @@ class Load
 {
     private $resource;
     
-    private $count;
-    
-    private $bookmark;
-    
     private $results = [];
     
     private $uuid;
@@ -23,7 +19,7 @@ class Load
      *
      * @param $resource
      */
-    public function __construct($resource = null)
+    public function __construct($resource)
     {
         $this->resource = $resource;
         $this->uuid = (string)Uuid::v4(); 

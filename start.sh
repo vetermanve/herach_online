@@ -5,7 +5,14 @@
 cd $(dirname $0)
 currentPath=$(pwd -P);
 
-registerPath="/srv/www/conf/"
+cloud=$(php ./cluster/get_cloud.php);
+echo "Start cloud: ${cloud}";
+
+registerPath="/srv/www/conf/${cloud}/"
+
+if [ ! -d ${registerPath} ]; then
+    mkdir -p ${registerPath};
+fi;
 
 releaseInfoFileName="release.json"
 releaseConfigFile="cluster/config_file"

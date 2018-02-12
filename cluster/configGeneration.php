@@ -35,7 +35,7 @@ $cloud = [
 ];
 
 $argsTemplate = [
-    'dc'    => 'dc', //gethostname(),
+    'dc'    => $releaseInfo['slot'] ?? 'dc', //gethostname(),
 //    'cloud' => 'cloud_one',
 //    'host'  => 'localhost',
 ];

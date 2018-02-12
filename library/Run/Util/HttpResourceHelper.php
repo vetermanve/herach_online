@@ -16,29 +16,36 @@ class HttpResourceHelper
     
     const R_3_PART_ITEM_ID = 3;
     
-    const TYPE_REST  = 'rest';
-    const TYPE_WEB   = 'web';
-    const TYPE_OAUTH = 'oauth';
+    const TYPE_REST = 'rest';
+    const TYPE_WEB  = 'web';
+    const TYPE_READ = 'read';
     
     private $string   = '';
     private $resource = '';
-    private $version  = 1;
     private $type;
     private $method;
     
+    private static $subResourceTypes = [
+        self::TYPE_REST => self::TYPE_REST,
+        self::TYPE_WEB  => self::TYPE_WEB,
+        self::TYPE_READ => self::TYPE_READ
+    ];
+    
+    private $defaultType;
     
     private $id;
     
     /**
      * HttpResourceHelper constructor.
      *
-     * @param     $string
-     * @param int $defaultVersion
+     * @param            $string
+     * @param string     $defaultType
      */
-    public function __construct($string, $defaultVersion = 2)
+    public function __construct($string, $defaultType = self::TYPE_WEB)
     {
-        $this->string  = $string;
-        $this->version = $defaultVersion;
+        $this->string      = $string;
+        $this->defaultType = $defaultType;
+        
         $this->_parse();
     }
     
@@ -47,11 +54,10 @@ class HttpResourceHelper
         $path = strpos($this->string, '?') ? strstr($this->string, '?', true) : $this->string;
         $data = explode('/', trim($path, '/'));
         
-        if (count($data) > 1 && $data[0] === 'rest') {
-            array_shift($data);
-            $this->type     = self::TYPE_REST;
+        if (count($data) > 1 && isset(self::$subResourceTypes[$data[0]])) {
+            $this->type = array_shift($data);
         } else {
-            $this->type     = self::TYPE_WEB;
+            $this->type = $this->defaultType;
         }
         
         if (count($data) === 1) { // /auth
@@ -80,14 +86,6 @@ class HttpResourceHelper
     public function getResource()
     {
         return $this->resource;
-    }
-    
-    /**
-     * @return int
-     */
-    public function getVersion()
-    {
-        return $this->version;
     }
     
     /**
