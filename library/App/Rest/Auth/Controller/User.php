@@ -12,12 +12,12 @@ class User extends RestControllerProto
     public function get()
     {
         $sid = $this->getState('sid');
+    
+        $session = [];
         
         if (!$sid) {
-            return null;
+            $session = (new SessionLoader())->getSession($sid);    
         }
-        
-        $session = (new SessionLoader())->getSession($sid);
         
         return [
             'user_id' => $session['user_id'] ?? 0,
