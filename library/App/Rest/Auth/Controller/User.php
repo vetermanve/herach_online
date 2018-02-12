@@ -15,7 +15,7 @@ class User extends RestControllerProto
     
         $session = [];
         
-        if (!$sid) {
+        if ($sid) {
             $session = (new SessionLoader())->getSession($sid);    
         }
         
