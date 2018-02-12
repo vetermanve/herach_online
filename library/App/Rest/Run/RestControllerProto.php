@@ -18,6 +18,16 @@ abstract class RestControllerProto extends BaseControllerProto
         return isset($res['user_id']) ? $res['user_id'] : 0;
     }
     
+    public function run () 
+    {
+        return $this->{$this->method}();
+    }
+    
+    public function validateMethod () 
+    {
+        return method_exists($this, $this->method);
+    }
+    
     public function get() {
         return null;   
     }

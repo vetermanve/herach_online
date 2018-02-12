@@ -77,7 +77,6 @@ class PhpFpmRequest extends RunProviderProto
     
         $request->meta = [
             HttpRequestMetaSpec::REQUEST_METHOD  => $method,
-            HttpRequestMetaSpec::REQUEST_VERSION => $pathData->getVersion(),
             HttpRequestMetaSpec::REQUEST_HEADERS => $headers,
             HttpRequestMetaSpec::CLIENT_IP       => $this->httpEnv->getScope(HttpEnvContext::HTTP_SERVER, 'REMOTE_ADDR'),
             HttpRequestMetaSpec::CLIENT_AGENT    => isset($headers['user-agent']) ? $headers['user-agent'] : null,

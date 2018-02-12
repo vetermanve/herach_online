@@ -21,7 +21,7 @@ class Projects extends WebControllerProto
     
         $count = $this->p('count', 100);
     
-        $projects = new Load('projects');
+        $projects = new Load('read/projects');
         $projects->setParams([
             'count' => $count,
         ]);

@@ -2,12 +2,13 @@
 
 namespace Load\Executor;
 
-use App\Rest\Run\RestProcessor;
+use App\Base\Run\BaseRunProcessor;
+use App\Base\Run\Component\MainDependencyManager;
+use Load\InternalLoadRunProvider;
 use Mu\Env;
 use Run\Channel\MemoryStoreChannelStack;
 use Run\RunContext;
 use Run\RunCore;
-use Run\RunRequest;
 use Run\RuntimeLog;
 use Run\Spec\HttpResponseSpec;
 
@@ -23,6 +24,43 @@ class InternalRestLoader extends LoadExecutorProto
      */
     private $dataChannel;
     
+    /**
+     * @var InternalLoadRunProvider
+     */
+    private $provider;
+    
+    private $mainContext;
+    
+    private $executionContext;
+    
+    public function init()
+    {
+        if ($this->run) {
+            return ;
+        }
+        
+        $this->mainContext = Env::getContainer();
+        
+        $this->run = new RunCore();
+        $this->dataChannel = new MemoryStoreChannelStack();
+        $this->provider = new InternalLoadRunProvider();
+        
+        $context = new RunContext();
+        $context->set(RunContext::GLOBAL_CONFIG, Env::getEnvContext()->getData());
+        
+        $this->run->setContext($context);
+        $this->run->setProvider($this->provider);
+        $this->run->setProcessor(new BaseRunProcessor());
+        $this->run->addComponent(new MainDependencyManager());
+        $this->run->setDataChannel($this->dataChannel);
+        $this->run->setRuntime(new RuntimeLog('InternalRestLoader'));
+        
+        $this->run->prepare();
+        
+        $this->executionContext  = Env::getContainer();
+        Env::setContainer($this->mainContext);
+    }
+    
     public function processLoad()
     {
         if (!$this->loads) {
@@ -33,11 +71,13 @@ class InternalRestLoader extends LoadExecutorProto
             $this->init();
         }
         
+        $this->provider->setLoads($this->loads);
+        
+        Env::setContainer($this->executionContext);
+        $this->run->run();
+        Env::setContainer($this->mainContext);
+        
         foreach ($this->loads as $load) {
-            $request = new RunRequest($load->getUuid(), $load->getResource());
-            $request->params = $load->getParams();
-            
-            $this->run->process($request);
             $result = $this->dataChannel->getMessageByUid($load->getUuid());
             
             if ($result && $result->getCode() == HttpResponseSpec::HTTP_CODE_OK) {
@@ -46,22 +86,5 @@ class InternalRestLoader extends LoadExecutorProto
         }
         
         $this->loads = [];
-    }
-    
-    public function init()
-    {
-        if ($this->run) {
-            return ;
-        }
-        
-        $this->run = new RunCore();
-        $this->dataChannel = new MemoryStoreChannelStack();
-        
-        $this->run->setContext(new RunContext());
-        $this->run->setProcessor(new RestProcessor());
-        $this->run->setDataChannel($this->dataChannel);
-        $this->run->setRuntime(new RuntimeLog('InternalRestLoader'));
-        
-        $this->run->prepare();
     }
 }
