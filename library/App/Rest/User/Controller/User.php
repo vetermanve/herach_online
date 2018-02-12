@@ -54,9 +54,11 @@ class User extends RestControllerProto
         
         $userId = Uuid::v4();
         $sid = $this->getState('sid');
-        if(!$sid) {
+        
+        if (!$sid) {
             $sid = Uuid::v4();
         }
+        
         $this->setState('sid', $sid);
         
         $solt = hash('whirlpool', mt_rand(1,1000000).mt_rand(1,1000000).mt_rand(1,1000000));
