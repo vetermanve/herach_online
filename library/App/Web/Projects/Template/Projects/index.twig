@@ -15,6 +15,11 @@
                     {% if not project.desc %}
                         Нет описания
                     {% endif %}
+                    {% if project.owner %}
+                        <div>
+                            Проект <a href="/user/{{ project.owner.id }}">@{{ project.owner.nickname }}</a>
+                        </div>
+                    {% endif %}
                 </p>
             </div>
         </div>

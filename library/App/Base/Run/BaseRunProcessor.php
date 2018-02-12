@@ -65,8 +65,6 @@ class BaseRunProcessor extends RunRequestProcessorProto
      */
     public function getProcessor ($type) 
     {
-        $type = $type === 'rest' ? 'rest' : 'web'; 
-        
         if (isset($this->processors[$type])) {
             return $this->processors[$type];
         }
@@ -74,6 +72,9 @@ class BaseRunProcessor extends RunRequestProcessorProto
         switch ($type) {
             case 'rest': 
                 $processor = new \App\Rest\Run\RestProcessor();
+                break;
+            case 'read':
+                $processor = new \App\Read\Run\ReadProcessor();
                 break;
             case 'web':
             default:

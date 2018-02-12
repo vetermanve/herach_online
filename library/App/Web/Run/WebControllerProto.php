@@ -10,8 +10,6 @@ use Mu\Env;
 
 abstract class WebControllerProto extends BaseControllerProto
 {
-    protected $method = 'index';
-    
     public function run () 
     {
         return $this->{$this->method}();
@@ -63,13 +61,6 @@ abstract class WebControllerProto extends BaseControllerProto
         return Env::getLoader();
     }
     
-    public function setMethod($method)
-    {
-        if ($method) {
-            $this->method = $method;    
-        }
-    }
-    
     protected function _getTemplateDir () 
     {
         $calledClassReflection = (new \ReflectionClass($this));
@@ -77,5 +68,10 @@ abstract class WebControllerProto extends BaseControllerProto
         $calledClassName = $calledClassReflection->getShortName();
         
         return $calledModule.'/Template/'.$calledClassName;
+    }
+    
+    public function validateMethod ()
+    {
+        return method_exists($this, $this->method);
     }
 }

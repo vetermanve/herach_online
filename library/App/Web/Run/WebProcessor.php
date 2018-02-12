@@ -88,22 +88,19 @@ class WebProcessor extends RunRequestProcessorProto
                 );
             }
     
-            if (!method_exists($controller, $method)) {
+            $controller->setMethod($method);
+            if (!$controller->validateMethod()) {
                 return $this->abnormalResponse(
                     HttpResponseSpec::HTTP_CODE_NOT_FOUND,
-                    'Incorrect resource',
+                    'Incorrect method:'.$method,
                     $response,
                     $request
                 );
             }
-    
-    
-            // все что нужно шаблонизатору
             
             // параметры запроса
             $options = new RestRequestOptions();
             $options->setRequest($request);
-            $controller->setMethod($method);
             $controller->setRequestOptions($options);
     
             // Построим сессию
