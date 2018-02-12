@@ -4,3 +4,5 @@
 /vendor/
 /cluster/*
 !/cluster/configGeneration.php
+!/cluster/get_cloud.php
+release.json
