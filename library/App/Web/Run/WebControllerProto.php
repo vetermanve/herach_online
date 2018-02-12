@@ -10,9 +10,12 @@ use Mu\Env;
 
 abstract class WebControllerProto extends BaseControllerProto
 {
-    protected $template = '';
+    protected $method = 'index';
     
-    protected $templatePaths = [];
+    public function run () 
+    {
+        return $this->{$this->method}();
+    }
     
     public function _getCurrentUserId () 
     {
@@ -30,20 +33,16 @@ abstract class WebControllerProto extends BaseControllerProto
     
     public function render ($data, $template = null) 
     {
-        $template = $template ?: $this->template;
+        $template = $template ?: $this->method;
+    
+        $templatesPaths[] = $this->_getTemplateDir();
+        $templatesPaths[] = __DIR__.'/Template';
+    
         $data['request_id'] = $this->requestOptions->getReqiestId();
         $data['env']['debug'] = (bool)$this->requestOptions->getParam('_debug');
         $data['static_host'] = Env::getEnvContext()->getScope('static','host', '');
         
-        return Env::getRenderer()->render($template, $data, $this->templatePaths);
-    }
-    
-    /**
-     * @param mixed $template
-     */
-    public function setTemplate($template)
-    {
-        $this->template = $template;
+        return Env::getRenderer()->render($template, $data, $templatesPaths);
     }
     
     /**
@@ -61,24 +60,22 @@ abstract class WebControllerProto extends BaseControllerProto
      */
     public function getLoader () 
     {
-        $loader = Env::getLoader();
-        $loader->init();
-        return $loader;
+        return Env::getLoader();
     }
     
-    /**
-     * @return array
-     */
-    public function getTemplatePaths(): array
+    public function setMethod($method)
     {
-        return $this->templatePaths;
+        if ($method) {
+            $this->method = $method;    
+        }
     }
     
-    /**
-     * @param array $templatePaths
-     */
-    public function setTemplatePaths(array $templatePaths)
+    protected function _getTemplateDir () 
     {
-        $this->templatePaths = $templatePaths;
+        $calledClassReflection = (new \ReflectionClass($this));
+        $calledModule = dirname(dirname($calledClassReflection->getFileName()));
+        $calledClassName = $calledClassReflection->getShortName();
+        
+        return $calledModule.'/Template/'.$calledClassName;
     }
 }
