@@ -34,14 +34,16 @@ $cloud = [
 //    'testing' => 2,
 ];
 
+$area = $releaseInfo['slot'] ?? 'dc';
+
 $argsTemplate = [
-    'dc'    => $releaseInfo['slot'] ?? 'dc', //gethostname(),
+    'dc'    => $area, //gethostname(),
 //    'cloud' => 'cloud_one',
 //    'host'  => 'localhost',
 ];
 
 $appConfigTemplate = [
-    "name"         => "rest",
+    "name"         => $area,
     "kill_timeout" => 4000,
     "script"       => "daemon.php",
     'args'         => '',

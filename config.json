@@ -11,7 +11,11 @@
     "port" : 5672
   },
   "error" : {
-    "debug" : true
+    "debug" : true,
+    "no_debug_slots" : [
+      "Herach.online",
+      "herach.online"
+    ]
   },
   "static" : {
     "host" : ""
