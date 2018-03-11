@@ -86,6 +86,7 @@ if [ -f ${configFile} ]; then
     echo "-> Starting up cluster from $configFile ..."
     echo ${internalExecStart};
     pm2 startOrRestart ${configFile}
+    pm2 save
     echo ${internalExecEnd};
     
     if [[ ${prevReleasePlacement} != "" ]] && [[ ${prevReleasePlacement} != ${currentPath} ]]; then
