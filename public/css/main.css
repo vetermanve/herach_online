@@ -212,3 +212,10 @@ html {
     box-shadow: none !important;
     border: none !important;
 }
+
+.layout-footer-links ul {
+    padding-left: 0;
+}
+.layout-footer-links li {
+    list-style: none;
+}

@@ -15,7 +15,6 @@
     "require": {
       "monolog/monolog" : "master",
         "ramsey/uuid": "^3.0@dev",
-        "twig/twig": "^3.0@dev",
-        "nette/database": "v2.4.x-dev"
+        "twig/twig": "^3.0@dev"
     }
 }
