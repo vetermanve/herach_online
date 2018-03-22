@@ -20,9 +20,10 @@ class User extends WebControllerProto
         $this->load($authLoad);
         
         $session = $authLoad->getResults();
+        $authUserId = $session['user_id'] ?? 0;
         $userId = $this->p('id');
         if ($userId === 'me') {
-            $userId = $session['user_id'];
+            $userId = $authUserId;
         }
     
         if (!$userId) {
@@ -59,7 +60,7 @@ class User extends WebControllerProto
             
         return $this->render([
             'user' => $user,
-            'user_id' => $session['user_id'],
+            'user_id' => $authUserId,
             'projects' => $projectsLoad->getResults(),
         ]);
     }
