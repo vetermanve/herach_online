@@ -1,6 +1,8 @@
 <?php
 
-include_once 'bootstrap.php';
+chdir(__DIR__);
+
+include_once __DIR__.'/bootstrap.php';
 
 use App\Base\Run\Schema\AmqpConsume;
 use Run\RunContext;
