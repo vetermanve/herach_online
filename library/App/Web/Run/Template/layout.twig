@@ -26,15 +26,15 @@
         transport.setConnection(connectionPage, transportProto.PAGE);
 
         transport.call('get', 'auth-user', {}, function (data) {
-            if (typeof data.user_id !== 'undefined') {
+            if (typeof data.user_id !== 'undefined' && !!data.user_id) {
                 transport.call('get', 'user', {id: data.user_id}, function (user) {
                     $("#user-page a").text(user.nickname).attr('href', '/user/' + data.user_id);
                     $("#sign-in").hide();
                     $("#login").show();
                 })
             } else {
-                $("#sign-in").hide();
-                $("#user-page").show();
+                $("#sign-in").show();
+                $("#user-page").hide();
                 $("#login").show();
             }
         });
