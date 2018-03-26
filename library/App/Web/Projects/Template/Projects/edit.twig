@@ -21,8 +21,9 @@
     
     <form class="pure-form" action="save" id="form-edit" method="POST">
         <fieldset class="pure-group">
-            <h2><input type="text" name="title" class="pure-input-1 auto-save" data-name="pr_title" placeholder="Название"></h2>
-            <textarea class="pure-input-1 auto-save full-w" name="desc" data-name="pr_desc" placeholder="Описание проекта"></textarea>
+            <input type="hidden" name="id" value="{{ project.id }}"/>
+            <h2><input type="text" name="title" class="pure-input-1 auto-save" data-name="pr_title" placeholder="Название" value="{{ project.title }}"></h2>
+            <textarea class="pure-input-1 auto-save full-w" name="desc" data-name="pr_desc" placeholder="Описание проекта">{{ project.desc }}</textarea>
         </fieldset>
 
         <button type="submit" class="pure-button pure-input-1 pure-button-primary">Сохранить</button>
@@ -55,8 +56,8 @@
                 $btn.animate({ marginLeft: "0" }, 100);
                 $btn.animate({backgroundColor: '#dc0000'}, 1000);
                 $btn.animate({backgroundColor: bgcol}, 600);
-            }
-        );
+            },
+        '{{ project.id ? 'put' : 'post' }}');
         
     </script>
     </div>

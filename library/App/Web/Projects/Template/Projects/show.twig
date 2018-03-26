@@ -1,7 +1,11 @@
 {% extends 'layout.twig' %}
 
 {% block head %}
-    <h1>{{ project.title }}</h1>
+    <h1>{{ project.title }}
+    {% if editable %}
+        <a class="alignright" href="/projects/{{ project.id }}/edit">редактировать</a>
+    {% endif %}
+    </h1>
 {% endblock %}
 
 {% block body %}
