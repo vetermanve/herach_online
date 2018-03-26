@@ -25,4 +25,14 @@ class AsyncWriteModule  extends StorageDataAccessModuleProto implements WriteMod
         
         return $request;
     }
+    
+    public function remove($id, $callerMethod)
+    {
+        throw new \Exception("NIY");
+    }
+    
+    public function update($id, $bind, $callerMethod)
+    {
+        throw new \Exception("NIY");
+    }
 }

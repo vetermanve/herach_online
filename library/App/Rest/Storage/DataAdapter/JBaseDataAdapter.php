@@ -11,6 +11,7 @@ class JBaseDataAdapter extends DataAdapterProto
 {
     const READ_ACCESS = 'r';
     const CREATE_ACCESS = 'w';
+    const UPDATE_ACCESS = 'c+';
     const ADD_ACCESS = 'x';
     
     const F_DATA = 'd';
@@ -117,7 +118,29 @@ class JBaseDataAdapter extends DataAdapterProto
      */
     public function getUpdateRequest($id, $updateBind)
     {
-        // TODO: Implement getUpdateRequest() method.
+        $self = $this;
+        $updateBind = [$this->primaryKey => $id] + $updateBind;
+        $request = new StorageDataRequest(
+            [$id, $updateBind],
+            function ($id, $bind) use ($self) {
+                $pointer = $self->getPointer($id, self::UPDATE_ACCESS);
+                if (!$pointer) {
+                    return null;
+                }
+    
+                $record = json_decode(stream_get_contents($pointer), true);
+                if (isset($record[self::F_DATA])) {
+                    $bind += $record[self::F_DATA];
+                }
+                ftruncate($pointer, 0);
+                rewind($pointer);
+                $res = fwrite($pointer, $this->_packData($bind));
+                $self->closePointer($pointer);
+                return $res ? $bind : null;
+            }
+        );
+    
+        return $request;
     }
     
     /**

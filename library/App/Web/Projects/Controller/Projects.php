@@ -9,7 +9,29 @@ class Projects extends WebControllerProto
 {
     public function edit () 
     {
-        return $this->render([]);
+        $id = $this->p('id');
+        $userId = $this->_getCurrentUserId();
+    
+        $load = new Load('projects');
+        $load->setParams([
+            'id' => $id,
+            'count' => 1,
+        ]);
+    
+        $this->load($load);
+    
+        $projectData = $load->getFirstResult([]);
+        if (!$projectData) {
+            throw new \Exception("Not found", 404);
+        }
+    
+        if ($projectData['owner_id'] !== $userId) {
+            throw new \Exception("Wrong access rights", 403);       
+        }
+    
+        return $this->render([
+            'project' => $projectData,
+        ], __FUNCTION__);
     }
     
     public function index () 
@@ -34,6 +56,7 @@ class Projects extends WebControllerProto
     public function show () 
     {
         $id = $this->p('id');
+        $userId = $this->_getCurrentUserId();
         
         $load = new Load('projects');
         $load->setParams([
@@ -47,6 +70,7 @@ class Projects extends WebControllerProto
     
         return $this->render([
             'project' => $projectData,
+            'editable' => $projectData['owner_id'] === $userId
         ], __FUNCTION__);
     }
     /**
