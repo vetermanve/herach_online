@@ -39,7 +39,7 @@ class Projects extends RestControllerProto
     
     public function post()
     {
-        $id = $this->p(ProjectStorage::ID, null) ?? Uuid::v4();
+        $id = $this->p(ProjectStorage::ID, null) ?: Uuid::v4();
         $currentUserId = $this->_getCurrentUserId();
         
         if (!$currentUserId) {
@@ -55,6 +55,41 @@ class Projects extends RestControllerProto
         $storage = new ProjectStorage();
         $result  = $storage->write()->insert($id, $data, __METHOD__);
         
+        return $result;
+    }
+    
+    public function put () 
+    {
+        $id = $this->p(ProjectStorage::ID, null);
+        if (!$id) {
+            throw new \Exception("Id not passed", 409);
+        }
+        
+        $currentUserId = $this->_getCurrentUserId();
+    
+        if (!$currentUserId) {
+            throw new \Exception("Not authorised", 401);
+        }
+    
+        $storage = new ProjectStorage();
+        
+        $data = $storage->read()->get($id, __METHOD__);
+        if (!$data) {
+            throw new \Exception("Project not found", 404);
+        }
+        
+        if ($data[ProjectStorage::F_OWNER_ID] !== $currentUserId) {
+            throw new \Exception("Only project owner can edit project", 403);
+        }
+    
+        $data = [
+            ProjectStorage::F_TITLE => $this->p(ProjectStorage::F_TITLE),
+            ProjectStorage::F_DESC  => $this->p(ProjectStorage::F_DESC),
+            ProjectStorage::F_OWNER_ID => $currentUserId,
+        ] + $data;
+        
+        $result = $storage->write()->update($id, $data, __METHOD__);
+    
         return $result;
     }
     
