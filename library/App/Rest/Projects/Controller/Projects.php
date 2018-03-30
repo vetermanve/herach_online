@@ -31,7 +31,9 @@ class Projects extends RestControllerProto
         if ($ids) {
             $data = $storage->read()->mGet($ids, __METHOD__, []);
         } else {
-            $data = $storage->search()->find($filter, $count, __METHOD__);
+            $data = $storage->search()->find($filter, $count, __METHOD__, [
+                'sort' => [[ProjectStorage::F_TITLE, 'asc']],
+            ]);
         }
     
         return array_values($data);
@@ -46,8 +48,13 @@ class Projects extends RestControllerProto
             throw new \Exception("Not authorised", 401);
         }
         
+        $title = trim($this->p(ProjectStorage::F_TITLE, ''));
+        if (strlen($title) < 3) {
+            throw new \Exception("Bad title", 409);
+        }
+        
         $data = [
-            ProjectStorage::F_TITLE => $this->p(ProjectStorage::F_TITLE),
+            ProjectStorage::F_TITLE => $title,
             ProjectStorage::F_DESC  => $this->p(ProjectStorage::F_DESC),
             ProjectStorage::F_OWNER_ID => $currentUserId,
         ];
@@ -82,8 +89,13 @@ class Projects extends RestControllerProto
             throw new \Exception("Only project owner can edit project", 403);
         }
     
+        $title = trim($this->p(ProjectStorage::F_TITLE, ''));
+        if (strlen($title) < 3) {
+            throw new \Exception("Bad title", 409);
+        }
+    
         $data = [
-            ProjectStorage::F_TITLE => $this->p(ProjectStorage::F_TITLE),
+            ProjectStorage::F_TITLE => $title,
             ProjectStorage::F_DESC  => $this->p(ProjectStorage::F_DESC),
             ProjectStorage::F_OWNER_ID => $currentUserId,
         ] + $data;
