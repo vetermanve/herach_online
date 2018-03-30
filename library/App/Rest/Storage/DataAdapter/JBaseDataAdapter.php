@@ -25,6 +25,11 @@ class JBaseDataAdapter extends DataAdapterProto
     
     private $_dirCheckCache = [];
     
+    static private $sortingRules = [
+        'asc'  => SORT_ASC,
+        'desc' => SORT_DESC,
+    ];
+    
     private function _getTablePath() {
         $path = $this->dataRoot.'/'.$this->database.'/'.$this->resource.'/';
         if (isset($this->_dirCheckCache[$path])) {
@@ -213,7 +218,7 @@ class JBaseDataAdapter extends DataAdapterProto
         $self = $this;
         $request = new StorageDataRequest(
             [$filter, $limit],
-            function ($filter, $limit) use ($self) {
+            function ($filter, $limit, $conditions) use ($self) {
                 $items = $self->getAllItems();
                 $results = [];
                 foreach ($items as $id) {
@@ -238,6 +243,10 @@ class JBaseDataAdapter extends DataAdapterProto
                         }
                     }
                 }
+                
+                if ($results && $conditions) {
+                    $self->applyConditions($results, $conditions);
+                }
             
                 return $results;
             }
@@ -246,6 +255,35 @@ class JBaseDataAdapter extends DataAdapterProto
         return $request;
     }
     
+    
+    public function applyConditions (&$results, $conditions) 
+    {
+        if ($conditions['sort']) {
+            $rows = [];
+            
+            foreach ($conditions['sort'] as $sortingRule) {
+                $rule = null;
+                $key = array_shift($sortingRule);
+                if($sortingRule) {
+                    $rule = array_shift($sortingRule);
+                }
+        
+                $rows[$key] = self::$sortingRules[$rule] ?? SORT_ASC;
+            }
+            
+            $params = [];
+            foreach ($rows as $rowName => $rule) {
+                $params[] = array_column($results, $rowName);
+                $params[] = $rule;
+            }
+    
+            $params[] = &$results;
+            
+            call_user_func_array('array_multisort', $params);
+            
+            return $results; 
+        }
+    }
     
     /**
      * @return string

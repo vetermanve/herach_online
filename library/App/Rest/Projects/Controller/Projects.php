@@ -31,7 +31,9 @@ class Projects extends RestControllerProto
         if ($ids) {
             $data = $storage->read()->mGet($ids, __METHOD__, []);
         } else {
-            $data = $storage->search()->find($filter, $count, __METHOD__);
+            $data = $storage->search()->find($filter, $count, __METHOD__, [
+                'sort' => [[ProjectStorage::F_TITLE, 'asc']],
+            ]);
         }
     
         return array_values($data);
