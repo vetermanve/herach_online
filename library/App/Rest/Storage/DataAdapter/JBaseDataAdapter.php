@@ -217,7 +217,7 @@ class JBaseDataAdapter extends DataAdapterProto
     {
         $self = $this;
         $request = new StorageDataRequest(
-            [$filter, $limit],
+            [$filter, $limit, $conditions],
             function ($filter, $limit, $conditions) use ($self) {
                 $items = $self->getAllItems();
                 $results = [];
@@ -280,8 +280,6 @@ class JBaseDataAdapter extends DataAdapterProto
             $params[] = &$results;
             
             call_user_func_array('array_multisort', $params);
-            
-            return $results; 
         }
     }
     
