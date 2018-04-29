@@ -2,10 +2,11 @@
 
 namespace App\Base\Run;
 
-use App\Base\Run\Logger\LogSessionHandler;
-use Mu\Env;
+use App\Base\Run\Logger\FileSystemHandler;
+use App\Base\Run\Logger\LogHandlerInterface;
 use Run\Processor\RunRequestProcessorProto;
 use Run\RunContext;
+use Run\Storage\LogStorage;
 
 class BaseRunProcessor extends RunRequestProcessorProto
 {
@@ -15,7 +16,7 @@ class BaseRunProcessor extends RunRequestProcessorProto
     private $processors = [];
     
     /**
-     * @var LogSessionHandler
+     * @var LogHandlerInterface
      */
     private $sessionHandler;
     
@@ -25,10 +26,9 @@ class BaseRunProcessor extends RunRequestProcessorProto
         }
     
         try {
-            $this->sessionHandler = new LogSessionHandler(function () {
-                return Env::getRedis()->getInstance();
+            $this->sessionHandler = new FileSystemHandler(function () {
+                return new LogStorage();
             });
-        
             $this->runtime->pushHandler($this->sessionHandler);
         } catch (\Throwable $exception) {
             trigger_error("Can't create sessionHandler: ".$exception->getMessage(), E_USER_WARNING);
@@ -54,7 +54,7 @@ class BaseRunProcessor extends RunRequestProcessorProto
         $this->runtime->runtime('RUN_REQ_END' , $request->params + ['time_ms' => $time, 'resource' => $request->getResource(), 'request_id' => $request->getUid(),]);
     
         if ($isDebugRuntime) {
-            $this->sessionHandler && $this->sessionHandler->flushLogs('slog:'.$request->getUid());    
+            $this->sessionHandler && $this->sessionHandler->flushLogs('slog:'.$request->getUid());
         }
     }
     

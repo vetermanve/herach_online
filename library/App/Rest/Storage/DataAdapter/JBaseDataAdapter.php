@@ -31,7 +31,8 @@ class JBaseDataAdapter extends DataAdapterProto
     ];
     
     private function _getTablePath() {
-        $path = $this->dataRoot.'/'.$this->database.'/'.$this->resource.'/';
+        $di = DIRECTORY_SEPARATOR;
+        $path = $this->dataRoot.$di.$this->database.$di.$this->resource.$di;
         if (isset($this->_dirCheckCache[$path])) {
             return $path;
         }
@@ -47,8 +48,11 @@ class JBaseDataAdapter extends DataAdapterProto
     }
     
     public function getPointer($id, $method = self::READ_ACCESS) {
+        if(!$id) {
+            return null;
+        }
+
         $filePath = $this->_getTablePath().$id;
-        
         $fileExists = file_exists($filePath);
         if ($method === self::READ_ACCESS && !$fileExists) {
             return null;
