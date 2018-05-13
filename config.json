@@ -3,7 +3,7 @@
     "default" : {
       "database" : "reanima_store",
       "type" : "jbase",
-      "connection" : "P:\\dev\\test"
+      "connection" : "/srv/data/jbase"
     }
   },
   "amqp" : {
