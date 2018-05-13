@@ -6,7 +6,7 @@ namespace Run\Spec;
 
 class AmqpHttpRequest
 {
-    const UID     = 'uid';
+    const UID     = 'uuid';
     const REPLY   = 'reply';
     const METHOD  = 'method';
     const PATH    = 'path';

@@ -10,6 +10,8 @@ use Storage\StorageDependency;
 class LogStorage extends SimpleStorage
 {
     const RESOURCE_LOG = 'log';
+    
+    protected $profilingAllowed = false;
 
     public function loadConfig()
     {

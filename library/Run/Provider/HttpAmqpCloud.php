@@ -59,7 +59,14 @@ class HttpAmqpCloud extends RunProviderProto
         $this->runtime->runtime('RUN_HTTP_AMQP_REQ_INCOME', ['request_id' => $amqpRequest[AmqpHttpRequest::UID]]);
     
         // getting params
-        parse_str($amqpRequest[AmqpHttpRequest::QUERY], $params);
+        if (is_array($amqpRequest[AmqpHttpRequest::QUERY])) {
+            $params = $amqpRequest[AmqpHttpRequest::QUERY]; 
+        } elseif(is_string($amqpRequest[AmqpHttpRequest::QUERY])) {
+            parse_str($amqpRequest[AmqpHttpRequest::QUERY], $params);    
+        } else {
+            $params = [];
+        }
+        
     
         $path = $amqpRequest[AmqpHttpRequest::PATH];
     
@@ -76,20 +83,22 @@ class HttpAmqpCloud extends RunProviderProto
         $request->params = $params;
                            
         // data processing
-        $request->body = $amqpRequest[AmqpHttpRequest::DATA] ? trim($amqpRequest[AmqpHttpRequest::DATA]) : '';
-        if ($request->body) {
-            if (strpos($request->body, '{') === 0) {
-                $bodyData = json_decode($request->body, true);
-                if (is_array($bodyData)) {
-                    $request->data = $bodyData;
-                }
-            } elseif (strpos($request->body, '=')) {
-                parse_str($request->body, $bodyData);
-                if (is_array($bodyData)) {
-                    $request->data = $bodyData;
+        if (is_string($amqpRequest[AmqpHttpRequest::DATA])) {
+            $request->body = $amqpRequest[AmqpHttpRequest::DATA] ? trim($amqpRequest[AmqpHttpRequest::DATA]) : '';
+            if ($request->body) {
+                if (strpos($request->body, '{') === 0) {
+                    $bodyData = json_decode($request->body, true);
+                    if (is_array($bodyData)) {
+                        $request->data = $bodyData;
+                    }
+                } elseif (strpos($request->body, '=')) {
+                    parse_str($request->body, $bodyData);
+                    if (is_array($bodyData)) {
+                        $request->data = $bodyData;
+                    }
                 }
             }
-        }    
+        }
         
         if ($pathData->getType() !== HttpResourceHelper::TYPE_WEB) {
             $method = RestMethodHelper::getRealMethod($amqpRequest[AmqpHttpRequest::METHOD], $request);    
