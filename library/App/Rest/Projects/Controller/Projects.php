@@ -12,7 +12,7 @@ class Projects extends RestControllerProto
 {
     public function get()
     {
-        $count = $this->p('count', 1);
+        $count = $this->p('count', 9);
         
         if ($id = $this->p('id')) {
             $ids = [$id]; 
