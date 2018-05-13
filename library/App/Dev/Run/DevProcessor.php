@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Web\Run;
+
+namespace App\Dev\Run;
 
 use App\Base\Run\WebProcessorProto;
 
-class WebProcessor extends WebProcessorProto
+class DevProcessor extends WebProcessorProto
 {
     public function getAppName()
     {
-        return "Web";
+        return 'Dev';
     }
 }

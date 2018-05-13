@@ -1,6 +1,6 @@
 <?php
 
-namespace Run\Storage;
+namespace App\Base\Storage;
 
 use Storage\SimpleStorage;
 use App\Rest\Storage\DataAdapterFactory;

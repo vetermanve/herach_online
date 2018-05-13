@@ -143,7 +143,7 @@
                         $("#logs-root-container").remove();
                     });
 
-                    transport.loadPage('get', 'dev-logs', {"id": "{{ request_id }}"}, function (data) {
+                    transport.loadPage('get', 'dev/dev-logs', {"id": "{{ request_id }}"}, function (data) {
                         $("#logs-container").html(data);
                     });
                 </script>

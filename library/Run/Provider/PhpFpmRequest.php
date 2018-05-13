@@ -63,12 +63,6 @@ class PhpFpmRequest extends RunProviderProto
         }
     
         $method = $this->httpEnv->getScope(HttpEnvContext::HTTP_SERVER, 'REQUEST_METHOD', 'GET');
-        
-        if ($pathData->getType() !== HttpResourceHelper::TYPE_WEB) {
-            $method = RestMethodHelper::getRealMethod($method, $request);
-        } else {
-            $method = $pathData->getMethod();
-        }
 
         $locale = null;
         if (function_exists('locale_accept_from_http') && isset($headers['accept-language'])) {

@@ -67,11 +67,11 @@ class HttpAmqpCloud extends RunProviderProto
             $params = [];
         }
         
-    
         $path = $amqpRequest[AmqpHttpRequest::PATH];
     
         // getting routing data
         $pathData = new HttpResourceHelper($path);
+        
         if ($pathData->getId()) {
             $params['id'] = $pathData->getId();    
         }
@@ -100,15 +100,8 @@ class HttpAmqpCloud extends RunProviderProto
             }
         }
         
-        if ($pathData->getType() !== HttpResourceHelper::TYPE_WEB) {
-            $method = RestMethodHelper::getRealMethod($amqpRequest[AmqpHttpRequest::METHOD], $request);    
-        } else {
-            $method = $pathData->getMethod();
-        }
-        
-    
         $request->meta = [
-            HttpRequestMetaSpec::REQUEST_METHOD  => $method,
+            HttpRequestMetaSpec::REQUEST_METHOD  => $amqpRequest[AmqpHttpRequest::METHOD],
             HttpRequestMetaSpec::REQUEST_HEADERS => $amqpRequest[AmqpHttpRequest::HEADERS],
             HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
         ];

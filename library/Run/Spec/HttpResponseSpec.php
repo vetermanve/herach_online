@@ -41,6 +41,7 @@ class HttpResponseSpec
     
     const CONTENT_JSON = 'application/json; charset=UTF-8';
     const CONTENT_HTML = 'text/html; charset=UTF-8';
+    const CONTENT_TEXT = 'text/plain; charset=UTF-8';
     
     public static $absoluteHeaders = [
         'Access-Control-Allow-Headers'      => 'Origin, Accept, X-Suppress-HTTP-Code, Content-Type, X-Rest-App, Authorization',

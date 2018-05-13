@@ -2,11 +2,11 @@
 
 namespace App\Base\Run;
 
-use App\Base\Run\Logger\FileSystemHandler;
-use App\Base\Run\Logger\LogHandlerInterface;
+use App\Base\Run\Processor\RequestProfilingProcessor;
 use Run\Processor\RunRequestProcessorProto;
 use Run\RunContext;
-use Run\Storage\LogStorage;
+use Run\RunRequest;
+use Run\Spec\HttpRequestMetaSpec;
 
 class BaseRunProcessor extends RunRequestProcessorProto
 {
@@ -16,45 +16,38 @@ class BaseRunProcessor extends RunRequestProcessorProto
     private $processors = [];
     
     /**
-     * @var LogHandlerInterface
+     * @var RequestProfilingProcessor
      */
-    private $sessionHandler;
-    
-    private function _prepareSessionHandler() {
-        if ($this->sessionHandler) {
-            return;
-        }
-    
-        try {
-            $this->sessionHandler = new FileSystemHandler(function () {
-                return new LogStorage();
-            });
-            $this->runtime->pushHandler($this->sessionHandler);
-        } catch (\Throwable $exception) {
-            trigger_error("Can't create sessionHandler: ".$exception->getMessage(), E_USER_WARNING);
-        }
-    }
+    private $profilingProcessor;
     
     public function prepare()
     {
-
+        $this->profilingProcessor = new RequestProfilingProcessor();
+        $this->profilingProcessor->follow($this);
+        $this->profilingProcessor->prepare();
     }
     
-    public function process(\Run\RunRequest $request)
+    public function process(RunRequest $request)
     {
-        $isDebugRuntime = (bool)$request->getParamOrData('_debug') || $this->context->getEnv(RunContext::ENV_DEBUG); 
-        if ($isDebugRuntime) {
-            $this->_prepareSessionHandler(); 
+        // get required provider type
+        $type = $request->getMeta(HttpRequestMetaSpec::PROVIDER_TYPE);
+        
+        // get processor for provider
+        $processor = $this->getProcessor($type);
+        
+        // compose params to check if we should profile this request 
+        {
+            $debugParam = (bool)$request->getParamOrData('_debug');
+            $debugContext = $this->context->getEnv(RunContext::ENV_DEBUG);
+            $debugShowProcessor = $type === 'dev';
         }
         
-        $start = microtime(1)*1000;
-        $type = $request->getMeta(\Run\Spec\HttpRequestMetaSpec::PROVIDER_TYPE);
-        $this->getProcessor($type)->process($request);
-        $time = (round((microtime(1)*1000 - $start), 1));
-        $this->runtime->runtime('RUN_REQ_END' , $request->params + ['time_ms' => $time, 'resource' => $request->getResource(), 'request_id' => $request->getUid(),]);
-    
-        if ($isDebugRuntime) {
-            $this->sessionHandler && $this->sessionHandler->flushLogs('slog:'.$request->getUid());
+        $isDebugAllowed = ($debugParam || $debugContext) && !$debugShowProcessor; 
+            
+        if ($isDebugAllowed) {
+            $this->profilingProcessor->process($request, $processor); 
+         } else {
+            $processor->process($request);
         }
     }
     
@@ -75,6 +68,9 @@ class BaseRunProcessor extends RunRequestProcessorProto
                 break;
             case 'read':
                 $processor = new \App\Read\Run\ReadProcessor();
+                break;
+            case 'dev':
+                $processor = new \App\Dev\Run\DevProcessor();
                 break;
             case 'web':
             default:

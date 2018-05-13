@@ -5,6 +5,7 @@ namespace App\Base\Run\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 use Run\Storage\LogStorage;
+use Storage\StorageProto;
 use Throwable;
 
 /**
@@ -12,7 +13,7 @@ use Throwable;
  * 
  * Class LogSessionHandler
  */
-class FileSystemHandler extends AbstractProcessingHandler implements LogHandlerInterface
+class StorageRequestLogsHandler extends AbstractProcessingHandler implements LogHandlerInterface
 {
     protected $logs = [];
     protected $logsLimit = 1000;
@@ -57,7 +58,7 @@ class FileSystemHandler extends AbstractProcessingHandler implements LogHandlerI
     }
 
     /**
-     * @return LogStorage
+     * @return StorageProto
      */
     public function getStorage()
     {
