@@ -67,19 +67,10 @@ class HttpAmqpCloud extends RunProviderProto
             $params = [];
         }
         
-        $path = $amqpRequest[AmqpHttpRequest::PATH];
-    
-        // getting routing data
-        $pathData = new HttpResourceHelper($path);
-        
-        if ($pathData->getId()) {
-            $params['id'] = $pathData->getId();    
-        }
-    
         RestMethodHelper::makeStrictParams($params);
     
         // create main request object
-        $request = new RunRequest($amqpRequest[AmqpHttpRequest::UID], $pathData->getResource(), $amqpRequest[AmqpHttpRequest::REPLY]);
+        $request = new RunRequest($amqpRequest[AmqpHttpRequest::UID], $amqpRequest[AmqpHttpRequest::PATH], $amqpRequest[AmqpHttpRequest::REPLY]);
         $request->params = $params;
                            
         // data processing
@@ -101,9 +92,9 @@ class HttpAmqpCloud extends RunProviderProto
         }
         
         $request->meta = [
-            HttpRequestMetaSpec::REQUEST_METHOD  => $amqpRequest[AmqpHttpRequest::METHOD],
+            HttpRequestMetaSpec::REQUEST_METHOD  => $amqpRequest[AmqpHttpRequest::METHOD] ?? "GET",
             HttpRequestMetaSpec::REQUEST_HEADERS => $amqpRequest[AmqpHttpRequest::HEADERS],
-            HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
+//            HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
         ];
     
         $request->meta[HttpRequestMetaSpec::REQUEST_SOURCE] = $request->getMetaItem(HttpRequestMetaSpec::REQUEST_HEADERS, HttpRequestHeaders::ORIGIN, '');

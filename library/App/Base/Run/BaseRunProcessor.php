@@ -7,6 +7,7 @@ use Run\Processor\RunRequestProcessorProto;
 use Run\RunContext;
 use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;
+use Run\Util\HttpResourceHelper;
 
 class BaseRunProcessor extends RunRequestProcessorProto
 {
@@ -29,9 +30,8 @@ class BaseRunProcessor extends RunRequestProcessorProto
     
     public function process(RunRequest $request)
     {
-        // get required provider type
-        $type = $request->getMeta(HttpRequestMetaSpec::PROVIDER_TYPE);
-        
+        $pathData = new HttpResourceHelper($request->getResource());
+        $type = $pathData->getType();
         // get processor for provider
         $processor = $this->getProcessor($type);
         

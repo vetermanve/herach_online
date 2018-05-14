@@ -8,6 +8,7 @@ use Run\ChannelMessage\HttpReply;
 use Run\Processor\RunRequestProcessorProto;
 use Run\RunRequest;
 use Run\Spec\HttpResponseSpec;
+use Run\Util\HttpResourceHelper;
 
 abstract class BaseRoutedProcessor extends RunRequestProcessorProto
 {
@@ -26,7 +27,9 @@ abstract class BaseRoutedProcessor extends RunRequestProcessorProto
      * @return BaseControllerProto
      */
     protected function _getControllerClass(RunRequest $request) {
-        $resParts = array_filter(explode('/', $request->getResource()));
+        $pathData = new HttpResourceHelper($request->getResource());
+        
+        $resParts = array_filter(explode('/', $pathData->getResource()));
         if (isset($resParts[0]) && $resParts[0]) {
             $moduleParts = explode('-', $resParts[0]);
             $moduleName = ucfirst(array_shift($moduleParts));

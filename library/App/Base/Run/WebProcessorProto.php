@@ -37,14 +37,18 @@ abstract class WebProcessorProto extends BaseRoutedProcessor
     {
         $response = $this->_buildResponseObject($request);
         $response->setHeader(HttpResponseSpec::META_HTTP_HEADER_CONTENT_TYPE, HttpResponseSpec::CONTENT_HTML);
+    
+        // getting routing data
+        $pathData = new HttpResourceHelper($request->getResource());
+        $method = $pathData->getMethod() ?? 'index';
+        
+        if ($pathData->getId()) {
+            $request->params['id'] = $pathData->getId();    
+        }
         
         /* Try to execute */
         try {
             $controller = $this->_getControllerClass($request);
-            
-            // getting routing data
-            $pathData = new HttpResourceHelper($request->getResource());
-            $method = $pathData->getMethod() ?? 'index';
             
             if (!$controller || !($controller instanceof BaseControllerProto)) {
                 return $this->abnormalResponse(

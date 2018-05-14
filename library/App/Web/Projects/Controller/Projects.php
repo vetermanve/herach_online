@@ -70,7 +70,7 @@ class Projects extends WebControllerProto
     
         return $this->render([
             'project' => $projectData,
-            'editable' => $projectData['owner_id'] === $userId
+            'editable' => isset($projectData['owner_id']) ? $projectData['owner_id'] === $userId : true
         ], __FUNCTION__);
     }
     /**
