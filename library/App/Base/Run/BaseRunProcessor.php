@@ -23,9 +23,20 @@ class BaseRunProcessor extends RunRequestProcessorProto
     
     public function prepare()
     {
-        $this->profilingProcessor = new RequestProfilingProcessor();
-        $this->profilingProcessor->follow($this);
-        $this->profilingProcessor->prepare();
+        
+    }
+    
+    /**
+     * @return RequestProfilingProcessor
+     */
+    private function _getProfilingProcessor() {
+        if (!$this->profilingProcessor) {
+            $this->profilingProcessor = new RequestProfilingProcessor();
+            $this->profilingProcessor->follow($this);
+            $this->profilingProcessor->prepare();    
+        }
+        
+        return $this->profilingProcessor;
     }
     
     public function process(RunRequest $request)
@@ -45,7 +56,7 @@ class BaseRunProcessor extends RunRequestProcessorProto
         $isDebugAllowed = ($debugParam || $debugContext) && !$debugShowProcessor; 
             
         if ($isDebugAllowed) {
-            $this->profilingProcessor->process($request, $processor); 
+            $this->_getProfilingProcessor()->process($request, $processor); 
          } else {
             $processor->process($request);
         }
