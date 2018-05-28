@@ -89,12 +89,13 @@ class HttpAmqpCloud extends RunProviderProto
                     }
                 }
             }
+        } else {
+            $request->data = $amqpRequest[AmqpHttpRequest::DATA];
         }
         
         $request->meta = [
             HttpRequestMetaSpec::REQUEST_METHOD  => $amqpRequest[AmqpHttpRequest::METHOD] ?? "GET",
             HttpRequestMetaSpec::REQUEST_HEADERS => $amqpRequest[AmqpHttpRequest::HEADERS],
-//            HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
         ];
     
         $request->meta[HttpRequestMetaSpec::REQUEST_SOURCE] = $request->getMetaItem(HttpRequestMetaSpec::REQUEST_HEADERS, HttpRequestHeaders::ORIGIN, '');

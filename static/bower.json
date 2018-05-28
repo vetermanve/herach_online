@@ -19,6 +19,7 @@
   "dependencies": {
     "jquery-color": "^2.1.2",
     "magnific-popup": "^1.1.0",
-    "pure": "^1.0.0"
+    "pure": "^1.0.0",
+    "socket.io-client": "^2.1.1"
   }
 }

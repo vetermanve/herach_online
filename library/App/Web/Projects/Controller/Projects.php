@@ -58,7 +58,7 @@ class Projects extends WebControllerProto
         $id = $this->p('id');
         $userId = $this->_getCurrentUserId();
         
-        $load = new Load('projects');
+        $load = new Load('rest/projects');
         $load->setParams([
             'id' => $id,
             'count' => 1,

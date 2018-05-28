@@ -12,7 +12,7 @@ class User extends WebControllerProto
 {
     public function index () 
     {
-        $authLoad = new Load('auth-session');
+        $authLoad = new Load('rest/auth-session');
         $authLoad->setParams([
             'id' => $this->getState('sid'),
         ]);
@@ -34,7 +34,7 @@ class User extends WebControllerProto
         
         // load user
         {
-            $userLoad = new Load('user');
+            $userLoad = new Load('rest/user');
             $userLoad->setParams([
                 'id' => $userId,
             ]);
@@ -44,7 +44,7 @@ class User extends WebControllerProto
         
         // load user projects
         {
-            $projectsLoad = new Load('projects');
+            $projectsLoad = new Load('rest/projects');
             $projectsLoad->setParams([
                 'owner_id' => $userId, 
                 'count' => 6,
