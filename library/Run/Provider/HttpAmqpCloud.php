@@ -101,8 +101,19 @@ class HttpAmqpCloud extends RunProviderProto
         $request->meta[HttpRequestMetaSpec::REQUEST_SOURCE] = $request->getMetaItem(HttpRequestMetaSpec::REQUEST_HEADERS, HttpRequestHeaders::ORIGIN, '');
     
         $cookie = $request->getMetaItem(HttpRequestMetaSpec::REQUEST_HEADERS, HttpRequestHeaders::COOKIE, '');
-    
-        $request->getChannelState()->setPacked(HttpParse::cookie($cookie));
+        
+        $channelState = $request->getChannelState();
+        if ($cookie) {
+            $channelState->setPacked(HttpParse::cookie($cookie));
+        }
+        
+        if (isset($amqpRequest[AmqpHttpRequest::STATE])) {
+            $this->runtime->runtime('AMQP_STATE', ['state' => $amqpRequest[AmqpHttpRequest::STATE]]);
+            foreach ($amqpRequest[AmqpHttpRequest::STATE] as $stateKey => $stateDataList) {
+                list($stateValue, $stateExpiresAt) = $stateDataList;
+                $channelState->set($stateKey, $stateValue, $stateExpiresAt);
+            }
+        }
     
         $this->core->process($request);
     

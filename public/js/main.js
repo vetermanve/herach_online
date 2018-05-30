@@ -19,6 +19,72 @@ var transportProto = {
     }
 };
 
+var clientProto = {
+    serverAddress : '', 
+    deviceId : '',
+    salt : '',
+    init : function ()
+    {
+        var self = this;
+        var address = transport.call('get', '/socket/connection/address', {}, function (data)
+        {
+            if (data && typeof data.address !== 'undefined') {
+                self.setAddress(data.address);
+            }
+        });
+    },
+    setAddress : function (address)
+    {
+        this.serverAddress = address;
+        this.loadDevice();
+        this.updateDevice();
+    },
+    loadDevice : function ()
+    {
+        this.deviceId = localStorage.getItem('deviceId') || '';
+        this.salt = localStorage.getItem('salt') || '';
+    },
+    updateDevice : function ()
+    {
+        var self = this;
+        
+        var deviceId = this.deviceId;
+        var salt = this.salt;
+        
+        if (deviceId.length > 0 && salt.length > 0) {
+            transport.call('put', 'rest/platform-clients', {
+                "id": deviceId,
+                "salt": salt,
+                "address": this.serverAddress
+            },  function (data)
+            {
+                console.log('device address updated', data);
+            });
+        } else {
+            var bind = {
+                "type"  : "web",
+                "ownerId" : '',
+                "ownerType" : 'user',
+                "address" : this.serverAddress,
+                "key" : uuidV4(),
+                "salt" : uuidV4() + uuidV4() + uuidV4(),
+                "version" : window.mutantClientVersion || 0
+            };
+            transport.call('post', 'rest/platform-clients', bind, this.saveDevice.bind(self), function (err)
+            {
+                console.error(err);
+            });
+        }
+    },
+    saveDevice : function (device) {
+        this.deviceId = device.id;
+        this.salt = device.salt;
+        
+        localStorage.setItem('deviceId', this.deviceId);
+        localStorage.setItem('salt', this.salt);   
+    }
+};
+
 var ajaxConnection = {
     host : 'http://localhost/rest/',
     type : 'json',
@@ -89,6 +155,12 @@ var socketConnection = {
             console.warn(msg);
             console.error("No reply found", msg);
             return;
+        }
+        
+        if (typeof msg.state === 'object' && Object.keys(msg.state).length) {
+            for (var stateKey in msg.state) {
+                Cookies.set(stateKey, msg.state[stateKey][0], {expires : msg.state[stateKey][1]});
+            }
         }
         
         var callbacks = this.response[msg.reply_uuid];

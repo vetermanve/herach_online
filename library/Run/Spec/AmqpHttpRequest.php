@@ -13,5 +13,6 @@ class AmqpHttpRequest
     const QUERY   = 'query';
     const DATA    = 'data';
     const HEADERS = 'headers';
+    const STATE   = 'state';
     const BORN    = 'born';
 }
