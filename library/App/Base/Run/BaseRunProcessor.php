@@ -80,6 +80,9 @@ class BaseRunProcessor extends RunRequestProcessorProto
             case 'read':
                 $processor = new \App\Read\Run\ReadProcessor();
                 break;
+            case 'event':
+                $processor = new \App\Event\Run\EventProcessor();
+                break;
             case 'dev':
                 $processor = new \App\Dev\Run\DevProcessor();
                 break;
