@@ -27,11 +27,9 @@ abstract class BaseRoutedProcessor extends RunRequestProcessorProto
      * @return BaseControllerProto
      */
     protected function _getControllerClass(RunRequest $request) {
-        $pathData = new HttpResourceHelper($request->getResource());
-        
-        $resParts = array_filter(explode('/', $pathData->getResource()));
-        if (isset($resParts[0]) && $resParts[0]) {
-            $moduleParts = explode('-', $resParts[0]);
+        $module = $request->getResourcePart(0);
+        if ($module) {
+            $moduleParts = explode('-', $module);
             $moduleName = ucfirst(array_shift($moduleParts));
             if ($moduleParts) {
                 array_walk($moduleParts, function (&$val) {

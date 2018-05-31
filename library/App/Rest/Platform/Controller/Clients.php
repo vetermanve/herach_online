@@ -10,6 +10,25 @@ use Uuid\Uuid;
 
 class Clients extends RestControllerProto
 {
+    public function get () 
+    {
+        $limit = $this->p('count', 100);
+        $id = $this->p('id');
+        
+        ///
+        $filter = [];
+        if ($id) {
+            $filter['id'] = $id;
+        }
+        
+        ///
+        $storage = new PlatformClientsStorage();
+        
+        $res = $storage->search()->find($filter, $limit, __METHOD__);
+    
+        return $res;
+    }
+    
     public function post()
     {
         $id = Uuid::v4();

@@ -3,7 +3,7 @@
 
 namespace App\Event\Message\Controller;
 
-use App\Rest\Run\EventControllerProto;
+use App\Event\Run\EventControllerProto;
 use Load\Load;
 use Mu\Env;
 

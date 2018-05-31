@@ -12,7 +12,6 @@ use Run\Spec\AmqpHttpRequest;
 use Run\Spec\HttpRequestHeaders;
 use Run\Spec\HttpRequestMetaSpec;
 use Run\Util\HttpParse;
-use Run\Util\HttpResourceHelper;
 use Run\Util\RestMethodHelper;
 
 class HttpAmqpCloud extends RunProviderProto

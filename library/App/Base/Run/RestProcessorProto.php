@@ -58,12 +58,17 @@ abstract class RestProcessorProto extends BaseRoutedProcessor
             $response->setBody($controller->run());
             
         } catch (\Throwable $throwable) {
-            return $this->abnormalResponse(
-                HttpResponseSpec::HTTP_CODE_ERROR,
-                'Internal error : '. $throwable->getMessage().' on '.$throwable->getTraceAsString(),
-                $response,
-                $request
-            );
+            // possible is an http code
+            if ($throwable->getCode() >= 300 && $throwable->getCode() < 600) {
+                $response->setCode($throwable->getCode());
+                $response->body = [
+                    'message' => $throwable->getMessage(),
+                    'code' => $throwable->getCode(),
+                ];
+            } else {
+                $response->setCode(HttpResponseSpec::HTTP_CODE_ERROR);
+                $response->body = 'Internal error : '. $throwable->getMessage().' on '.$throwable->getTraceAsString();
+            }
         }
         
         $this->sendResponse($response, $request);

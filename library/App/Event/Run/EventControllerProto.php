@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rest\Run;
+namespace App\Event\Run;
 
 use App\Base\Run\BaseControllerProto;
 use App\Rest\Auth\Lib\SessionLoader;
@@ -27,6 +27,6 @@ abstract class EventControllerProto extends BaseControllerProto
     
     public function validateMethod () 
     {
-        return method_exists($this, $this->method);
+        return true;//method_exists($this, $this->method);
     }
 }
