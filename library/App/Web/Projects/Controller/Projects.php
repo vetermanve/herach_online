@@ -12,7 +12,7 @@ class Projects extends WebControllerProto
         $id = $this->p('id');
         $userId = $this->_getCurrentUserId();
     
-        $load = new Load('projects');
+        $load = new Load('rest/projects');
         $load->setParams([
             'id' => $id,
             'count' => 1,
@@ -25,7 +25,7 @@ class Projects extends WebControllerProto
             throw new \Exception("Not found", 404);
         }
     
-        if ($projectData['owner_id'] !== $userId) {
+        if (!isset($projectData['owner_id']) || $projectData['owner_id'] !== $userId) {
             throw new \Exception("Wrong access rights", 403);       
         }
     

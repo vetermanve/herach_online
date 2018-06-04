@@ -4,7 +4,7 @@
 namespace App\Rest\User\Lib\Storage;
 
 
-use App\Rest\Storage\DataAdapterFactory;
+use App\Base\Storage\DataAdapterFactory;
 use Storage\SimpleStorage;
 use Storage\StorageContext;
 use Storage\StorageDependency;

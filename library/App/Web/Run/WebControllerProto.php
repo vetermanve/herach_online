@@ -17,7 +17,7 @@ abstract class WebControllerProto extends BaseControllerProto
     
     public function _getCurrentUserId () 
     {
-        $auth = new Load('auth-session');
+        $auth = new Load('rest/auth-session');
         $auth->setParams([
             'id' => $this->getState('sid'),
         ]);
@@ -31,11 +31,19 @@ abstract class WebControllerProto extends BaseControllerProto
     
     public function render ($data, $template = null) 
     {
+        // add controller template path 
         $template = $template ?: $this->method;
-    
         $templatesPaths[] = $this->_getTemplateDir();
-        $templatesPaths[] = __DIR__.'/Template';
     
+        // add layouts dir
+        $layoutsDir = __DIR__.'/Template';
+        $customLayoutsDir = $this->requestOptions->getParam('_layout', '');
+        if ($customLayoutsDir) {
+            $layoutsDir .= '/' . ucfirst($customLayoutsDir);
+        } 
+        $templatesPaths[] = $layoutsDir;
+        
+        // debug params passing
         $data['request_id'] = $this->requestOptions->getReqiestId();
         $data['env']['debug'] = (bool)$this->requestOptions->getParam('_debug');
         $data['static_host'] = Env::getEnvContext()->getScope('static','host', '');

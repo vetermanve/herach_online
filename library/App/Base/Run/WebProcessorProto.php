@@ -7,9 +7,7 @@ use Renderer\TwigEngine;
 use Run\ChannelMessage\ChannelMsg;
 use Run\Rest\RestRequestOptions;
 use Run\RunRequest;
-use Run\Spec\HttpRequestMetaSpec;
 use Run\Spec\HttpResponseSpec;
-use Run\Util\HttpResourceHelper;
 use Run\Util\SessionBuilder;
 
 abstract class WebProcessorProto extends BaseRoutedProcessor
@@ -39,7 +37,9 @@ abstract class WebProcessorProto extends BaseRoutedProcessor
         $response->setHeader(HttpResponseSpec::META_HTTP_HEADER_CONTENT_TYPE, HttpResponseSpec::CONTENT_HTML);
     
         $method = $request->getResourcePart(2) ?: 'index';
-        $request->params['id'] = $request->getResourcePart(1) ?: $request->params['id']; 
+        if ($request->getResourcePart(1)) {
+            $request->params['id'] = $request->getResourcePart(1);  
+        }
         
         /* Try to execute */
         try {
@@ -80,15 +80,16 @@ abstract class WebProcessorProto extends BaseRoutedProcessor
             $response->setBody($controller->run());
             
         } catch (\Throwable $throwable) {
-            return $this->abnormalResponse(
-                HttpResponseSpec::HTTP_CODE_ERROR,
-                'Internal error ('.get_class($throwable).') : '. $throwable->getMessage().' on '.$throwable->getTraceAsString(),
-                $response,
-                $request
-            );
+            if ($throwable->getCode() >= 300 && $throwable->getCode() < 600) {
+                $response->setCode($throwable->getCode());
+                $response->body = "Error: ". $throwable->getCode() . ": " .$throwable->getMessage();
+            } else {
+                $response->setCode(HttpResponseSpec::HTTP_CODE_ERROR);
+                $response->body = 'Internal error ('.get_class($throwable).') : '. $throwable->getMessage().' on '.$throwable->getTraceAsString();
+            }
         } 
         
-        $this->sendResponse($response, $request);
+        return $this->sendResponse($response, $request);
     }
     
     protected function abnormalResponse(int $code, string $text, ChannelMsg $response, RunRequest $request) {

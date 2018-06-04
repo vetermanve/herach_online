@@ -12,7 +12,7 @@ class Clients extends RestControllerProto
 {
     public function get () 
     {
-        $limit = $this->p('count', 100);
+        $limit = $this->p('limit', 100);
         $id = $this->p('id');
         
         ///
@@ -62,6 +62,8 @@ class Clients extends RestControllerProto
         $storage = new PlatformClientsStorage();
         
         $res = $storage->write()->insert($id, $bind, __METHOD__);
+    
+        $this->setState('device_id', $id);
         
         return $res;
     }
@@ -97,6 +99,9 @@ class Clients extends RestControllerProto
         ] + $res;
         
         $res = $storage->write()->update($id, $bind, __METHOD__);
+        
+        $this->setState('device_id', $id);
+        
         return $res;
     }
 }

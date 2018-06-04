@@ -249,7 +249,23 @@ var setupForm = function(obj, resource, success, error, method, beforeSend) {
 };
 
 var nav = {
-    go : function (page) {
-        document.location.href = page;  
+    go : function (page, data) {
+        data = data || {};
+        data['_layout'] = 'noheader';
+        transport.loadPage('get', '/web' + page, data, function (html)
+            {
+                $('body').html(html).scrollTop(0);
+                window.history.pushState({}, page, page)
+            }
+        );
+    },
+    init : function ()
+    {
+        var self = this;
+        $('body').on('click', 'a', function(event) {
+                event.preventDefault();
+                self.go($(this).attr("href"));
+            }
+        );
     }
 };

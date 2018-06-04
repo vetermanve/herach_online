@@ -1,10 +1,8 @@
 <?php
 
 
-namespace App\Rest\Storage\DataAdapter;
+namespace Storage\Data;
 
-
-use Storage\Data\DataAdapterProto;
 use Storage\Request\StorageDataRequest;
 
 class JBaseDataAdapter extends DataAdapterProto
@@ -20,8 +18,6 @@ class JBaseDataAdapter extends DataAdapterProto
     private $dataRoot = '/tmp/jbase';
     
     private $database = 'default';
-    
-    private $resource;
     
     private $_dirCheckCache = [];
     
@@ -150,6 +146,16 @@ class JBaseDataAdapter extends DataAdapterProto
         );
     
         return $request;
+    }
+    
+    /**
+     * @param $updateBindsByKeys
+     *
+     * @return StorageDataRequest
+     */
+    public function getBatchUpdateRequest($updateBindsByKeys)
+    {
+        // TODO: Implement getBatchUpdateRequest() method.
     }
     
     /**
@@ -318,22 +324,5 @@ class JBaseDataAdapter extends DataAdapterProto
     {
         $this->database = $database;
     }
-    
-    /**
-     * @return mixed
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-    
-    /**
-     * @param mixed $resource
-     */
-    public function setResource($resource)
-    {
-        $this->resource = $resource;
-    }
-    
     
 }

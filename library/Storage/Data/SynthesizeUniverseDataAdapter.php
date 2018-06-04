@@ -115,6 +115,18 @@ class SynthesizeUniverseDataAdapter extends DataAdapterProto
         );
     }
     
+    
+    /**
+     * @param $updateBindsByKeys
+     *
+     * @return StorageDataRequest
+     * @throws \Exception
+     */
+    public function getBatchUpdateRequest($updateBindsByKeys)
+    {
+        throw new \Exception('NIY');
+    }
+    
     /**
      * @param $ids
      *

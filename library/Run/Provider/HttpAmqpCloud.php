@@ -110,7 +110,9 @@ class HttpAmqpCloud extends RunProviderProto
             $this->runtime->runtime('AMQP_STATE', ['state' => $amqpRequest[AmqpHttpRequest::STATE]]);
             foreach ($amqpRequest[AmqpHttpRequest::STATE] as $stateKey => $stateDataList) {
                 list($stateValue, $stateExpiresAt) = $stateDataList;
-                $channelState->set($stateKey, $stateValue, $stateExpiresAt);
+                if (!is_null($stateValue)) {
+                    $channelState->set($stateKey, $stateValue, $stateExpiresAt);    
+                }
             }
         }
     

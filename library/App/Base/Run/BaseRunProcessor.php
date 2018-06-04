@@ -86,6 +86,8 @@ class BaseRunProcessor extends RunRequestProcessorProto
             $debugShowProcessor = $type === 'dev';
         }
         
+        $this->runtime->runtime("Processor ".get_class($processor));
+        
         $isDebugAllowed = ($debugParam || $debugContext) && !$debugShowProcessor;
         
         if ($isDebugAllowed) {

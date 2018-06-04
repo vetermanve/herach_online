@@ -3,7 +3,6 @@
 namespace App\Base\Storage;
 
 use Storage\SimpleStorage;
-use App\Rest\Storage\DataAdapterFactory;
 use Storage\StorageContext;
 use Storage\StorageDependency;
 

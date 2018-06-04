@@ -6,6 +6,13 @@
       "connection" : "/srv/data/jbase"
     }
   },
+  "event": {
+    "default" : {
+      "database" : "",
+      "type" : "rabbit",
+      "connection" : "localhost:5672"
+    }
+  },
   "amqp" : {
     "host" : "localhost",
     "port" : 5672
