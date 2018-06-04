@@ -11,7 +11,7 @@ use Throwable;
  * 
  * Class LogSessionHandler
  */
-class LogSessionHandler extends AbstractProcessingHandler
+class LogSessionHandler extends AbstractProcessingHandler implements LogHandlerInterface
 {
     protected $logs = [];
     

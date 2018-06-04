@@ -19,6 +19,8 @@ class HttpResourceHelper
     const TYPE_REST = 'rest';
     const TYPE_WEB  = 'web';
     const TYPE_READ = 'read';
+    const TYPE_DEV  = 'dev';
+    
     
     private $string   = '';
     private $resource = '';
@@ -28,7 +30,8 @@ class HttpResourceHelper
     private static $subResourceTypes = [
         self::TYPE_REST => self::TYPE_REST,
         self::TYPE_WEB  => self::TYPE_WEB,
-        self::TYPE_READ => self::TYPE_READ
+        self::TYPE_READ => self::TYPE_READ,
+        self::TYPE_DEV => self::TYPE_DEV
     ];
     
     private $defaultType;

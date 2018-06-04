@@ -1,10 +1,8 @@
 <?php
 
 
-namespace App\Rest\Storage\DataAdapter;
+namespace Storage\Data;
 
-
-use Storage\Data\DataAdapterProto;
 use Storage\Request\StorageDataRequest;
 
 class JBaseDataAdapter extends DataAdapterProto
@@ -21,8 +19,6 @@ class JBaseDataAdapter extends DataAdapterProto
     
     private $database = 'default';
     
-    private $resource;
-    
     private $_dirCheckCache = [];
     
     static private $sortingRules = [
@@ -31,7 +27,8 @@ class JBaseDataAdapter extends DataAdapterProto
     ];
     
     private function _getTablePath() {
-        $path = $this->dataRoot.'/'.$this->database.'/'.$this->resource.'/';
+        $di = DIRECTORY_SEPARATOR;
+        $path = $this->dataRoot.$di.$this->database.$di.$this->resource.$di;
         if (isset($this->_dirCheckCache[$path])) {
             return $path;
         }
@@ -47,8 +44,11 @@ class JBaseDataAdapter extends DataAdapterProto
     }
     
     public function getPointer($id, $method = self::READ_ACCESS) {
+        if(!$id) {
+            return null;
+        }
+
         $filePath = $this->_getTablePath().$id;
-        
         $fileExists = file_exists($filePath);
         if ($method === self::READ_ACCESS && !$fileExists) {
             return null;
@@ -146,6 +146,16 @@ class JBaseDataAdapter extends DataAdapterProto
         );
     
         return $request;
+    }
+    
+    /**
+     * @param $updateBindsByKeys
+     *
+     * @return StorageDataRequest
+     */
+    public function getBatchUpdateRequest($updateBindsByKeys)
+    {
+        // TODO: Implement getBatchUpdateRequest() method.
     }
     
     /**
@@ -314,22 +324,5 @@ class JBaseDataAdapter extends DataAdapterProto
     {
         $this->database = $database;
     }
-    
-    /**
-     * @return mixed
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-    
-    /**
-     * @param mixed $resource
-     */
-    public function setResource($resource)
-    {
-        $this->resource = $resource;
-    }
-    
     
 }

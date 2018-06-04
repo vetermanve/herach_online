@@ -12,64 +12,8 @@ use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;
 use Run\Spec\HttpResponseSpec;
 
-abstract class RestProcessorProto extends RunRequestProcessorProto
+abstract class RestProcessorProto extends BaseRoutedProcessor
 {
-    private $appName = '';
-    
-    abstract public function getAppName();
-    
-    public function prepare()
-    {
-        $this->appName = $this->getAppName();
-    }
-    
-    /**
-     * @param RunRequest $request
-     *
-     * @return BaseControllerProto
-     */
-    protected function _getControllerClass(RunRequest $request) {
-        $resParts = array_filter(explode('/', $request->getResource()));
-        if (isset($resParts[0]) && $resParts[0]) {
-            $moduleParts = explode('-', $resParts[0]);
-            $moduleName = ucfirst(array_shift($moduleParts));
-            if ($moduleParts) {
-                array_walk($moduleParts, function (&$val) {
-                    $val = ucfirst($val);
-                });
-                $controllerName = implode('', $moduleParts);
-            } else {
-                $controllerName = $moduleName;
-            }
-        } else {
-            $moduleName = $controllerName = 'Landing';
-        }
-        
-        $controllerClassName = $this->_getClassName($moduleName, $controllerName);
-        
-        if (!class_exists($controllerClassName)) {
-            return null;
-        }
-        
-        return new $controllerClassName;
-    }
-    
-    protected function _getClassName($moduleName, $controllerName) {
-        return '\\App\\'.$this->appName.'\\'.$moduleName.'\\Controller\\'.$controllerName;
-    }
-    
-    public function _buildResponseObject (RunRequest $request)
-    {
-        $response = new HttpReply();
-        $response->setUid($request->getUid());
-        $response->setDestination($request->getReply());
-        $response->setChannelState($request->getChannelState());
-        $response->setHeaders(HttpResponseSpec::$absoluteHeaders);
-        $response->setHeader(HttpResponseSpec::META_HTTP_HEADER_CONTENT_TYPE, HttpResponseSpec::CONTENT_JSON);
-        
-        return $response;
-    }
-    
     public function _getRequestMethod (RunRequest $request)
     {
         return $request->getMeta(HttpRequestMetaSpec::REQUEST_METHOD, 'get');
@@ -80,6 +24,7 @@ abstract class RestProcessorProto extends RunRequestProcessorProto
         $request->meta[HttpRequestMetaSpec::EXECUTION_START] = microtime(1);
         
         $response = $this->_buildResponseObject($request);
+        $response->setHeader(HttpResponseSpec::META_HTTP_HEADER_CONTENT_TYPE, HttpResponseSpec::CONTENT_JSON);
         
         try {
             $controller = $this->_getControllerClass($request);
@@ -113,12 +58,17 @@ abstract class RestProcessorProto extends RunRequestProcessorProto
             $response->setBody($controller->run());
             
         } catch (\Throwable $throwable) {
-            return $this->abnormalResponse(
-                HttpResponseSpec::HTTP_CODE_ERROR,
-                'Internal error : '. $throwable->getMessage().' on '.$throwable->getTraceAsString(),
-                $response,
-                $request
-            );
+            // possible is an http code
+            if ($throwable->getCode() >= 300 && $throwable->getCode() < 600) {
+                $response->setCode($throwable->getCode());
+                $response->body = [
+                    'message' => $throwable->getMessage(),
+                    'code' => $throwable->getCode(),
+                ];
+            } else {
+                $response->setCode(HttpResponseSpec::HTTP_CODE_ERROR);
+                $response->body = 'Internal error : '. $throwable->getMessage().' on '.$throwable->getTraceAsString();
+            }
         }
         
         $this->sendResponse($response, $request);

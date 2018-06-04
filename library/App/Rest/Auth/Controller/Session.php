@@ -54,6 +54,10 @@ class Session extends RestControllerProto
         $storage = new SessionStorage();
         $session = $storage->write()->insert($sid, $sessionInsert, __METHOD__);
         
+        if (!$session) {
+            throw new \Exception('Session cannot be created', 409);
+        }
+        
         $this->setState('sid', $sid);
         $this->setState('uid', $userId);
         

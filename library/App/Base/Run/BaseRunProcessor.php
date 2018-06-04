@@ -2,59 +2,98 @@
 
 namespace App\Base\Run;
 
-use App\Base\Run\Logger\LogSessionHandler;
-use Mu\Env;
+use App\Base\Run\Processor\RequestProfilingProcessor;
 use Run\Processor\RunRequestProcessorProto;
 use Run\RunContext;
+use Run\RunRequest;
+use Run\Spec\HttpRequestMetaSpec;
+use Run\Util\HttpResourceHelper;
 
 class BaseRunProcessor extends RunRequestProcessorProto
 {
     /**
-     * @var RunRequestProcessorProto[] 
+     * @var RunRequestProcessorProto[]|callable[]
      */
     private $processors = [];
     
     /**
-     * @var LogSessionHandler
+     * @var RequestProfilingProcessor
      */
-    private $sessionHandler;
+    private $profilingProcessor;
     
-    private function _prepareSessionHandler() {
-        if ($this->sessionHandler) {
-            return;
-        }
+    const PROCESSOR_DEFAULT = self::PROCESSOR_WEB;
     
-        try {
-            $this->sessionHandler = new LogSessionHandler(function () {
-                return Env::getRedis()->getInstance();
-            });
-        
-            $this->runtime->pushHandler($this->sessionHandler);
-        } catch (\Throwable $exception) {
-            trigger_error("Can't create sessionHandler: ".$exception->getMessage(), E_USER_WARNING);
-        }
-    }
+    const PROCESSOR_REST  = 'rest';
+    const PROCESSOR_READ  = 'read';
+    const PROCESSOR_EVENT = 'event';
+    const PROCESSOR_DEV   = 'dev';
+    const PROCESSOR_WEB   = 'web';
     
     public function prepare()
     {
-
+        $this->processors = [
+            self::PROCESSOR_REST  => function () {
+                return new \App\Rest\Run\RestProcessor();
+            },
+            self::PROCESSOR_READ  => function () {
+                return new \App\Read\Run\ReadProcessor();
+            },
+            self::PROCESSOR_EVENT => function () {
+                return new \App\Event\Run\EventProcessor();
+            },
+            self::PROCESSOR_DEV   => function () {
+                return new \App\Dev\Run\DevProcessor();
+            },
+            self::PROCESSOR_WEB   => function () {
+                return new \App\Web\Run\WebProcessor();
+            }
+        ];
     }
     
-    public function process(\Run\RunRequest $request)
+    /**
+     * @return RequestProfilingProcessor
+     */
+    private function _getProfilingProcessor()
     {
-        $isDebugRuntime = (bool)$request->getParamOrData('_debug') || $this->context->getEnv(RunContext::ENV_DEBUG); 
-        if ($isDebugRuntime) {
-            $this->_prepareSessionHandler(); 
+        if (!$this->profilingProcessor) {
+            $this->profilingProcessor = new RequestProfilingProcessor();
+            $this->profilingProcessor->follow($this);
+            $this->profilingProcessor->prepare();
         }
         
-        $start = microtime(1)*1000;
-        $type = $request->getMeta(\Run\Spec\HttpRequestMetaSpec::PROVIDER_TYPE);
-        $this->getProcessor($type)->process($request);
-        $time = (round((microtime(1)*1000 - $start), 1));
-        $this->runtime->runtime('RUN_REQ_END' , $request->params + ['time_ms' => $time, 'resource' => $request->getResource(), 'request_id' => $request->getUid(),]);
+        return $this->profilingProcessor;
+    }
     
-        if ($isDebugRuntime) {
-            $this->sessionHandler && $this->sessionHandler->flushLogs('slog:'.$request->getUid());    
+    public function process(RunRequest $request)
+    {
+        $resourceParts = explode('/', trim($request->getResource(),'/'));
+        $type = $resourceParts[0];
+        $processor = $this->getProcessor($type);
+        
+        if ($processor) {
+            // remove processor prefix;
+            array_shift($resourceParts);
+            $request->setResource('/'.implode('/', $resourceParts));
+        } else {
+            // get default processor
+            $processor = $this->getProcessor(self::PROCESSOR_DEFAULT); 
+        }
+        
+        // compose params to check if we should profile this request 
+        {
+            $debugParam         = (bool)$request->getParamOrData('_debug');
+            $debugContext       = $this->context->getEnv(RunContext::ENV_DEBUG);
+            $debugShowProcessor = $type === 'dev';
+        }
+        
+        $this->runtime->runtime("Processor ".get_class($processor));
+        
+        $isDebugAllowed = ($debugParam || $debugContext) && !$debugShowProcessor;
+        
+        if ($isDebugAllowed) {
+            $this->_getProfilingProcessor()->process($request, $processor);
+        } else {
+            $processor->process($request);
         }
     }
     
@@ -63,28 +102,20 @@ class BaseRunProcessor extends RunRequestProcessorProto
      *
      * @return RunRequestProcessorProto
      */
-    public function getProcessor ($type) 
+    public function getProcessor($type)
     {
-        if (isset($this->processors[$type])) {
-            return $this->processors[$type];
+        if (!isset($this->processors[$type])) {
+            return null;
         }
         
-        switch ($type) {
-            case 'rest': 
-                $processor = new \App\Rest\Run\RestProcessor();
-                break;
-            case 'read':
-                $processor = new \App\Read\Run\ReadProcessor();
-                break;
-            case 'web':
-            default:
-                $processor = new \App\Web\Run\WebProcessor();
+        if (is_callable($this->processors[$type])) {
+            /* @var $processor RunRequestProcessorProto */
+            $processor = $this->processors[$type]();
+            $processor->follow($this);
+            $processor->prepare();
+            $this->processors[$type] = $processor;
         }
         
-        $processor->follow($this);
-        $processor->prepare();
-        
-        $this->processors[$type] = $processor;
-        return $processor;
+        return $this->processors[$type];
     }
 }

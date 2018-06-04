@@ -175,9 +175,18 @@ class Router
         return $consumer;
     }
     
-    public function getRequestReader ($queueName, $timeout) 
+    /**
+     * @param $queueName
+     *
+     * @return Actors\RouterReplyReader
+     */
+    public function getRequestReader ($queueName) 
     {
+        $forwardQueueName = $this->_prepareQueueName($queueName);
         
+        $server = $this->registry->findServerForQueue($forwardQueueName, RouterConfig::SERVER_TAG_DEFAULT);
+    
+        return $server->getReplyReader(self::THREAD_MAIN, $this->replyQueueName, RouterConfig::CONFIG_REPLY_CONSUMER);
     }
     
     public function readResult($forwardQueueName, $correlationId, $timeout)

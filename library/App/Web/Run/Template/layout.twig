@@ -11,22 +11,30 @@
     <script type="text/javascript" src="{{ static_host }}/vendor/jquery.min.js"></script>
     <script type="text/javascript" src="{{ static_host }}/vendor/jquery.color.js"></script>
     <script type="text/javascript" src="{{ static_host }}/vendor/jquery.magnific-popup.min.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/vendor/socket.io.slim.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/vendor/js.cookie.js"></script>
     <script type="text/javascript" src="{{ static_host }}/js/main.js"></script>
     <script type="text/javascript">
         var transport = Object.create(transportProto);
 
-        var connectionRest = Object.create(ajaxConnection);
-        connectionRest.host = document.location.protocol + '//' + document.location.host + '/rest';
+//        var connectionRest = Object.create(ajaxConnection);
+//        connectionRest.host = document.location.protocol + '//' + document.location.host + '/rest';
+//        transport.setConnection(connectionRest, transportProto.REST);
+
+        var connectionRest = Object.create(socketConnection);
+        connectionRest.host = document.location.protocol + '//' + document.location.hostname + ':9081';
+        connectionRest.init({});
         transport.setConnection(connectionRest, transportProto.REST);
 
         var connectionPage = Object.create(ajaxConnection);
         connectionPage.host = document.location.protocol + '//' + document.location.host;
         connectionPage.type = 'html';
         transport.setConnection(connectionPage, transportProto.PAGE);
+        
 
-        transport.call('get', 'auth-user', {}, function (data) {
+        transport.call('get', 'rest/auth-user', {}, function (data) {
             if (typeof data.user_id !== 'undefined' && !!data.user_id) {
-                transport.call('get', 'user', {id: data.user_id}, function (user) {
+                transport.call('get', 'rest/user', {id: data.user_id}, function (user) {
                     $("#user-page a").text(user.nickname).attr('href', '/user/' + data.user_id);
                     $("#sign-in").hide();
                     $("#login").show();
@@ -143,7 +151,7 @@
                         $("#logs-root-container").remove();
                     });
 
-                    transport.loadPage('get', 'dev-logs', {"id": "{{ request_id }}"}, function (data) {
+                    transport.loadPage('get', 'dev/dev-logs', {"id": "{{ request_id }}"}, function (data) {
                         $("#logs-container").html(data);
                     });
                 </script>
@@ -152,5 +160,8 @@
     </div>
 {% endif %}
 <script type="text/javascript" src="{{ static_host }}/js/autosave.js"></script>
+<script type="text/javascript">
+    nav.init();
+</script>
 </body>
 </html>

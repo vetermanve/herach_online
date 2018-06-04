@@ -11,7 +11,7 @@ class Register extends WebControllerProto
 {
     public function index () 
     {
-        $loader = new Load('auth-session');
+        $loader = new Load('rest/auth-session');
         $loader->setParams([
             'id' => $this->getState('sid'), 
         ]);

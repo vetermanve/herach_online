@@ -9,7 +9,7 @@ if (isset($releaseData['slot'])) {
     $slotName = $releaseData['slot'];
     
     if (isset($globalConfig['db']['default']['database'])) {
-        $globalConfig['db']['default']['database'] .= ':'.$slotName;    
+        $globalConfig['db']['default']['database'] .= '_'.$slotName;
     }
     
     if (isset($globalConfig['error']['no_debug_slots'])) {

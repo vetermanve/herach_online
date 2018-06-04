@@ -96,6 +96,16 @@ class RedisCacheDataAdapter extends DataAdapterProto
     }
     
     /**
+     * @param $updateBindsByKeys
+     *
+     * @return StorageDataRequest
+     */
+    public function getBatchUpdateRequest($updateBindsByKeys)
+    {
+        return $this->getBatchInsertRequest($updateBindsByKeys);
+    }
+    
+    /**
      * @param $ids
      *
      * @return StorageDataRequest

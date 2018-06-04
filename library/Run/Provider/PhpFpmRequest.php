@@ -4,14 +4,10 @@
 namespace Run\Provider;
 
 
-use Run\Processor\AlolRestRequestProcessor;
-use Run\RunConfig;
 use Run\RunContext;
 use Run\RunRequest;
 use Run\Spec\HttpRequestMetaSpec;
-use Run\Util\ChannelState;
 use Run\Util\HttpEnvContext;
-use Run\Util\HttpResourceHelper;
 use Run\Util\RestMethodHelper;
 use Uuid\Uuid;
 
@@ -40,19 +36,11 @@ class PhpFpmRequest extends RunProviderProto
         $uri = $this->httpEnv->getScope(HttpEnvContext::HTTP_SERVER, 'REQUEST_URI', '/');
         $uri = str_replace('//', '/', urldecode($uri));
         
-        $pathData = new HttpResourceHelper($uri);
-    
-        $resource = $this->context->get(RunContext::HTTP_RESOURCE_OVERRIDE, $pathData->getResource());
+        $resource = strpos($uri, '?') ? strstr($uri, '?', true) : $uri;
     
         $request = new RunRequest($uid, $resource, '');
     
         $request->params = $this->httpEnv->get(HttpEnvContext::HTTP_GET, []);
-    
-        if ($pathData->getId()) {
-            $request->params['id'] = $pathData->getId();
-        }
-    
-        unset($request->params['path']);
     
         RestMethodHelper::makeStrictParams($request->params);
     
@@ -63,12 +51,6 @@ class PhpFpmRequest extends RunProviderProto
         }
     
         $method = $this->httpEnv->getScope(HttpEnvContext::HTTP_SERVER, 'REQUEST_METHOD', 'GET');
-        
-        if ($pathData->getType() !== HttpResourceHelper::TYPE_WEB) {
-            $method = RestMethodHelper::getRealMethod($method, $request);
-        } else {
-            $method = $pathData->getMethod();
-        }
 
         $locale = null;
         if (function_exists('locale_accept_from_http') && isset($headers['accept-language'])) {
@@ -81,7 +63,6 @@ class PhpFpmRequest extends RunProviderProto
             HttpRequestMetaSpec::CLIENT_IP       => $this->httpEnv->getScope(HttpEnvContext::HTTP_SERVER, 'REMOTE_ADDR'),
             HttpRequestMetaSpec::CLIENT_AGENT    => isset($headers['user-agent']) ? $headers['user-agent'] : null,
             HttpRequestMetaSpec::CLIENT_LOCALE   => isset($locale) ? $locale : null,
-            HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
         ];
     
         if ($request->getParamOrData('dddebug') === 4) {
