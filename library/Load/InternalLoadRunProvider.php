@@ -5,9 +5,7 @@ namespace Load;
 
 
 use Run\RunRequest;
-use Run\Spec\HttpRequestMetaSpec;
 use Run\Provider\RunProviderProto;
-use Run\Util\HttpResourceHelper;
 
 class InternalLoadRunProvider extends RunProviderProto
 {
@@ -29,12 +27,8 @@ class InternalLoadRunProvider extends RunProviderProto
     }
     
     private function _processLoad(Load $load) {
-        // готовим ресурс по взрослому
-        $resource = new HttpResourceHelper($load->getResource(), HttpResourceHelper::TYPE_REST);
-        
         // собираем реквест
-        $request = new RunRequest($load->getUuid(), $resource->getResource());
-        $request->meta[HttpRequestMetaSpec::PROVIDER_TYPE] = $resource->getType();
+        $request = new RunRequest($load->getUuid(), $load->getResource());
         $request->params = $load->getParams();
     
         // отдаем в работу

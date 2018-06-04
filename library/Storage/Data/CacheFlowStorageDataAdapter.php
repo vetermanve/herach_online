@@ -81,6 +81,28 @@ class CacheFlowStorageDataAdapter extends DataAdapterProto
     }
     
     /**
+     * @param $updateBindsByKeys
+     *
+     * @return StorageDataRequest
+     */
+    public function getBatchUpdateRequest($updateBindsByKeys)
+    {
+        return new StorageDataRequest(
+            [$this->sourceDataAdapter, $this->cacheDataAdapter, $updateBindsByKeys],
+            function (DataAdapterInterface $sourceData, DataAdapterInterface $cacheData, $updateBindsByKeys) {
+                $request = $sourceData->getBatchUpdateRequest($updateBindsByKeys);
+                $request->send();
+                $result = $request->fetch();
+                if ($result) {
+                    $cacheData->getDeleteRequest(array_keys($updateBindsByKeys))->send();
+                }
+            
+                return $result;
+            }
+        );
+    }
+    
+    /**
      * @param $ids int|array
      *
      * @return StorageDataRequest

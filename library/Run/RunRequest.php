@@ -36,8 +36,8 @@ class RunRequest
      *
      * @var []
      */
-    public $meta = [];
-    
+    public    $meta = [];
+        
     /**
      * Айди тела сообщения
      * обычно это uuid v4
@@ -47,12 +47,17 @@ class RunRequest
     private $uid;
     
     /**
-     * Запрашиваемый ресурс
-     * Например auth
+     * Requested resource
      *
-     * @var
+     * @var string
      */
     private $resource;
+    
+    /**
+     * Url parts
+     * @var array
+     */
+    protected $resourceParts = [];
     
     /**
      * Обратный адрес для ответа
@@ -78,9 +83,10 @@ class RunRequest
     public function __construct($uid, $resource, $reply = '')
     {
         $this->uid      = $uid;
-        $this->resource = $resource;
         $this->reply    = $reply;
         $this->channelState = new ChannelState();
+        
+        $this->setResource($resource);
     }
     
     public function getMeta ($key, $default = null) 
@@ -142,6 +148,20 @@ class RunRequest
         return $this->resource;
     }
     
+    /**
+     * @param mixed $resource
+     */
+    public function setResource($resource)
+    {
+        $this->resource = $resource;
+        $this->resourceParts = explode('/', trim($resource, '/'));
+    }
+    
+    public function getResourcePart ($position)
+    {
+        return $this->resourceParts[$position] ?? null;
+    }
+    
     public function getDesc()
     {
         return $this->resource . ' ' . $this->uid;
@@ -153,5 +173,13 @@ class RunRequest
     public function getReply()
     {
         return $this->reply;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getResourceParts(): array
+    {
+        return $this->resourceParts;
     }
 }

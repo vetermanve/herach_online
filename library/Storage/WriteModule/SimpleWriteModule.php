@@ -25,6 +25,17 @@ class SimpleWriteModule extends StorageDataAccessModuleProto implements WriteMod
         return $request->getResult();
     }
     
+    public function insertBatch($bindsByIds, $callerMethod)
+    {
+        $timer = $this->profiler->openTimer(__METHOD__, $bindsByIds, $callerMethod);
+        $request = $this->dataAdapter->getBatchInsertRequest($bindsByIds);
+        $request->send();
+        $request->fetch();
+        $this->profiler->finishTimer($timer);
+    
+        return $request->getResult();
+    }
+    
     public function update ($id, $bind, $callerMethod) 
     {
         $timer = $this->profiler->openTimer(__METHOD__, $bind, $callerMethod);
@@ -36,6 +47,14 @@ class SimpleWriteModule extends StorageDataAccessModuleProto implements WriteMod
         return $request->getResult();
     }
     
+    public function updateBatch($bindsByIds, $callerMethod)
+    {
+        $timer = $this->profiler->openTimer(__METHOD__, $bind, $callerMethod);
+        $request = $this->dataAdapter->getUpdateRequest($id, $bind);
+        $request->send();
+        $request->fetch();
+        $this->profiler->finishTimer($timer);
+    }
     
     public function remove($id, $callerMethod)
     {

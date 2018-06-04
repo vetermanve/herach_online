@@ -32,6 +32,13 @@ interface DataAdapterInterface
     public function getUpdateRequest ($id, $updateBind);
     
     /**
+     * @param $updateBindsByKeys
+     *
+     * @return StorageDataRequest
+     */
+    public function getBatchUpdateRequest ($updateBindsByKeys);
+    
+    /**
      * @param $ids
      *
      * @return StorageDataRequest fetch result is array [ 'key1' => ['primary' => 'key1', ...], ... ]

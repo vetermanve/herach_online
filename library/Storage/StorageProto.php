@@ -13,6 +13,8 @@ abstract class StorageProto extends StorageModuleProto
 {
     private $configured = false;
     
+    protected $profilingAllowed = true;
+    
     /**
      * StorageProto constructor.
      */
@@ -25,7 +27,7 @@ abstract class StorageProto extends StorageModuleProto
     protected function preConfigure() {
         $this->diContainer->setModule(StorageDependency::PROFILER, function () {
             $profiler = new StorageProfiler();
-            if (Env::isProfiling()) {
+            if ($this->profilingAllowed && Env::isProfiling()) {
                 $logger = Env::getLogger();
                 $profiler->setTimerReportCallback(function ($timer) use ($logger) {
                     $logger->debug('StorageProfiler', $timer);
@@ -91,5 +93,21 @@ abstract class StorageProto extends StorageModuleProto
     {
         $this->configured || $this->runConfigure();
         return $this->diContainer->bootstrap(StorageDependency::PROFILER);
+    }
+    
+    /**
+     * @return bool
+     */
+    public function isProfilingAllowed(): bool
+    {
+        return $this->profilingAllowed;
+    }
+    
+    /**
+     * @param bool $profilingAllowed
+     */
+    public function setProfilingAllowed(bool $profilingAllowed)
+    {
+        $this->profilingAllowed = $profilingAllowed;
     }
 }

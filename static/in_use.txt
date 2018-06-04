@@ -5,3 +5,6 @@ static/bower_components/magnific-popup/dist/magnific-popup.css
 static/bower_components/pure/pure-min.css
 static/bower_components/pure/grids-min.css
 static/bower_components/pure/grids-responsive-min.css
+static/bower_components/socket.io-client/dist/socket.io.slim.js
+static/bower_components/socket.io-client/dist/socket.io.slim.js.map
+static/bower_components/js-cookie/src/js.cookie.js

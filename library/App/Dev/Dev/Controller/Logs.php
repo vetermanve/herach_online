@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Web\Dev\Controller;
+namespace App\Dev\Dev\Controller;
 
+use App\Base\Storage\LogStorage;
 use App\Web\Run\WebControllerProto;
-use Mu\Env;
 
 class Logs extends WebControllerProto
 {
     public function index () 
     {
+        $storage = new LogStorage();
         $id = $this->p('id');
-        $data = Env::getRedis()->hgetall('slog:'.$id);
-        ksort($data);
+        $data = $storage->read()->get($id, __METHOD__);
         return $this->render(['logs' => $data,]);
     }
 }

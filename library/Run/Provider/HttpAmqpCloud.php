@@ -12,7 +12,6 @@ use Run\Spec\AmqpHttpRequest;
 use Run\Spec\HttpRequestHeaders;
 use Run\Spec\HttpRequestMetaSpec;
 use Run\Util\HttpParse;
-use Run\Util\HttpResourceHelper;
 use Run\Util\RestMethodHelper;
 
 class HttpAmqpCloud extends RunProviderProto
@@ -59,56 +58,63 @@ class HttpAmqpCloud extends RunProviderProto
         $this->runtime->runtime('RUN_HTTP_AMQP_REQ_INCOME', ['request_id' => $amqpRequest[AmqpHttpRequest::UID]]);
     
         // getting params
-        parse_str($amqpRequest[AmqpHttpRequest::QUERY], $params);
-    
-        $path = $amqpRequest[AmqpHttpRequest::PATH];
-    
-        // getting routing data
-        $pathData = new HttpResourceHelper($path);
-        if ($pathData->getId()) {
-            $params['id'] = $pathData->getId();    
+        if (is_array($amqpRequest[AmqpHttpRequest::QUERY])) {
+            $params = $amqpRequest[AmqpHttpRequest::QUERY]; 
+        } elseif(is_string($amqpRequest[AmqpHttpRequest::QUERY])) {
+            parse_str($amqpRequest[AmqpHttpRequest::QUERY], $params);    
+        } else {
+            $params = [];
         }
-    
+        
         RestMethodHelper::makeStrictParams($params);
     
         // create main request object
-        $request = new RunRequest($amqpRequest[AmqpHttpRequest::UID], $pathData->getResource(), $amqpRequest[AmqpHttpRequest::REPLY]);
+        $request = new RunRequest($amqpRequest[AmqpHttpRequest::UID], $amqpRequest[AmqpHttpRequest::PATH], $amqpRequest[AmqpHttpRequest::REPLY]);
         $request->params = $params;
                            
         // data processing
-        $request->body = $amqpRequest[AmqpHttpRequest::DATA] ? trim($amqpRequest[AmqpHttpRequest::DATA]) : '';
-        if ($request->body) {
-            if (strpos($request->body, '{') === 0) {
-                $bodyData = json_decode($request->body, true);
-                if (is_array($bodyData)) {
-                    $request->data = $bodyData;
-                }
-            } elseif (strpos($request->body, '=')) {
-                parse_str($request->body, $bodyData);
-                if (is_array($bodyData)) {
-                    $request->data = $bodyData;
+        if (is_string($amqpRequest[AmqpHttpRequest::DATA])) {
+            $request->body = $amqpRequest[AmqpHttpRequest::DATA] ? trim($amqpRequest[AmqpHttpRequest::DATA]) : '';
+            if ($request->body) {
+                if (strpos($request->body, '{') === 0) {
+                    $bodyData = json_decode($request->body, true);
+                    if (is_array($bodyData)) {
+                        $request->data = $bodyData;
+                    }
+                } elseif (strpos($request->body, '=')) {
+                    parse_str($request->body, $bodyData);
+                    if (is_array($bodyData)) {
+                        $request->data = $bodyData;
+                    }
                 }
             }
-        }    
-        
-        if ($pathData->getType() !== HttpResourceHelper::TYPE_WEB) {
-            $method = RestMethodHelper::getRealMethod($amqpRequest[AmqpHttpRequest::METHOD], $request);    
         } else {
-            $method = $pathData->getMethod();
+            $request->data = $amqpRequest[AmqpHttpRequest::DATA];
         }
         
-    
         $request->meta = [
-            HttpRequestMetaSpec::REQUEST_METHOD  => $method,
+            HttpRequestMetaSpec::REQUEST_METHOD  => $amqpRequest[AmqpHttpRequest::METHOD] ?? "GET",
             HttpRequestMetaSpec::REQUEST_HEADERS => $amqpRequest[AmqpHttpRequest::HEADERS],
-            HttpRequestMetaSpec::PROVIDER_TYPE   => $pathData->getType(),
         ];
     
         $request->meta[HttpRequestMetaSpec::REQUEST_SOURCE] = $request->getMetaItem(HttpRequestMetaSpec::REQUEST_HEADERS, HttpRequestHeaders::ORIGIN, '');
     
         $cookie = $request->getMetaItem(HttpRequestMetaSpec::REQUEST_HEADERS, HttpRequestHeaders::COOKIE, '');
-    
-        $request->getChannelState()->setPacked(HttpParse::cookie($cookie));
+        
+        $channelState = $request->getChannelState();
+        if ($cookie) {
+            $channelState->setPacked(HttpParse::cookie($cookie));
+        }
+        
+        if (isset($amqpRequest[AmqpHttpRequest::STATE])) {
+            $this->runtime->runtime('AMQP_STATE', ['state' => $amqpRequest[AmqpHttpRequest::STATE]]);
+            foreach ($amqpRequest[AmqpHttpRequest::STATE] as $stateKey => $stateDataList) {
+                list($stateValue, $stateExpiresAt) = $stateDataList;
+                if (!is_null($stateValue)) {
+                    $channelState->set($stateKey, $stateValue, $stateExpiresAt);    
+                }
+            }
+        }
     
         $this->core->process($request);
     
