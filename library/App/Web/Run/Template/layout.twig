@@ -22,7 +22,7 @@
 //        transport.setConnection(connectionRest, transportProto.REST);
 
         var connectionRest = Object.create(socketConnection);
-        connectionRest.host = document.location.protocol + '//' + document.location.hostname + ':9081';
+        connectionRest.host = document.location.protocol + '//' + document.location.hostname; // + ':9081';
         connectionRest.init({});
         transport.setConnection(connectionRest, transportProto.REST);
 
