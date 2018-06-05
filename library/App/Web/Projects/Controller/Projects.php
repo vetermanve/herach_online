@@ -81,7 +81,7 @@ class Projects extends WebControllerProto
     {
         $data = [
             'project' => [
-                'title' => 'Новый проект',
+                'title' => '',
             ],
         ];
         

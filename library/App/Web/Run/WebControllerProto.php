@@ -47,6 +47,7 @@ abstract class WebControllerProto extends BaseControllerProto
         $data['request_id'] = $this->requestOptions->getReqiestId();
         $data['env']['debug'] = (bool)$this->requestOptions->getParam('_debug');
         $data['static_host'] = Env::getEnvContext()->getScope('static','host', '');
+        $data['socket_port'] = Env::getEnvContext()->getScope('socket','port', '');
         
         return Env::getRenderer()->render($template, $data, $templatesPaths);
     }

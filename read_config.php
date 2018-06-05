@@ -15,6 +15,10 @@ if (isset($releaseData['slot'])) {
     if (isset($globalConfig['error']['no_debug_slots'])) {
         $globalConfig['error']['debug'] = !in_array($slotName, $globalConfig['error']['no_debug_slots']);
     }
+    
+    if (isset($globalConfig['slots'][$slotName]) && $globalConfig['slots'][$slotName] === 'production') {
+        $globalConfig['socket']['port'] = '';
+    }
 }
 
 return $globalConfig;
