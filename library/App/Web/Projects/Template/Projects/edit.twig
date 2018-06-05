@@ -45,6 +45,8 @@
                     setTimeout(function () {
                         nav.go('/projects/'+projectId);
                     }, 1000);
+                    
+                    autoSave.clear(frm);
                 } else {
                     alert("Something went wrong");   
                 }
