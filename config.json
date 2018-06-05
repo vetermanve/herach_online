@@ -26,5 +26,12 @@
   },
   "static" : {
     "host" : ""
+  },
+  "socket" : {
+    "port" : "9081"
+  },
+  "slots" : {
+    "Herach.online" : "production",
+    "herach.online" : "production"
   }
 }
