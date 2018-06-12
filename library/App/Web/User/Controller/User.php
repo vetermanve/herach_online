@@ -67,13 +67,13 @@ class User extends WebControllerProto
     
     public function list () 
     {
-        $userLoad = new Load('user');
+        $userLoad = new Load('rest/user');
         $this->load($userLoad);
     
-        $user = $userLoad->getResults();
+        $users = $userLoad->getResults();
     
         return $this->render([
-            'users' => $user,
+            'users' => $users,
         ]);
     }
 }

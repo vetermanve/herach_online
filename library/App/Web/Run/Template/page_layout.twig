@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Reanima.store{% endblock %}</title>
+    <link rel="stylesheet" href="{{ static_host }}/vendor/pure-min.css">
+    <link rel="stylesheet" href="{{ static_host }}/vendor/grids-min.css">
+    <link rel="stylesheet" href="{{ static_host }}/vendor/grids-responsive-min.css">
+    <link rel="stylesheet" href="{{ static_host }}/vendor/magnific-popup.css">
+    <link rel="stylesheet" href="{{ static_host }}/css/main.css">
+    
+    <script type="text/javascript" src="{{ static_host }}/vendor/vue.min.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/vendor/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/vendor/jquery.color.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/vendor/jquery.magnific-popup.min.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/vendor/socket.io.slim.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/vendor/js.cookie.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/js/main.js"></script>
+    <script type="text/javascript">
+        var transport = Object.create(transportProto);
+
+//        var connectionRest = Object.create(ajaxConnection);
+//        connectionRest.host = document.location.protocol + '//' + document.location.host + '/rest';
+//        transport.setConnection(connectionRest, transportProto.REST);
+
+        var connectionRest = Object.create(socketConnection);
+        connectionRest.host = document.location.protocol + '//' + document.location.hostname + '{{ socket_port ? ":#{socket_port}" : '' }}';
+        connectionRest.init({});
+        transport.setConnection(connectionRest, transportProto.REST);
+
+        var connectionPage = Object.create(ajaxConnection);
+        connectionPage.host = document.location.protocol + '//' + document.location.host;
+        connectionPage.type = 'html';
+        transport.setConnection(connectionPage, transportProto.PAGE);
+        
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+
+    </style>
+    {% block top_head %}{% endblock %}
+</head>
+<body>
+{% include 'top_menu.twig' %}
+
+<div id="page-content">
+    {% block sub_theme %}
+        <div class="main-content-parent sub-theme">
+            <div class="main-content">
+                {% block head_parent %}
+                    <div class="zero-layer">
+                        {% block head %}{% endblock %}
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+    {% endblock %}
+    
+    <div class="main-content-parent">
+        <div class="main-content">
+            {% block body %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+{% include 'page_footer.twig' %}
+
+{% if env.debug %}
+    {% include 'dev_footer.twig' %}
+{% endif %}
+
+<script type="text/javascript" src="{{ static_host }}/js/autosave.js"></script>
+<script type="text/javascript" src="{{ static_host }}/js/auth.js"></script>
+<script type="text/javascript">
+    nav.init();
+</script>
+</body>
+</html>

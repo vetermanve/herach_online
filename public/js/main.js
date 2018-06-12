@@ -254,7 +254,8 @@ var nav = {
         data['_layout'] = 'noheader';
         transport.loadPage('get', '/web' + page, data, function (html)
             {
-                $('body').html(html).scrollTop(0);
+                $('#page-content').html(html);
+                $('body').scrollTop(0);
                 window.history.pushState({}, page, page)
             }
         );

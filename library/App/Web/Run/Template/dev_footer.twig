@@ -1,0 +1,28 @@
+<div class="main-content-parent" style="height: 20vh;" id="logs-root-container">
+    <div class="main-content">
+        <div class="logs-footer">
+            <div class="pure-g">
+                <div id="logs-expand" class="pure-u-1-2"></div>
+                <div id="logs-close" class="pure-u-1-2"></div>
+            </div>
+            <div class="">
+            </div>
+            <div id="logs-container"></div>
+            <script>
+                $("#logs-expand").bind('click', function () {
+                    console.log('logs-expand');
+                    $(".logs-footer").toggleClass('logs-footer-open');
+                });
+
+                $("#logs-close").bind('click', function () {
+                    console.log('logs-close');
+                    $("#logs-root-container").remove();
+                });
+
+                transport.loadPage('get', 'dev/dev-logs', {"id": "{{ request_id }}"}, function (data) {
+                    $("#logs-container").html(data);
+                });
+            </script>
+        </div>
+    </div>
+</div>
