@@ -1,0 +1,24 @@
+<div class="header-area main-content-parent" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+    <div class="pure-g main-content">
+        <div class="pure-u-1-5 menu">
+            <div class="logo">
+                <a href="/">R-Store</a>
+            </div>
+        </div>
+        <div class="pure-u-4-5 menu" style="">
+            <div class="top-menu align-parent">
+                <a href="/projects/new/project">+проект</a>
+                <a href="/">все проекты</a>
+
+                <span id="login" class="alignright" v-if="loaded" v-bind:title="user.id">
+                    <span id="user-page" v-if="authorized">
+                        <a href="/user/me" v-text="user.nickname"></a>
+                    </span>    
+                    <span id="sign-in" v-else>
+                        <a href="/user-auth/">войти</a>
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

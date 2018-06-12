@@ -1,0 +1,155 @@
+{% extends _layout ? _layout : 'layout.twig' %}
+
+{% block title %}Общий чат{% endblock %}
+
+{% block sub_theme %}{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="/css/layouts/chat.css"/>
+    <div id="layout" class="content pure-g chat-page">
+        {% if 0 %}
+        <div id="list" class="pure-u-1-3" >
+            <div class="email-item email-item-selected pure-g">
+
+                <div class="pure-u">
+                    {#<img width="64" height="64" alt="Tilo Mitra&#x27;s avatar" class="email-avatar" src="img/common/tilo-avatar.png">#}
+                    <div style="width: 64px; height: 64px"></div>
+                </div>
+
+                <div class="pure-u-3-4">
+                    <h5 class="email-name">Name</h5>
+                    <h4 class="email-subject">subj</h4>
+                    <p class="email-desc">
+                        desc
+                    </p>
+                </div>
+            </div>
+
+            <div class="email-item email-item-unread pure-g">
+                <div class="pure-u">
+                    <img width="64" height="64" alt="Eric Ferraiuolo&#x27;s avatar" class="email-avatar"
+                         src="img/common/ericf-avatar.png">
+                </div>
+
+                <div class="pure-u-3-4">
+                    <h5 class="email-name">Eric Ferraiuolo</h5>
+                    <h4 class="email-subject">Re: Pull Requests</h4>
+                    <p class="email-desc">
+                        Hey, I had some feedback for pull request #51. We should center the menu so it looks better on
+                        mobile.
+                    </p>
+                </div>
+            </div>
+
+            <div class="email-item email-item-unread pure-g">
+                <div class="pure-u">
+                    <img width="64" height="64" alt="YUI&#x27;s avatar" class="email-avatar"
+                         src="img/common/yui-avatar.png">
+                </div>
+
+                <div class="pure-u-3-4">
+                    <h5 class="email-name">YUI Library</h5>
+                    <h4 class="email-subject">You have 5 bugs assigned to you</h4>
+                    <p class="email-desc">
+                        Duis aute irure dolor in reprehenderit in voluptate velit essecillum dolore eu fugiat nulla.
+                    </p>
+                </div>
+            </div>
+
+            <div class="email-item pure-g">
+                <div class="pure-u">
+                    <img width="64" height="64" alt="Reid Burke&#x27;s avatar" class="email-avatar"
+                         src="img/common/reid-avatar.png">
+                </div>
+
+                <div class="pure-u-3-4">
+                    <h5 class="email-name">Reid Burke</h5>
+                    <h4 class="email-subject">Re: Design Language</h4>
+                    <p class="email-desc">
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa.
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div id="main" class="pure-u">
+            <div class="email-content">
+                <div class="email-content-header pure-g">
+                    <div class="pure-u-1-2">
+                        <h1 class="email-content-title">Общий чат</h1>
+                        {#<p class="email-content-subtitle">#}
+                            {#From <a>Tilo Mitra</a> at <span>3:56pm, April 3, 2012</span>#}
+                        {#</p>#}
+                    </div>
+
+                    {#<div class="email-content-controls pure-u-1-2">#}
+                        {#<button class="secondary-button pure-button">Reply</button>#}
+                        {#<button class="secondary-button pure-button">Forward</button>#}
+                        {#<button class="secondary-button pure-button">Move to</button>#}
+                    {#</div>#}
+                </div>
+
+                <div class="email-content-body" id="chat-messages-list" >
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat.
+                    </p>
+                    
+                </div>
+            </div>
+            <div class="input-content">
+                <form class="pure-form" onsubmit="mu_sendMessage(this); return false;">
+                    <fieldset>
+                        <input type="text" placeholder="" style="width: 80%">
+
+                        <button type="submit" class="pure-button pure-button-primary" style="width: 20%; float: right">Send</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <script type="text/javascript">
+                var chatListContainer = $('#chat-messages-list');
+                
+                function mu_sendMessage (form) {
+                    var input = $(form).find('input').first();
+                    var text = input.val();
+                    var userName = $('#user-page a').text();
+                    
+                    transport.call('post', 'rest/chat-messages', {
+                                text : text
+                            }, 
+                            function (data)
+                            {
+                                mu_appendMessage({
+                                    text : data.text,
+                                    author_name : userName
+                                }); 
+                            }
+                        );
+                    
+                    input.val('');
+                }
+
+                chatListContainer.ready(function ()
+                {
+                    transport.call('get', '/read/chat-messages', {}, function (data)
+                    {
+                        for (var i in data) {
+                            mu_appendMessage(data[i]);
+                        }
+                    });
+                });
+                
+                function mu_appendMessage(message)
+                {
+                    chatListContainer.append($('<p>').text(message['author_name'] + ": " + message['text']));
+                }
+                
+            </script>
+            
+            
+        </div>
+    </div>
+
+{% endblock %}
