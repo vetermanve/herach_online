@@ -1,4 +1,4 @@
-{% extends 'layout.twig' %}
+{% extends _layout ? _layout : 'layout.twig' %}
 
 {% block title %}Вы уже зарегистрированы{% endblock %}
 

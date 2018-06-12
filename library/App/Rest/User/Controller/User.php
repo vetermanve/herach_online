@@ -12,23 +12,35 @@ use Uuid\Uuid;
 
 class User extends RestControllerProto
 {
+    private function _clearUser($user) {
+        unset($user[UserStorage::SOLT],$user[UserStorage::PASSWORD]);
+        return $user;
+    }
+    
+    private function _clearUsers($users) {
+        foreach ($users as &$user) {
+            $user = $this->_clearUser($user);
+        }
+            
+        return $users;
+    }
+    
     public function get()
     {
         $storage = new UserStorage();
         
         if ($id = $this->p('id')) {
             $user = $storage->read()->get($id, __METHOD__);
-            unset($user[UserStorage::SOLT],$user[UserStorage::PASSWORD]);
-            return $user;
+            return $user ? $this->_clearUser($user) : null;
         }
         
-        $users = $storage->search()->find([], 1000, __METHOD__);
-        
-        foreach ($users as &$user) {
-            unset($user[UserStorage::SOLT],$user[UserStorage::PASSWORD]);
+        if ($ids = $this->p('ids')) {
+            $users = $storage->read()->mGet($ids, __METHOD__);
+        } else {
+            $users = $storage->search()->find([], 1000, __METHOD__);     
         }
-        
-        return $users;
+    
+        return $users ? $this->_clearUsers($users) : [];
     }
     
     

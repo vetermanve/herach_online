@@ -36,18 +36,15 @@ abstract class WebControllerProto extends BaseControllerProto
         $templatesPaths[] = $this->_getTemplateDir();
     
         // add layouts dir
-        $layoutsDir = __DIR__.'/Template';
-        $customLayoutsDir = $this->requestOptions->getParam('_layout', '');
-        if ($customLayoutsDir) {
-            $layoutsDir .= '/' . ucfirst($customLayoutsDir);
-        } 
-        $templatesPaths[] = $layoutsDir;
+        $layout = $this->requestOptions->getParam('_layout', 'page').'_layout.twig';
+        $templatesPaths[] = __DIR__.'/Template';
         
         // debug params passing
         $data['request_id'] = $this->requestOptions->getReqiestId();
         $data['env']['debug'] = (bool)$this->requestOptions->getParam('_debug');
         $data['static_host'] = Env::getEnvContext()->getScope('static','host', '');
         $data['socket_port'] = Env::getEnvContext()->getScope('socket','port', '');
+        $data['_layout'] = $layout;
         
         return Env::getRenderer()->render($template, $data, $templatesPaths);
     }

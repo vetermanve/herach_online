@@ -1,0 +1,17 @@
+{% block sub_theme %}
+    <div class="main-content-parent sub-theme">
+        <div class="main-content">
+            {% block head_parent %}
+                <div class="zero-layer">
+                    {% block head %}{% endblock %}
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+<div class="main-content-parent">
+    <div class="main-content">
+        {% block body %}
+        {% endblock %}
+    </div>
+</div>

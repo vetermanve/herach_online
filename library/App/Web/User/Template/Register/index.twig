@@ -1,4 +1,4 @@
-{% extends 'layout.twig' %}
+{% extends _layout ? _layout : 'layout.twig' %}
 
 {% block title %}Регистрация{% endblock %}
 
@@ -22,11 +22,12 @@
             </div>
             <script type="text/javascript">
                 setupForm($('#pass-auth-form'), 'user', function (data) {
-                    alert(JSON.stringify(data));
+                    auth.checkAuthorisation();
                     if (data['id']) {
                         nav.go('/');
                     }
                 }, function (data) {
+                    alert('Что-то пошло не так.');
                     console.log(data.responseText);
                 });
             </script>
