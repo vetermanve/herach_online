@@ -249,16 +249,19 @@ var setupForm = function(obj, resource, success, error, method, beforeSend) {
 };
 
 var nav = {
-    go : function (page, data) {
+    go : function (page, data, preventHistory) {
         data = data || {};
         data['_layout'] = 'noheader';
         transport.loadPage('get', '/web' + page, data, function (html)
             {
                 $('#page-content').html(html);
                 $('body').scrollTop(0);
-                window.history.pushState({}, page, page)
+                preventHistory || window.history.pushState({}, page, page)
             }
         );
+    },
+    goState : function (state) {
+        this.go(state.target.location.pathname, {}, true);
     },
     init : function ()
     {
@@ -268,5 +271,12 @@ var nav = {
                 self.go($(this).attr("href"));
             }
         );
+
+        window.onpopstate = function (event)
+        {
+          self.goState(event);  
+        };
+        //window.history.Adapter.unbind('mu_navigation');
+        //window.history.Adapter.bind(window, 'mu_navigation', this.goState.bind(this));
     }
 };
