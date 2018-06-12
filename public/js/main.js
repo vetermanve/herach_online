@@ -148,6 +148,10 @@ var socketConnection = {
         this.socket.on('response', function (msg) {
             self._response(msg);
         });
+
+        this.socket.on('event', function (msg) {
+            console.log(msg); 
+        });
     },
     _response : function (msg)
     {
@@ -276,7 +280,5 @@ var nav = {
         {
           self.goState(event);  
         };
-        //window.history.Adapter.unbind('mu_navigation');
-        //window.history.Adapter.bind(window, 'mu_navigation', this.goState.bind(this));
     }
 };

@@ -90,12 +90,6 @@
                 </div>
 
                 <div class="email-content-body" id="chat-messages-list" >
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat.
-                    </p>
-                    
                 </div>
             </div>
             <div class="input-content">
@@ -144,11 +138,15 @@
                 function mu_appendMessage(message)
                 {
                     chatListContainer.append($('<p>').text(message['author_name'] + ": " + message['text']));
+                    mu_chat_scroll_down();
                 }
                 
+                function mu_chat_scroll_down()
+                {
+                    var objDiv = document.getElementById("chat-messages-list");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                }
             </script>
-            
-            
         </div>
     </div>
 

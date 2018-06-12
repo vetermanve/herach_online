@@ -18,6 +18,10 @@
     color: #1b98f8;
 }
 
+.chat-page #main {
+    width: 100%;
+}
+
 /*
  * -- HELPER STYLES --
  * Over-riding some of the .pure-button styles to make my buttons look unique
@@ -181,7 +185,6 @@
 .email-content {
     height: 96%;
     overflow: hidden;
-    padding-bottom: 1em;
 }
 
 .input-content {
@@ -194,7 +197,8 @@
 .email-content-body {
     /*padding: 1em 2em;*/
     height: 100%; 
-    overflow: scroll
+    overflow: scroll;
+    padding-bottom: 5em;
 }
 
 .email-content-header {
@@ -304,9 +308,7 @@
 
     /* This will now take up it's own column, so don't need position: fixed; */
     .chat-page #main {
-        /*position: static;*/
-        /*margin: 0;*/
-        /*padding: 0;*/
+        width: 100%;
     }
 }
 
