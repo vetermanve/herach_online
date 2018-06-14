@@ -132,14 +132,18 @@
                     });
                 });
                 
-                events.on('chatMessage', function (data)
+                
+                function handleChatMessageEvent(data)
                 {
                     transport.call('get', 'rest/user', {id : data.author_id}, function (user)
                     {
                         data['author_name'] = user.nickname;
-                        mu_appendMessage(data);    
+                        mu_appendMessage(data);
                     });
-                });
+                }
+                
+                events.off('chatMessage');
+                events.on('chatMessage', handleChatMessageEvent);
                 
                 function mu_appendMessage(message)
                 {
