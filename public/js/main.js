@@ -2,6 +2,8 @@
  * Created by vetermanve on 22/12/2017.
  */
 
+window.events = new window.EventEmitter3();
+
 var transportProto = {
     REST         : 'rest',
     PAGE         : 'page',
@@ -58,7 +60,7 @@ var clientProto = {
                 "address": this.serverAddress
             },  function (data)
             {
-                console.log('device address updated', data);
+                //console.log('device address updated', data);
             });
         } else {
             var bind = {
@@ -148,9 +150,13 @@ var socketConnection = {
         this.socket.on('response', function (msg) {
             self._response(msg);
         });
+        
 
         this.socket.on('event', function (msg) {
-            console.log(msg); 
+            if (msg && msg.type && msg.data) {
+                window.events.emit(msg.type, msg.data);    
+                console.log("Event emitted", msg.type, msg.data);
+            }
         });
     },
     _response : function (msg)
@@ -172,7 +178,7 @@ var socketConnection = {
         
         delete this.response[msg.reply_uuid];
 
-        console.log('Incoming: ', msg, callbacks);
+        console.log('socket response on: ' + callbacks.p, msg);
             
         if (msg.code === 200 || msg.code === 201) {
             callbacks.s && callbacks.s(msg.data);
@@ -200,6 +206,7 @@ var socketConnection = {
         if (success || error)
         {
             this.response[requestId] = {
+                p : method + " " + resource,
                 s : success,
                 e : error,
                 t : setTimeout(this._response.bind(this), 3000, {
@@ -226,11 +233,7 @@ var socketConnection = {
 
         this.socket.emit('request', request);
         
-        if (data) {
-            console.log('sock: ' + resource , data);
-        } else {
-            console.log('sock: ' + resource);
-        }
+        console.log('socket request: ' + method + " " + resource , data);
     } 
 };
 
