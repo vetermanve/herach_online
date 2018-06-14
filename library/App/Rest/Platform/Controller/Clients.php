@@ -13,16 +13,20 @@ class Clients extends RestControllerProto
     public function get () 
     {
         $limit = $this->p('limit', 100);
-        $id = $this->p('id');
         
-        ///
-        $filter = [];
-        if ($id) {
-            $filter['id'] = $id;
+        $storage = new PlatformClientsStorage();
+        
+        if ($id = $this->p('id')) {
+            return $storage->read()->get($id, __METHOD__); 
         }
         
         ///
-        $storage = new PlatformClientsStorage();
+        $filter = [];
+        if ($lastActive = $this->p('last_active')) {
+            $filter[] = [
+                PlatformClientsStorage::ACTIVE, '>', time() - $lastActive 
+            ];
+        }
         
         $res = $storage->search()->find($filter, $limit, __METHOD__);
     
@@ -57,6 +61,7 @@ class Clients extends RestControllerProto
             PlatformClientsStorage::ADDRESS    => $address,
             PlatformClientsStorage::VERSION    => $version,
             PlatformClientsStorage::FEATURES   => $features,
+            PlatformClientsStorage::ACTIVE     => time(),
         ];
         
         $storage = new PlatformClientsStorage();
@@ -96,6 +101,7 @@ class Clients extends RestControllerProto
             PlatformClientsStorage::ADDRESS    => $address,
             PlatformClientsStorage::VERSION    => $version,
             PlatformClientsStorage::FEATURES   => $features,
+            PlatformClientsStorage::ACTIVE     => time(),
         ] + $res;
         
         $res = $storage->write()->update($id, $bind, __METHOD__);

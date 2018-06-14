@@ -25,7 +25,7 @@ class Projects extends RestControllerProto
         $filter = [];
         
         if ($ownerId = $this->p(ProjectStorage::F_OWNER_ID)) {
-            $filter[ProjectStorage::F_OWNER_ID] = $ownerId; 
+            $filter[] = [ProjectStorage::F_OWNER_ID, '=', $ownerId]; 
         }
         
         if ($ids) {

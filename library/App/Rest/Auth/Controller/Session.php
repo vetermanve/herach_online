@@ -28,7 +28,7 @@ class Session extends RestControllerProto
         
         $storage = new UserStorage();
         $user = $storage->search()->findOne([
-             UserStorage::NICKNAME => $login
+             [UserStorage::NICKNAME , '=', $login]
         ], __METHOD__);
         
         if (!$user) {
