@@ -20,6 +20,8 @@
     <script type="text/javascript" src="{{ static_host }}/vendor/eventemitter3.min.js"></script>
     <script type="text/javascript" src="{{ static_host }}/js/main.js"></script>
     <script type="text/javascript">
+        clientProto.init();
+        
         var transport = Object.create(transportProto);
 
 //        var connectionRest = Object.create(ajaxConnection);
@@ -35,8 +37,6 @@
         connectionPage.host = document.location.protocol + '//' + document.location.host;
         connectionPage.type = 'html';
         transport.setConnection(connectionPage, transportProto.PAGE);
-
-        clientProto.init();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">

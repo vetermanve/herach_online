@@ -27,6 +27,10 @@ var clientProto = {
     salt : '',
     init : function ()
     {
+        window.events.on('socketConnect', this.setUp, this);
+    },
+    setUp : function ()
+    {
         var self = this;
         var address = transport.call('get', '/socket/connection/address', {}, function (data)
         {
@@ -150,7 +154,14 @@ var socketConnection = {
         this.socket.on('response', function (msg) {
             self._response(msg);
         });
+
+        this.socket.on('connect', function(){
+            window.events.emit('socketConnect');
+        });
         
+        this.socket.on('reconnect', function (){
+            window.events.emit('socketConnect');
+        });
 
         this.socket.on('event', function (msg) {
             if (msg && msg.type && msg.data) {
