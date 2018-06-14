@@ -21,6 +21,7 @@ class PlatformClientsStorage extends SimpleStorage
     const SALT       = 'salt';
     const VERSION    = 'version';
     const FEATURES   = 'features';
+    const ACTIVE     = 'active';
     
     public function loadConfig()
     {

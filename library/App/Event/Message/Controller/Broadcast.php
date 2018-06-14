@@ -41,7 +41,7 @@ class Broadcast extends EventControllerProto
             $results[] = $storageWriter->insert(Uuid::v4(), [
                 BroadcastMessageStorage::ADDRESS   => $client[self::CLIENT_ADDRESS],
                 BroadcastMessageStorage::DEVICE_ID => $client[self::CLIENT_ID],
-                BroadcastMessageStorage::MESSAGE   => $text . " " . $client[self::CLIENT_ID],
+                BroadcastMessageStorage::DATA      => $text . " " . $client[self::CLIENT_ID],
             ], __METHOD__);
         }
         

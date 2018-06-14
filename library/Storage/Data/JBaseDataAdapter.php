@@ -231,19 +231,67 @@ class JBaseDataAdapter extends DataAdapterProto
             function ($filter, $limit, $conditions) use ($self) {
                 $items = $self->getAllItems();
                 $results = [];
+                
+                $knownFilters = [
+                    '=' => function ($original, $compare) {
+                        return $original == $compare;
+                    },
+                    '>' => function ($original, $compare) {
+                        return $original > $compare;                      
+                    },
+                    '<' => function ($original, $compare) {
+                        return $original > $compare;
+                    },
+                    '>=' => function ($original, $compare) {
+                        return $original >= $compare;
+                    },
+                    '<=' => function ($original, $compare) {
+                        return $original <= $compare;
+                    },
+                    '!=' => function ($original, $compare) {
+                        return $original != $compare;
+                    },
+                    'in' => function ($original, $compare) {
+                        return in_array($original, $compare);
+                    }
+                ];
+    
+                $filterRules = [];
+                
+                foreach ($filter as $filterRequest) {
+                    if (count($filterRequest) === 3) {
+                        list ($key, $compare, $compareValue) = $filterRequest;
+                        
+                        if (isset($knownFilters[$compare])) {
+                            $filterRules[] = [$key, $knownFilters[$compare], $compareValue];
+                        } else {
+                            trigger_error('Comparator not found for filter: '.json_encode($filterRequest).'');
+                        }
+                    } else {
+                        trigger_error('Strange filter: less than 3 parameters, '.json_encode($filterRequest));
+                    }
+                }
+                
                 foreach ($items as $id) {
                     $pointer = $self->getPointer($id);
                     $isOk = true;
                     if ($pointer) {
                         $record = json_decode(stream_get_contents($pointer), true);
-                        foreach ($filter as $key => $value) {
-                            if (!(isset($record[self::F_DATA][$key]) && $record[self::F_DATA][$key] == $value)) {
-                                $isOk = false;
-                            }
-                        }
                         
-                        if ($isOk && isset($record[self::F_DATA])) {
-                            $results[$id] = [$this->primaryKey => $id] + $record[self::F_DATA];
+                        if (isset($record[self::F_DATA])) {
+                            foreach ($filterRules as $filterRule) {
+                                list ($key, $function, $filterRequest) = $filterRule;
+        
+                                $isOk = $isOk && call_user_func($function, $record[self::F_DATA][$key] ?? null, $filterRequest);
+        
+                                if (!$isOk) {
+                                    break;
+                                }
+                            }
+    
+                            if ($isOk) {
+                                $results[$id] = [$this->primaryKey => $id] + $record[self::F_DATA];
+                            }    
                         }
                         
                         $self->closePointer($pointer);
