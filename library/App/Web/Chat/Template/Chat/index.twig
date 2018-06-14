@@ -90,20 +90,15 @@
                 </div>
 
                 <div class="email-content-body" id="chat-messages-list" >
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat.
-                    </p>
-                    
                 </div>
             </div>
             <div class="input-content">
                 <form class="pure-form" onsubmit="mu_sendMessage(this); return false;">
-                    <fieldset>
-                        <input type="text" placeholder="" style="width: 80%">
-
-                        <button type="submit" class="pure-button pure-button-primary" style="width: 20%; float: right">Send</button>
+                    <fieldset >
+                        <button type="submit" class="pure-button pure-button-primary" style="width: 10em; float: right; right: 1em; margin: 0" >Send</button>
+                        <div style="padding-right: 10em; width: 100%">
+                            <input type="text" placeholder="" style="width: 100%">
+                        </div>
                     </fieldset>
                 </form>
             </div>
@@ -114,17 +109,13 @@
                 function mu_sendMessage (form) {
                     var input = $(form).find('input').first();
                     var text = input.val();
-                    var userName = $('#user-page a').text();
                     
                     transport.call('post', 'rest/chat-messages', {
                                 text : text
                             }, 
                             function (data)
                             {
-                                mu_appendMessage({
-                                    text : data.text,
-                                    author_name : userName
-                                }); 
+                                console.log('Chat message sent', data);
                             }
                         );
                     
@@ -141,14 +132,44 @@
                     });
                 });
                 
+                
+                function handleChatMessageEvent(data)
+                {
+                    transport.call('get', 'rest/user', {id : data.author_id}, function (user)
+                    {
+                        data['author_name'] = user.nickname;
+                        mu_appendMessage(data);
+                    });
+                }
+                
+                events.off('chatMessage');
+                events.on('chatMessage', handleChatMessageEvent);
+                
                 function mu_appendMessage(message)
                 {
                     chatListContainer.append($('<p>').text(message['author_name'] + ": " + message['text']));
+                    mu_chat_scroll_down();
                 }
                 
+                function mu_chat_scroll_down()
+                {
+                    var objDiv = document.getElementById("chat-messages-list");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                }
+                
+                var inputForm = $(".input-content");
+
+                inputForm.on('focus', 'input', function (e)
+                {
+                    $('body').css('overflow', 'hidden');
+                    document.body.scrollTop = 0;
+                });
+
+                inputForm.on('blur', 'input', function (e)
+                {
+                    $('body').css('overflow', 'scroll');
+                });
             </script>
-            
-            
         </div>
     </div>
 

@@ -1,0 +1,13 @@
+cp bower_components/jquery/dist/jquery.min.js $target
+cp bower_components/jquery-color/jquery.color.js $target
+cp bower_components/magnific-popup/dist/jquery.magnific-popup.min.js $target
+cp bower_components/magnific-popup/dist/magnific-popup.css $target
+cp bower_components/pure/pure-min.css $target
+cp bower_components/pure/grids-min.css $target
+cp bower_components/pure/grids-responsive-min.css $target
+cp bower_components/socket.io-client/dist/socket.io.slim.js $target
+cp bower_components/socket.io-client/dist/socket.io.slim.js.map $target
+cp bower_components/js-cookie/src/js.cookie.js $target
+cp bower_components/vue/dist/vue.min.js $target
+cp bower_components/vue/dist/vue.js $target
+(cd bower_components/eventemitter3 && npm install &&  npm run prepublishOnly) && cp bower_components/eventemitter3/umd/* $target

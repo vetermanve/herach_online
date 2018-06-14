@@ -13,7 +13,8 @@ class BroadcastMessageStorage extends SimpleStorage
 {
     const ADDRESS   = 'address';
     const DEVICE_ID = 'device_id';
-    const MESSAGE   = 'message';
+    const DATA      = 'data';
+    const TYPE      = 'type';
     
     public function loadConfig()
     {

@@ -22,6 +22,7 @@
     "pure": "^1.0.0",
     "socket.io-client": "^2.1.1",
     "js-cookie": "^2.2.0",
-    "vue": "^2.5.16"
+    "vue": "^2.5.16",
+    "eventemitter3": "^3.1.0"
   }
 }
