@@ -12,6 +12,7 @@ var transportConnections = {
     _workPriority : {},
     _activeConnection : {},
     _requests : [],
+    _connectionLock : {},
     setTransportPriority: function (priority)
     {
         this._priority = priority;
@@ -31,15 +32,17 @@ var transportConnections = {
         
         var activeConnectionType = this._activeConnection[resourceType];
         
-        console.log('addRequest', resourceType, activeConnectionType, this._connections, request);
+        //console.log('addRequest', resourceType, activeConnectionType, this._connections, request);
 
         // connection for given type was set-up earlier
         if (activeConnectionType && this._connections[activeConnectionType]) {
-            return this._connections[activeConnectionType].call(
+            var connection = this._connections[activeConnectionType];
+
+            return connection.call(
                 request.method,
                 request.resource,
-                request.data, 
-                request.success, 
+                request.data,
+                request.success,
                 request.error,
                 request.type
             );
@@ -52,7 +55,7 @@ var transportConnections = {
     },
     loadConnection: function (resourceType)
     {
-        console.log('loadConnection for ' + resourceType);
+        //console.log('loadConnection for ' + resourceType);
         
         //
         var activeConnectionType = this._activeConnection[resourceType];
@@ -60,21 +63,26 @@ var transportConnections = {
         // connection type was set-up;
         if (activeConnectionType) {
             return this._connections[activeConnectionType];
-        } else {
-            console.log('no active connections for ' + resourceType);
         }
+        
+        var lock = this._connectionLock[resourceType];
+        if (lock) {
+            console.log('Skip connecting - connection locked:' + resourceType);
+            return;
+        }
+
+        this._connectionLock[resourceType] = (new Date()).toUTCString();
         
         // we have no defined connections for given resource type
         if (!this._workPriority[resourceType])
         {
-            console.log('No connection schema for resource type ' + resourceType);
+            console.error('No connection schema for resource type ' + resourceType);
             throw new Error('No connection schema for resource type ' + resourceType);
         }
         
         if (!this._workPriority[resourceType].length) {
-            console.log('No connections priority found ' + resourceType);
-            throw new Error('No connections priority found' + resourceType);
-            //this._workPriority[resourceType] = this._priority[resourceType];     
+            console.warn('Start new cycle of initialising connections for ' + resourceType);
+            this._workPriority[resourceType] = this._priority[resourceType];
         }
         
         var connectionType = this._workPriority[resourceType].shift();
@@ -119,11 +127,13 @@ var transportConnections = {
     onConnectionFail: function(resourceType, connectionType, connection) {
         console.warn('Failed to connect "' + connectionType + '" for ' + resourceType);
         connection.stop();
+        this._connectionLock[resourceType] = null;
         this.loadConnection(resourceType);
     },
     onConnectionSuccess: function(resourceType, connectionType, connection) {
         this._connections[connectionType] = connection;
         this._activeConnection[resourceType] = connectionType;
+        this._connectionLock[resourceType] = null;
         
         console.log('Successful connected "' + connectionType + '" for ' + resourceType);
         
@@ -308,7 +318,7 @@ var socketConnection = {
     prefix : '',
     type : 'json',
     response : {},
-    initFailTimout : null,
+    initFailTimeout : null,
     init : function (meta, success, error) {
         meta = meta || {};
         this.host = meta['host'] || this.host;
@@ -316,8 +326,12 @@ var socketConnection = {
         this.response = {};
         var self = this;
         
-        this.initFailTimout = setTimeout(
-            error(self),
+        this.initFailTimeout && clearTimeout(self.initFailTimeout);
+        this.initFailTimeout = setTimeout(
+            function ()
+            {
+                error(self);    
+            },
             1500
         );
 
@@ -327,7 +341,8 @@ var socketConnection = {
 
         this.socket.on('connect', function(){
             window.events.emit('socketConnect');
-            success(this);
+            clearTimeout(self.initFailTimeout);
+            success(self);
         });
         
         this.socket.on('reconnect', function (){
@@ -337,7 +352,7 @@ var socketConnection = {
         this.socket.on('event', function (msg) {
             if (msg && msg.type && msg.data) {
                 window.events.emit(msg.type, msg.data);    
-                console.log("Event emitted", msg.type, msg.data);
+                console.log("Event received", msg.type, msg.data);
             }
         });
     },
@@ -348,8 +363,7 @@ var socketConnection = {
     _response : function (msg)
     {
         if (typeof this.response[msg.reply_uuid] === 'undefined') {
-            console.warn(msg);
-            console.error("No reply found", msg);
+            console.warn("No reply found", msg);
             return;
         }
         
