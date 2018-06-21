@@ -236,6 +236,15 @@ class JBaseDataAdapter extends DataAdapterProto
                     '=' => function ($original, $compare) {
                         return $original == $compare;
                     },
+                    '!=' => function ($original, $compare) {
+                        return $original != $compare;
+                    },
+                    '?=' => function ($original, $compare) {
+                        return is_null($original) || $original == $compare;
+                    },
+                    '?!=' => function ($original, $compare) {
+                        return is_null($original) || $original != $compare;
+                    },
                     '>' => function ($original, $compare) {
                         return $original > $compare;                      
                     },
@@ -247,9 +256,6 @@ class JBaseDataAdapter extends DataAdapterProto
                     },
                     '<=' => function ($original, $compare) {
                         return $original <= $compare;
-                    },
-                    '!=' => function ($original, $compare) {
-                        return $original != $compare;
                     },
                     'in' => function ($original, $compare) {
                         return in_array($original, $compare);
