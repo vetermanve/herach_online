@@ -34,10 +34,14 @@ class User extends RestControllerProto
             return $user ? $this->_clearUser($user) : null;
         }
         
+        $filter = [
+            ['deleted', '?!=', false]  
+        ];
+        
         if ($ids = $this->p('ids')) {
             $users = $storage->read()->mGet($ids, __METHOD__);
         } else {
-            $users = $storage->search()->find([], 1000, __METHOD__);     
+            $users = $storage->search()->find($filter, 1000, __METHOD__);     
         }
     
         return $users ? $this->_clearUsers($users) : [];
@@ -88,4 +92,21 @@ class User extends RestControllerProto
         
         return $res;
     }
+    
+    public function delete()
+    {
+        $userId = $this->p('id');
+        if ($userId !== $this->_getCurrentUserId()) {
+            throw new \Exception('Forbidden', 403);
+        }
+    
+        $session = new SessionStorage();
+        $result = $session->write()->update($userId, [
+            'deleted' => true,
+        ], __METHOD__);
+        
+        return $result;
+    }
+    
+    
 }

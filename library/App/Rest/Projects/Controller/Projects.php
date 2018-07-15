@@ -28,12 +28,16 @@ class Projects extends RestControllerProto
             $filter[] = [ProjectStorage::F_OWNER_ID, '=', $ownerId]; 
         }
         
-        if ($ids) {
-            $data = $storage->read()->mGet($ids, __METHOD__, []);
-        } else {
+        if ($filter || !$ids /* select all */) {
+            if ($ids) {
+                $filter[] = [ProjectStorage::ID, 'in', $ids];
+            }
+            
             $data = $storage->search()->find($filter, $count, __METHOD__, [
                 'sort' => [[ProjectStorage::F_TITLE, 'asc']],
-            ]);
+            ]);   
+        } else {
+            $data = $storage->read()->mGet($ids, __METHOD__, []);
         }
     
         return array_values($data);

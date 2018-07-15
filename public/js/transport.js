@@ -4,20 +4,186 @@
 
 window.events = new window.EventEmitter3();
 
+var transportConnections = {
+    _priority: {},
+    _connections: {},
+    _meta: {},
+    _schemas : {},
+    _workPriority : {},
+    _activeConnection : {},
+    _requests : [],
+    _connectionLock : {},
+    setTransportPriority: function (priority)
+    {
+        this._priority = priority;
+        this._workPriority = priority;
+    },
+    setConnectionSchema: function (schema)
+    {
+        this._schemas = schema;
+    },
+    setTransportMeta: function (meta)
+    {
+        this._meta = meta;
+    },
+    addRequest : function (request)
+    {
+        var resourceType = request.type;
+        
+        var activeConnectionType = this._activeConnection[resourceType];
+        
+        //console.log('addRequest', resourceType, activeConnectionType, this._connections, request);
+
+        // connection for given type was set-up earlier
+        if (activeConnectionType && this._connections[activeConnectionType]) {
+            var connection = this._connections[activeConnectionType];
+
+            return connection.call(
+                request.method,
+                request.resource,
+                request.data,
+                request.success,
+                request.error,
+                request.type
+            );
+        }
+
+        // save request.
+        this._requests.push(request);
+        
+        this.loadConnection(resourceType);
+    },
+    loadConnection: function (resourceType)
+    {
+        //console.log('loadConnection for ' + resourceType);
+        
+        //
+        var activeConnectionType = this._activeConnection[resourceType];
+
+        // connection type was set-up;
+        if (activeConnectionType) {
+            return this._connections[activeConnectionType];
+        }
+        
+        var lock = this._connectionLock[resourceType];
+        if (lock) {
+            console.log('Skip connecting - connection locked:' + resourceType);
+            return;
+        }
+
+        this._connectionLock[resourceType] = (new Date()).toUTCString();
+        
+        // we have no defined connections for given resource type
+        if (!this._workPriority[resourceType])
+        {
+            console.error('No connection schema for resource type ' + resourceType);
+            throw new Error('No connection schema for resource type ' + resourceType);
+        }
+        
+        if (!this._workPriority[resourceType].length) {
+            console.warn('Start new cycle of initialising connections for ' + resourceType);
+            this._workPriority[resourceType] = this._priority[resourceType];
+        }
+        
+        var connectionType = this._workPriority[resourceType].shift();
+        
+        this._bootConnection(connectionType, resourceType);
+    },
+    _bootConnection : function(connectionType, resourceType) {
+        var self = this;
+        console.log('Boot connection ' + resourceType +  " - " + connectionType);
+        
+        if (this._connections[connectionType])
+        {
+            self.onConnectionSuccess(resourceType, connectionType, this._connections[connectionType]);
+            return;
+        }
+
+        if (!this._schemas[connectionType])
+        {
+            this.onConnectionFail(resourceType, connectionType);
+            return;
+        } 
+        
+        try {
+            console.log('Trying boot connection ' +  " - " + connectionType);
+            var connectionBuild = this._schemas[connectionType];
+            connectionBuild(
+                this._meta,
+                function (object)
+                {
+                    self.onConnectionSuccess(resourceType, connectionType, object);
+                },
+                function (object)
+                {
+                    self.onConnectionFail(resourceType, connectionType, object);
+                }
+            );
+        } catch (e) {
+            console.error(e);
+            this.onConnectionFail(resourceType, connectionType);
+        }
+    },
+    onConnectionFail: function(resourceType, connectionType, connection) {
+        console.warn('Failed to connect "' + connectionType + '" for ' + resourceType);
+        connection.stop();
+        this._connectionLock[resourceType] = null;
+        this.loadConnection(resourceType);
+    },
+    onConnectionSuccess: function(resourceType, connectionType, connection) {
+        this._connections[connectionType] = connection;
+        this._activeConnection[resourceType] = connectionType;
+        this._connectionLock[resourceType] = null;
+        
+        console.log('Successful connected "' + connectionType + '" for ' + resourceType);
+        
+        var currentRequests = this._requests;
+        this._requests = [];
+        while (currentRequests.length) {
+            var request = currentRequests.pop();
+            request.resetnds = request.resetnds ? request.resetnds + 1 : 1;
+            if (request.resetnds < 10) {
+                this.addRequest(request);
+            } else {
+                console.error("drop request by resends count", request, connectionType, resourceType);
+            }
+        }
+    }
+};
+
+var transportRequestProto = {
+    method : "get", 
+    resource : "", 
+    data : {}, 
+    success : null, 
+    error: null, 
+    type : ''  
+};
+
 var transportProto = {
+    connections  : {},
     REST         : 'rest',
     PAGE         : 'page',
-    connections  : {},
-    meta         : {},
-    setConnection: function (connection, type) {
-        type = type || this.REST;
-        this.connections[type] = connection
-    },
     call         : function (method, resource, data, success, error) {
-        this.connections[this.REST].call(method, resource, data, success, error);
+        this._doRequest(method, resource, data, success, error, this.REST);
     },
     loadPage     : function (method, resource, data, success, error) {
-        this.connections[this.PAGE].call(method, resource, data, success, error);
+        this._doRequest(method, resource, data, success, error, this.PAGE);
+    },
+    _doRequest : function (method, resource, data, success, error, type) {
+        var request = Object.create(transportRequestProto);
+        
+        request.method = method;
+        request.resource = resource;
+        request.data = data;
+        request.success = success;
+        request.error = error;
+        request.type = type;
+        
+        this.connections.addRequest(request);
+    },
+    setConnections: function (connections) {
+        this.connections = connections;
     }
 };
 
@@ -26,6 +192,10 @@ var clientProto = {
     deviceId : '',
     salt : '',
     init : function ()
+    {
+        window.events.on('socketConnect', this.setUp, this);
+    },
+    setUp : function ()
     {
         var self = this;
         var address = transport.call('get', '/socket/connection/address', {}, function (data)
@@ -89,17 +259,21 @@ var clientProto = {
 
 var ajaxConnection = {
     host : 'http://localhost/rest/',
-    type : 'json',
-    init : function (meta) {
-        this.host = meta['host'] || this.host;
+    types :  {
+        'rest' : 'json',
+        'page' : 'html'
     },
-    call : function (method, resource, data, success, error) {
+    init : function (meta, success, error) {
+        this.host = meta['host'] || this.host;
+        success(this);
+    },
+    call : function (method, resource, data, success, error, type) {
         var self = this;
         $.ajax({
             url : self.host + '/' + resource,
             cache: false,
             type: method,
-            dataType: self.type,
+            dataType: self.types[type] || 'json',
             data: data,
             success: function (data) {
                 self.log('successful ' + method +  ':' + resource, data);
@@ -117,6 +291,10 @@ var ajaxConnection = {
         } else {
             console.log('ajax: ' + text);
         }
+    },
+    stop : function ()
+    {
+        // do nothing;
     }
 };
 
@@ -140,30 +318,52 @@ var socketConnection = {
     prefix : '',
     type : 'json',
     response : {},
-    init : function (meta) {
+    initFailTimeout : null,
+    init : function (meta, success, error) {
         meta = meta || {};
         this.host = meta['host'] || this.host;
         this.socket = window.io(this.host);
         this.response = {};
         var self = this;
+        
+        this.initFailTimeout && clearTimeout(self.initFailTimeout);
+        this.initFailTimeout = setTimeout(
+            function ()
+            {
+                error(self);    
+            },
+            1500
+        );
 
         this.socket.on('response', function (msg) {
             self._response(msg);
         });
+
+        this.socket.on('connect', function(){
+            window.events.emit('socketConnect');
+            clearTimeout(self.initFailTimeout);
+            success(self);
+        });
         
+        this.socket.on('reconnect', function (){
+            window.events.emit('socketConnect');
+        });
 
         this.socket.on('event', function (msg) {
             if (msg && msg.type && msg.data) {
                 window.events.emit(msg.type, msg.data);    
-                console.log("Event emitted", msg.type, msg.data);
+                console.log("Event received", msg.type, msg.data);
             }
         });
+    },
+    stop : function ()
+    {
+        this.socket.disconnect();  
     },
     _response : function (msg)
     {
         if (typeof this.response[msg.reply_uuid] === 'undefined') {
-            console.warn(msg);
-            console.error("No reply found", msg);
+            console.warn("No reply found", msg);
             return;
         }
         

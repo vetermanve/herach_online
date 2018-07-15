@@ -56,9 +56,9 @@ var autoSave = {
     },
     clear : function (obj) {
         var self = this;
-        $(obj).find('.' + this.catchClass).each(function (id, obj_raw) {
+        $(obj).find(this.catchClass).each(function (id, obj_raw) {
             var obj = $(obj_raw);
-            var name = obj.data('name');
+            var name = obj.attr('name');
             
             if (name) {
                 localStorage.removeItem(self.getKey(name));

@@ -2,14 +2,69 @@
 
 {% block head %}
     <h1>{{ project.title }}
-    {% if editable %}
-        <a class="alignright" href="/projects/{{ project.id }}/edit">редактировать</a>
-    {% endif %}
+        {% if editable %}
+            <a class="alignright" href="/projects/{{ project.id }}/edit">редактировать</a>
+        {% endif %}
     </h1>
 {% endblock %}
 
 {% block body %}
     <div class="content">
-        <p class="pre-line">{{ project.desc }}</p>
+        <div class="pure-g">
+            <div class="pure-u-1 pure-u-sm-1-5">
+                <div class="padding-1">
+                    <img src="http://images.clipartpanda.com/jury-clipart-4867bc0a873e10c170ef0dd487245adb.jpg" alt=""
+                         class="pure-img">
+                </div>
+            </div>
+            <div class="pure-u-1 pure-u-sm-3-5">
+                <div class="padding-1">
+                    <h2>Описание</h2>
+                    <p>{{ project.desc }}</p>
+                </div>
+            </div>
+            <div class="pure-u-1 pure-u-sm-1-5">
+                <div class="padding-1">
+                    <p>
+                    <form class="pure-form" id="project-join-button" method="POST">
+                        <fieldset class="pure-group">
+                            <input type="hidden" name="p_id" value="{{ project.id }}"/>
+                        </fieldset>
+
+                        <button type="submit" class="pure-button pure-input-1 pure-button-primary">Поучавстовать в проекте</button>
+                    </form>
+
+                    <script type="text/javascript">
+                        var frm = $('#project-join-button');
+                        
+                        setupForm(frm, 'projects-actors', function (data)
+                            {
+                                frm.find('button').text('Вы успешно добавленый!').attr('disabled', 'disabled');
+                            },
+                            function (error)
+                            {
+                                console.log('error', error.responseText);
+                                $('body').append('</div>').html(error.responseText);
+                            }
+                        );
+                    </script>
+                    </p>
+                </div>
+            </div>
+            <div class="pure-u-1">
+                <div class="padding-1">
+                    <h2>Команда</h2>
+                    <p>
+                    <ul>
+                        {% for user in users %}
+                            <li>{{ user.nickname }}</li>
+                        {% endfor %}
+                    </ul>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <p class="pre-line"></p>
     </div>
 {% endblock %}
