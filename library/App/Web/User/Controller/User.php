@@ -44,24 +44,50 @@ class User extends WebControllerProto
         
         // load user projects
         {
-            $projectsLoad = new Load('rest/projects');
-            $projectsLoad->setParams([
-                'owner_id' => $userId, 
+            $projectsOwnedLoad = new Load('rest/projects');
+            $projectsOwnedLoad->setParams([
+                'owner_id' => $userId,
                 'count' => 6,
             ]);
             
-            $loader->addLoad($projectsLoad);
+            $loader->addLoad($projectsOwnedLoad);
+        }
+    
+        // load projects relations
+        {
+            $projectsRelation = new Load('rest/projects-actors');
+            $projectsRelation->setParams([
+                'u_id' => $userId,
+                'count' => 6,
+            ]);
+            
+            $loader->addLoad($projectsRelation);
         }
         
         $loader->init();
         $loader->processLoad();
             
         $user = $userLoad->getResults();
+        
+        if ($projectsRelation->getResultsCount()) {
+            $joinedProjectsIds = array_column($projectsRelation->getResults(),'p_id', 'p_id');
+    
+            $projectsJoinedLoad = new Load('rest/projects');
+            $projectsJoinedLoad->setParams([
+                'ids' => $joinedProjectsIds,
+                'count' => 6,
+            ]);
+    
+            $loader->addLoad($projectsJoinedLoad);
+            $loader->processLoad();
+        }
+        
             
         return $this->render([
             'user' => $user,
             'user_id' => $authUserId,
-            'projects' => $projectsLoad->getResults(),
+            'projects' => $projectsOwnedLoad->getResults(),
+            'projects_joined' => isset($projectsJoinedLoad) ? $projectsJoinedLoad->getResults() : [],
         ]);
     }
     
