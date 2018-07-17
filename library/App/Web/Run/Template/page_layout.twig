@@ -18,25 +18,46 @@
     <script type="text/javascript" src="{{ static_host }}/vendor/socket.io.slim.js"></script>
     <script type="text/javascript" src="{{ static_host }}/vendor/js.cookie.js"></script>
     <script type="text/javascript" src="{{ static_host }}/vendor/eventemitter3.min.js"></script>
-    <script type="text/javascript" src="{{ static_host }}/js/main.js"></script>
+    <script type="text/javascript" src="{{ static_host }}/js/transport.js"></script>
     <script type="text/javascript">
-        var transport = Object.create(transportProto);
-
-//        var connectionRest = Object.create(ajaxConnection);
-//        connectionRest.host = document.location.protocol + '//' + document.location.host + '/rest';
-//        transport.setConnection(connectionRest, transportProto.REST);
-
-        var connectionRest = Object.create(socketConnection);
-        connectionRest.host = document.location.protocol + '//' + document.location.hostname + '{{ socket_port ? ":#{socket_port}" : '' }}';
-        connectionRest.init({});
-        transport.setConnection(connectionRest, transportProto.REST);
-
-        var connectionPage = Object.create(ajaxConnection);
-        connectionPage.host = document.location.protocol + '//' + document.location.host;
-        connectionPage.type = 'html';
-        transport.setConnection(connectionPage, transportProto.PAGE);
-
         clientProto.init();
+        
+        var transportMeta = {
+            socketHost : document.location.protocol + '//' + document.location.hostname + '{{ socket_port ? ":#{socket_port}" : '' }}',
+            restHost : document.location.protocol + '//' + document.location.host
+        };
+        
+        var transportPriority = {
+            rest : ['socket', 'http'],
+            page : ['http']
+        };
+
+        var transportConnectionSchema = {
+            'socket': function (meta, success, error)
+            {
+                var connection = Object.create(socketConnection);
+                connection.host = meta.socketHost;
+                connection.init(meta, success, error);
+
+                return connection;
+            },
+            'http': function (meta, success, error)
+            {
+                var connection = Object.create(ajaxConnection);
+                connection.host = meta.restHost;
+                connection.init(meta, success, error);
+
+                return connection;
+            }
+        };
+        
+        transportConnections.setTransportMeta(transportMeta);
+        transportConnections.setTransportPriority(transportPriority);
+        transportConnections.setConnectionSchema(transportConnectionSchema);
+        
+        var transport = Object.create(transportProto);
+        transport.setConnections(transportConnections);
+        
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">
