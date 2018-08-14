@@ -4,6 +4,7 @@
 namespace Storage\Data;
 
 use Storage\Request\StorageDataRequest;
+use Storage\Spec\Compare;
 
 class JBaseDataAdapter extends DataAdapterProto
 {
@@ -233,32 +234,42 @@ class JBaseDataAdapter extends DataAdapterProto
                 $results = [];
                 
                 $knownFilters = [
-                    '=' => function ($original, $compare) {
+                    Compare::EQ              => function ($original, $compare) {
                         return $original == $compare;
                     },
-                    '!=' => function ($original, $compare) {
+                    Compare::NOT_EQ          => function ($original, $compare) {
                         return $original != $compare;
                     },
-                    '?=' => function ($original, $compare) {
+                    Compare::EMPTY_OR_EQ     => function ($original, $compare) {
                         return is_null($original) || $original == $compare;
                     },
-                    '?!=' => function ($original, $compare) {
+                    Compare::EMPTY_OR_NOT_EQ => function ($original, $compare) {
                         return is_null($original) || $original != $compare;
                     },
-                    '>' => function ($original, $compare) {
-                        return $original > $compare;                      
-                    },
-                    '<' => function ($original, $compare) {
+                    Compare::GRATER          => function ($original, $compare) {
                         return $original > $compare;
                     },
-                    '>=' => function ($original, $compare) {
+                    Compare::LESS            => function ($original, $compare) {
+                        return $original > $compare;
+                    },
+                    Compare::GRATER_OR_EQ    => function ($original, $compare) {
                         return $original >= $compare;
                     },
-                    '<=' => function ($original, $compare) {
+                    Compare::LESS_OR_EQ      => function ($original, $compare) {
                         return $original <= $compare;
                     },
-                    'in' => function ($original, $compare) {
+                    Compare::IN              => function ($original, $compare) {
                         return in_array($original, $compare);
+                    },
+                    Compare::ANY             => function ($original, $compare) {
+                        return in_array($compare, $original);
+                    },
+                    Compare::STR_BEGINS      => function ($original, $compare) {
+                        return stripos($original, $compare) === 0;
+                    },
+                    Compare::STR_ENDS        => function ($original, $compare) {
+                        $length = strlen($compare);
+                        return $length === 0 || (substr($original, -$length) === $compare);
                     }
                 ];
     
